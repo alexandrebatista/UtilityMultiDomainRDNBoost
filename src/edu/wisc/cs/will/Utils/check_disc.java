@@ -17,7 +17,7 @@ public class check_disc {
     	String factsdp=DirectoryPath;
     	trial[trial.length-1]=trial[trial.length-1].replace("/","");
     	String prefix = trial[trial.length-1];
-    	String bkname=prefix+"\\"+temp[temp.length-1]+"_bk.txt";
+    	String bkname=prefix+"/"+temp[temp.length-1]+"_bk.txt";
     	String alterbkpath=factsdp;
     	//FileInputStream fstreamtemp = new FileInputStream(DirectoryPath+bkname);
     	FileInputStream fstreamtemp = new FileInputStream(bkname);

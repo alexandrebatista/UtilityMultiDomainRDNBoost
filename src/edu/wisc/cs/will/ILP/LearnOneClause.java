@@ -2808,7 +2808,14 @@ public class LearnOneClause extends StateBasedSearchTask {
 			return new RegressionExample(stringHandler, lit, outputValue, provenance, extraLabel, annotationTerm);
 		}
 		if (!confirmExample(lit)) { return null; }
-		return new Example(stringHandler, lit, provenance, extraLabel, annotationTerm);
+		Example example = new Example(stringHandler, lit, provenance, extraLabel, annotationTerm);
+		// Added By Cainã Figueiredo
+		// ----------------------------------------------		
+		example.setExampleDomain(lit.getExampleDomain());
+		// TODO: Remove the print below
+		// System.out.println("Test: I have read an example of predicate" + example.predicateName + " with domain " + example.getExampleDomain() + ".\n");
+		// ----------------------------------------------		
+		return example;
 	}
 
 	private String combineLabels(String str1, String str2) {

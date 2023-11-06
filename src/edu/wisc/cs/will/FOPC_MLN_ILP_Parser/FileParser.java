@@ -1,6 +1,9 @@
 
 package edu.wisc.cs.will.FOPC_MLN_ILP_Parser;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static edu.wisc.cs.will.Utils.MessageType.PARSER_VERBOSE_FILE_INCLUDES;
 import static edu.wisc.cs.will.Utils.MessageType.PARSER_VERBOSE_LIBRARY_LOADING;
 import static edu.wisc.cs.will.Utils.MessageType.PARSER_VERBOSE_MODE_LOADING;
@@ -73,6 +76,7 @@ import edu.wisc.cs.will.Utils.condor.CondorFile;
 import edu.wisc.cs.will.Utils.condor.CondorFileInputStream;
 import edu.wisc.cs.will.Utils.condor.CondorFileReader;
 
+import java.lang.IllegalArgumentException;
 
 
 
@@ -792,6 +796,11 @@ public class FileParser {
 					case StreamTokenizer.TT_WORD:
 						String currentWord = tokenizer.sval();
 						boolean colonNext = checkAndConsume(':'); // If the next character is a colon, it will be "sucked up" and 'true' returned.  Otherwise it will be puhsed back and 'false' returned.
+						// Added by Cainã Figueiredo
+						// ---------------------------------------------------------------------------------------------------------------------------
+						if (colonNext && currentWord.equalsIgnoreCase("sourceDomain"))   { nextSentence = processExampleDomain(currentWord);  break; }
+						if (colonNext && currentWord.equalsIgnoreCase("targetDomain"))   { nextSentence = processExampleDomain(currentWord);  break; }
+						// ---------------------------------------------------------------------------------------------------------------------------
 						if (colonNext && currentWord.equalsIgnoreCase("define"))         { processDefinition( );  break; }
 						if (colonNext && currentWord.equalsIgnoreCase("setParam"))       { processSetParameter(); break; }
 						if (colonNext && currentWord.equalsIgnoreCase("setParameter"))   { processSetParameter(); break; }
@@ -922,6 +931,7 @@ public class FileParser {
 						// The default is to read an FOPC sentence.
 						tokenizer.pushBack();
 						nextSentence =                                                  processFOPC_sentence(0);
+						System.out.println(nextSentence.toPrettyString2());
 						break;
 					case StreamTokenizer.TT_NUMBER:  throw new ParsingException("Should not happen in the parser:  Read this NUMBER: " + tokenizer.nval());  // See comment above as to why this won't be reached.
 					case ':':
@@ -2440,6 +2450,17 @@ public class FileParser {
 		throw new ParsingException("Expecting the name of a predicate in a 'cost' but read: '" + reportLastItemRead() + "'.");
 	}
 
+	// Added By Cainã Figueiredo
+	// -------------------------------------------------------------------------------
+	private Sentence processExampleDomain(String domain) throws IllegalArgumentException, IOException {
+		Sentence sentence = processFOPC_sentence(0);
+		sentence.setExampleDomain(domain);
+		// TODO: Remove the print below
+		// System.out.println("Test: I have read the sentence '" + sentence.toPrettyString2() + "' with domain " + sentence.getExampleDomain() + ".\n");
+		return sentence;
+	}
+	// -------------------------------------------------------------------------------
+
 	private void processDirective(String directiveName) throws ParsingException, IOException {
 		// Have already read something like 'okIfUnknown:" (the colon isn't passed in).
 		if (directiveName == null) { throw new ParsingException("Cannot pass in directiveName=null."); } // This is a programmer, rather than user, error.
@@ -2771,6 +2792,12 @@ public class FileParser {
 		List<Sentence> result = null;
 		loadedLibraries.add(libName);  // TODO - should we store URLs instead?
 		URL libraryURL = getClass().getResource("/edu/wisc/cs/will/FOPC_MLN_ILP_Parser/" + libName + ".fopcLibrary");
+		// System.out.println("Class Name: " + getClass().getName());
+		// Path currentRelativePath = Paths.get("");
+		// String s = currentRelativePath.toAbsolutePath().toString();
+		// System.out.println("Current absolute path is: " + s);
+		// System.out.println("Current absolute path is: " + System.getProperty("user.dir"));
+		// System.out.println(libraryURL.toString());
 		if (libraryURL == null) { throw new ParsingException("Unknown library: " + libName); }
 		InputStream inStream  = new NamedInputStream(new BufferedInputStream(libraryURL.openStream()), libName + ".fopcLibrary");
 		if (!dontPrintUnlessImportant) { Utils.println(PARSER_VERBOSE_LIBRARY_LOADING, "% Reading library '" + libName + "'."); } //Utils.waitHere("libs: " + loadedLibraries);

@@ -15,6 +15,8 @@ import edu.wisc.cs.will.FOPC.visitors.SentenceVisitor;
 import edu.wisc.cs.will.ILP.SentenceCompressor;
 import edu.wisc.cs.will.Utils.Utils;
 
+import java.lang.IllegalArgumentException;
+
 /**
  * @author shavlik
  *
@@ -27,6 +29,10 @@ import edu.wisc.cs.will.Utils.Utils;
 public abstract class Sentence extends AllOfFOPC implements Serializable, SLDQuery, SentenceOrTerm {
 	protected final static int    debugLevel = 0; // Used to control output from this project (0 = no output, 1=some, 2=much, 3=all).
 	
+	// Added By Cainã Figueiredo	
+	// ----------------------------------------------------------
+	protected 			   String exampleDomain = "targetDomain"; // Used for transfer learning. It can be either "sourceDomain" or "targetDomain" (default).
+	// ----------------------------------------------------------
 	public    final static double maxWeight     = 300.0; // Since weights are used in exp^weight, want something that avoids overflow.	
 	public    final static double minWeight     = -maxWeight;	 // Also want to avoid underflow (note: code does not yet use this).
     public    final static double defaultWeight = maxWeight + 1.0; // The default weight is 'infinity.'  (Note: the Example class has a weight as well; since these two weights have different semantics, we use two long names.) 
@@ -82,6 +88,20 @@ public abstract class Sentence extends AllOfFOPC implements Serializable, SLDQue
 		return result;
 	}
 	
+	// Added By Cainã Figueiredo
+	// -------------------------------------------------------------------------------------------------
+	public void setExampleDomain(String domain) throws IllegalArgumentException{
+		if (!domain.equalsIgnoreCase("targetDomain") && !domain.equalsIgnoreCase("sourceDomain")) {
+			throw new IllegalArgumentException("Domain should be either targetDomain or sourceDomain.");
+		}
+		exampleDomain = domain;
+	}
+
+	public String getExampleDomain() {
+		return exampleDomain;
+	}
+	// -------------------------------------------------------------------------------------------------
+
 	public double getWeightOnSentence() {
 		return wgtSentence;
 	}	

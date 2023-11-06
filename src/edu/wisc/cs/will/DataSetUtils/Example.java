@@ -23,6 +23,8 @@ import edu.wisc.cs.will.FOPC.Variable;
 import edu.wisc.cs.will.Utils.Utils;
 import edu.wisc.cs.will.Utils.condor.CondorFileOutputStream;
 
+import java.lang.IllegalArgumentException;
+
 /**
  * @author shavlik
  *
@@ -47,6 +49,11 @@ public class Example extends Literal implements Serializable {
  //	public int    marker     = inTrainPrimeSet;	
 	public String extraLabel = null; // Examples can be labeled wrt some other information and when this information is present, it is used to report how the examples at some node are distributed wrt these labels. 
 
+	// Added By Cainã Figueiredo	
+	// -------------------------------------------
+	private String exampleDomain = "targetDomain"; // Used for transfer learning. It can be either "sourceDomain" or "targetDomain" (default).
+	// -------------------------------------------
+
 	public Example(HandleFOPCstrings stringHandler, PredicateName predicateName, List<Term> arguments, String provenance, String extraLabel, Term annotationTerm) {
 		this.stringHandler  = stringHandler;
 		this.predicateName  = predicateName; // Handle signs by placing examples in POS or NEG lists.
@@ -63,6 +70,10 @@ public class Example extends Literal implements Serializable {
 	}
 	public Example(HandleFOPCstrings stringHandler, Literal literal, String provenance, String extraLabel, Term annotationTerm) {
 		this(stringHandler, literal.predicateName, literal.getArguments(), provenance, extraLabel, annotationTerm);
+		// Added By Cainã Figueiredo;
+		// ----------------------------------------
+		exampleDomain = literal.getExampleDomain();
+		// ----------------------------------------
 	}	
 	public Example(Literal literal) {
 		this(literal.getStringHandler(), literal.predicateName, literal.getArguments(), null, null, null);
@@ -196,6 +207,20 @@ public class Example extends Literal implements Serializable {
         return weight;
     }
     
+	// Added By Cainã Figueiredo
+	// -------------------------------------------------------------------------------------------------
+	public void setExampleDomain(String domain) throws IllegalArgumentException{
+		if (!domain.equalsIgnoreCase("targetDomain") && !domain.equalsIgnoreCase("sourceDomain")) {
+			throw new IllegalArgumentException("Domain should be either targetDomain or sourceDomain.");
+		}
+		exampleDomain = domain;
+	}
+
+	public String getExampleDomain() {
+		return exampleDomain;
+	}
+	// -------------------------------------------------------------------------------------------------
+
     public void setAnnotationTerm(Term annotationTerm) {
 		this.annotationTerm = annotationTerm;
 	}

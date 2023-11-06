@@ -732,12 +732,21 @@ public class LearnBoostedRDN {
 								eg.setOutputValue(1 - prob/(prob + (1-prob)* Math.exp(-beta)));
 							}
 						} else if (adviceGradients==null){
+							//Added By Cainã Figueiredo
+							// ----------------------------------------------------------
+							double domainAlpha = eg.getExampleDomain().equalsIgnoreCase("targetDomain") ? cmdArgs.getTargetDomainWt() : 1 - cmdArgs.getTargetDomainWt();
+							// System.out.println("Example is from " + eg.getExampleDomain() + " and has weight " + domainAlpha + "\n");
+							// ----------------------------------------------------------
+
 							// Neither advice nor softm
+							// Modified by Cainã Figueiredo
+							// ---------------------------------------------------------
 							if (eg.isOriginalTruthValue()) {
-								eg.setOutputValue(stateProb * (1 - prob));					
+								eg.setOutputValue(stateProb * (1 - prob) * domainAlpha);					
 							} else {
-								eg.setOutputValue(stateProb * (0 - prob));
+								eg.setOutputValue(stateProb * (0 - prob) * domainAlpha);
 							}
+							// ---------------------------------------------------------
 						} else {
 							// Advice
 							if (eg.isOriginalTruthValue()) {

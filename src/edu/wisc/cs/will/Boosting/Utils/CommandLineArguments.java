@@ -237,6 +237,13 @@ public class CommandLineArguments {
         // Used to set flag for grounded random walks
         public static final String groundedRW = "grw";
         private boolean GroundedRelationalRW = false;
+	
+	// Introduced By Cainã Figueiredo
+	// ------------------------------------------------------------------
+	// Used to set flag for relational instance-based transfer learning 
+	public static final String targetDomainWt = "targetDomainWt";
+	private double targetDomainWtVal = 1.0;
+	// ------------------------------------------------------------------
 
 	public static final String kbpllFile = "adviceFile";
 	private String kbpllAdviceFile = null;
@@ -470,7 +477,13 @@ public class CommandLineArguments {
 			        GroundedRelationalRW = true;
 				continue;
 			}
-			
+			// Added By Cainã Figueiredo
+			// -------------------------------------------
+			if (argMatches(args[i], targetDomainWt)) {
+				setTargetDomainWt(args[++i]);
+				continue;
+			}
+			// -------------------------------------------
 			if (argMatches(args[i], useSoftM)) {
 				SoftM = true;
 				continue;
@@ -902,6 +915,11 @@ public class CommandLineArguments {
 		
 		result += argPrefix + testNegsToPosRatio + " <Negative/Positive ratio>: Ratio of negatives to positive for testing.\n";
 		
+		// Added By Cainã Figueiredo
+		// --------------------------------------------------------------------------------
+		result += argPrefix + targetDomainWt + " : Used for relational instance-based transfer learning. It controls the tradeoff between source and target domain in the loss function. It must be a value in (0, 1]. By default, it is 1, meaning that transfer learning is ignored and only the target domain is considered.\n";
+		// --------------------------------------------------------------------------------
+
 		return result;
 	}
 	
@@ -1593,6 +1611,18 @@ public class CommandLineArguments {
 	        this.GroundedRelationalRW = GroundedRelationalRW;
        }
     
+	// Added By Cainã Figueiredo
+	// --------------------------------------------------------- 
+	public void setTargetDomainWt(String w) {
+		// TODO: Validate w value. It should be a value in (0,1]
+		targetDomainWtVal = Double.parseDouble(w);
+	}
+
+	public Double getTargetDomainWt() {
+		return targetDomainWtVal;
+	}
+	// ---------------------------------------------------------
+	
 	public void setSoftM(boolean SoftM) {
 		this.SoftM = SoftM;
 	}
