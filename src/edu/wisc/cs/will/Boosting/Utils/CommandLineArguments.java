@@ -241,8 +241,11 @@ public class CommandLineArguments {
 	// Introduced By Cainã Figueiredo
 	// ------------------------------------------------------------------
 	// Used to set flag for relational instance-based transfer learning 
-	public static final String utilityAlpha = "utilityAlpha";
-	private double utilityAlphaVal = 1.0;
+	public static final String sourceUtilityAlpha = "sourceUtilityAlpha";
+	private double sourceUtilityAlphaVal = 1.0;
+
+	public static final String targetUtilityAlpha = "targetUtilityAlpha";
+	private double targetUtilityAlphaVal = 1.0;
 	// ------------------------------------------------------------------
 
 	public static final String kbpllFile = "adviceFile";
@@ -479,8 +482,13 @@ public class CommandLineArguments {
 			}
 			// Added By Cainã Figueiredo
 			// -------------------------------------------
-			if (argMatches(args[i], utilityAlpha)) {
-				setUtilityAlpha(args[++i]);
+			if (argMatches(args[i], sourceUtilityAlpha)) {
+				setSourceUtilityAlpha(args[++i]);
+				continue;
+			}
+
+			if (argMatches(args[i], targetUtilityAlpha)) {
+				setTargetUtilityAlpha(args[++i]);
 				continue;
 			}
 			// -------------------------------------------
@@ -917,7 +925,8 @@ public class CommandLineArguments {
 		
 		// Added By Cainã Figueiredo
 		// --------------------------------------------------------------------------------
-		result += argPrefix + utilityAlpha + " : Alpha hyperparameter for alpha-fairness utility function. Default: 1.0 (proportional fairness)\n";
+		result += argPrefix + sourceUtilityAlpha + " : Source alpha hyperparameter for alpha-fairness utility function. Default: 1.0 (proportional fairness)\n";
+		result += argPrefix + targetUtilityAlpha + " : Target alpha hyperparameter for alpha-fairness utility function. Default: 1.0 (proportional fairness)\n";
 		// --------------------------------------------------------------------------------
 
 		return result;
@@ -1613,13 +1622,20 @@ public class CommandLineArguments {
     
 	// Added By Cainã Figueiredo
 	// --------------------------------------------------------- 
-	public void setUtilityAlpha(String w) {
-		// TODO: Validate w value. It should be a value in (0,1]
-		utilityAlphaVal = Double.parseDouble(w);
+	public void setSourceUtilityAlpha(String alpha) {
+		sourceUtilityAlphaVal = Double.parseDouble(alpha);
 	}
 
-	public Double getUtilityAlpha() {
-		return utilityAlphaVal;
+	public Double getSourceUtilityAlpha() {
+		return sourceUtilityAlphaVal;
+	}
+
+	public void setTargetUtilityAlpha(String alpha) {
+		targetUtilityAlphaVal = Double.parseDouble(alpha);
+	}
+
+	public Double getTargetUtilityAlpha() {
+		return targetUtilityAlphaVal;
 	}
 	// ---------------------------------------------------------
 	

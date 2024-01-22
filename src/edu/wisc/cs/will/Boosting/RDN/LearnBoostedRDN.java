@@ -734,19 +734,22 @@ public class LearnBoostedRDN {
 						} else if (adviceGradients==null){
 							//Added By Cainã Figueiredo
 							// ----------------------------------------------------------
-							double utilityAlpha = cmdArgs.getUtilityAlpha();
+							double weight = eg.getExampleWeight();
+							String domain = eg.getExampleDomain();
+							double sourceUtilityAlpha = cmdArgs.getSourceUtilityAlpha();
+							double targetUtilityAlpha = cmdArgs.getTargetUtilityAlpha();
+							double utilityAlpha = domain.equalsIgnoreCase("sourceDomain") ? sourceUtilityAlpha : targetUtilityAlpha;
 							int originalValue = eg.getOriginalValue();
 							double predictionError = originalValue - prob;
 							double z = Math.pow(prob, originalValue) * Math.pow(1-prob, 1-originalValue);
-							double weight = eg.getExampleWeight();
-							String domain = eg.getExampleDomain();
+							double unweightedExampleGradient = Math.pow(z, 1-utilityAlpha) * predictionError;
 							// System.out.println("Example is from " + eg.getExampleDomain() + " and has weight " + domainAlpha + "\n");
 							// ----------------------------------------------------------
 
 							// Neither advice nor softm
 							// Modified by Cainã Figueiredo
 							// ---------------------------------------------------------
-							double exampleGradient = weight * Math.pow(-1, 1-originalValue) * Math.pow(z, 1-utilityAlpha) * (1-z);
+							double exampleGradient = weight * unweightedExampleGradient;
 							// TODO: Remove the following prints after fixing the issue related to weights normalization, which is reducing the gradients to zero as the number of examples increases
 							// System.out.println("State prob: " + stateProb);
 							// System.out.println("Grad file: " + gradFile);
