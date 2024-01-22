@@ -734,18 +734,30 @@ public class LearnBoostedRDN {
 						} else if (adviceGradients==null){
 							//Added By Cainã Figueiredo
 							// ----------------------------------------------------------
-							double domainAlpha = eg.getExampleDomain().equalsIgnoreCase("targetDomain") ? cmdArgs.getTargetDomainWt() : 1 - cmdArgs.getTargetDomainWt();
+							double utilityAlpha = cmdArgs.getUtilityAlpha();
+							int originalValue = eg.getOriginalValue();
+							double predictionError = originalValue - prob;
+							double z = Math.pow(prob, originalValue) * Math.pow(1-prob, 1-originalValue);
+							double weight = eg.getExampleWeight();
+							String domain = eg.getExampleDomain();
 							// System.out.println("Example is from " + eg.getExampleDomain() + " and has weight " + domainAlpha + "\n");
 							// ----------------------------------------------------------
 
 							// Neither advice nor softm
 							// Modified by Cainã Figueiredo
 							// ---------------------------------------------------------
-							if (eg.isOriginalTruthValue()) {
-								eg.setOutputValue(stateProb * (1 - prob) * domainAlpha);					
-							} else {
-								eg.setOutputValue(stateProb * (0 - prob) * domainAlpha);
-							}
+							double exampleGradient = weight * Math.pow(-1, 1-originalValue) * Math.pow(z, 1-utilityAlpha) * (1-z);
+							// TODO: Remove the following prints after fixing the issue related to weights normalization, which is reducing the gradients to zero as the number of examples increases
+							// System.out.println("State prob: " + stateProb);
+							// System.out.println("Grad file: " + gradFile);
+							// System.out.println("Domain: " + domain);
+							// System.out.println("Weight: " + weight);
+							// System.out.println("Probability of being True: " + prob);
+							// System.out.println("Original value: " + originalValue);
+							// System.out.println("Utility alpha: " + utilityAlpha);
+							// System.out.println("Z: " + z);
+							// System.out.println("Example gradient: " + exampleGradient);
+							eg.setOutputValue(exampleGradient);
 							// ---------------------------------------------------------
 						} else {
 							// Advice

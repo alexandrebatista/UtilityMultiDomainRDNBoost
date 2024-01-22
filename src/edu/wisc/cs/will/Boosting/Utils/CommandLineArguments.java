@@ -241,8 +241,8 @@ public class CommandLineArguments {
 	// Introduced By Cainã Figueiredo
 	// ------------------------------------------------------------------
 	// Used to set flag for relational instance-based transfer learning 
-	public static final String targetDomainWt = "targetDomainWt";
-	private double targetDomainWtVal = 1.0;
+	public static final String utilityAlpha = "utilityAlpha";
+	private double utilityAlphaVal = 1.0;
 	// ------------------------------------------------------------------
 
 	public static final String kbpllFile = "adviceFile";
@@ -479,8 +479,8 @@ public class CommandLineArguments {
 			}
 			// Added By Cainã Figueiredo
 			// -------------------------------------------
-			if (argMatches(args[i], targetDomainWt)) {
-				setTargetDomainWt(args[++i]);
+			if (argMatches(args[i], utilityAlpha)) {
+				setUtilityAlpha(args[++i]);
 				continue;
 			}
 			// -------------------------------------------
@@ -917,7 +917,7 @@ public class CommandLineArguments {
 		
 		// Added By Cainã Figueiredo
 		// --------------------------------------------------------------------------------
-		result += argPrefix + targetDomainWt + " : Used for relational instance-based transfer learning. It controls the tradeoff between source and target domain in the loss function. It must be a value in (0, 1]. By default, it is 1, meaning that transfer learning is ignored and only the target domain is considered.\n";
+		result += argPrefix + utilityAlpha + " : Alpha hyperparameter for alpha-fairness utility function. Default: 1.0 (proportional fairness)\n";
 		// --------------------------------------------------------------------------------
 
 		return result;
@@ -1613,13 +1613,13 @@ public class CommandLineArguments {
     
 	// Added By Cainã Figueiredo
 	// --------------------------------------------------------- 
-	public void setTargetDomainWt(String w) {
+	public void setUtilityAlpha(String w) {
 		// TODO: Validate w value. It should be a value in (0,1]
-		targetDomainWtVal = Double.parseDouble(w);
+		utilityAlphaVal = Double.parseDouble(w);
 	}
 
-	public Double getTargetDomainWt() {
-		return targetDomainWtVal;
+	public Double getUtilityAlpha() {
+		return utilityAlphaVal;
 	}
 	// ---------------------------------------------------------
 	

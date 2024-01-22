@@ -32,6 +32,7 @@ public abstract class Sentence extends AllOfFOPC implements Serializable, SLDQue
 	// Added By Cainã Figueiredo	
 	// ----------------------------------------------------------
 	protected 			   String exampleDomain = "targetDomain"; // Used for transfer learning. It can be either "sourceDomain" or "targetDomain" (default).
+	protected 			   double exampleWeight = 1.0; // Used for transfer learning. It should be greater than or equal to 0. It will be further normalized.
 	// ----------------------------------------------------------
 	public    final static double maxWeight     = 300.0; // Since weights are used in exp^weight, want something that avoids overflow.	
 	public    final static double minWeight     = -maxWeight;	 // Also want to avoid underflow (note: code does not yet use this).
@@ -99,6 +100,17 @@ public abstract class Sentence extends AllOfFOPC implements Serializable, SLDQue
 
 	public String getExampleDomain() {
 		return exampleDomain;
+	}
+	
+	public void setExampleWeight(double weight) throws IllegalArgumentException{
+		if (weight < 0) {
+			throw new IllegalArgumentException("Weight should be greater than or equal to zero.");
+		}
+		exampleWeight = weight;
+	}
+
+	public double getExampleWeight() {
+		return exampleWeight;
 	}
 	// -------------------------------------------------------------------------------------------------
 

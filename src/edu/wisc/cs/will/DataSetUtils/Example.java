@@ -52,6 +52,7 @@ public class Example extends Literal implements Serializable {
 	// Added By Cainã Figueiredo	
 	// -------------------------------------------
 	private String exampleDomain = "targetDomain"; // Used for transfer learning. It can be either "sourceDomain" or "targetDomain" (default).
+	private double exampleWeight = 1.0; // Used for transfer learning. It should be greater than or equal to 0. The weights are further normalized.
 	// -------------------------------------------
 
 	public Example(HandleFOPCstrings stringHandler, PredicateName predicateName, List<Term> arguments, String provenance, String extraLabel, Term annotationTerm) {
@@ -73,6 +74,7 @@ public class Example extends Literal implements Serializable {
 		// Added By Cainã Figueiredo;
 		// ----------------------------------------
 		exampleDomain = literal.getExampleDomain();
+		exampleWeight = literal.getExampleWeight();
 		// ----------------------------------------
 	}	
 	public Example(Literal literal) {
@@ -209,7 +211,7 @@ public class Example extends Literal implements Serializable {
     
 	// Added By Cainã Figueiredo
 	// -------------------------------------------------------------------------------------------------
-	public void setExampleDomain(String domain) throws IllegalArgumentException{
+	public void setExampleDomain(String domain) throws IllegalArgumentException {
 		if (!domain.equalsIgnoreCase("targetDomain") && !domain.equalsIgnoreCase("sourceDomain")) {
 			throw new IllegalArgumentException("Domain should be either targetDomain or sourceDomain.");
 		}
@@ -218,6 +220,17 @@ public class Example extends Literal implements Serializable {
 
 	public String getExampleDomain() {
 		return exampleDomain;
+	}
+
+	public void setExampleWeight(double weight) throws IllegalArgumentException{
+		if (weight < 0) {
+			throw new IllegalArgumentException("Weight should be greater than or equal to zero.");
+		}
+		exampleWeight = weight;
+	}
+
+	public double getExampleWeight() {
+		return exampleWeight;
 	}
 	// -------------------------------------------------------------------------------------------------
 

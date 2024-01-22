@@ -796,11 +796,6 @@ public class FileParser {
 					case StreamTokenizer.TT_WORD:
 						String currentWord = tokenizer.sval();
 						boolean colonNext = checkAndConsume(':'); // If the next character is a colon, it will be "sucked up" and 'true' returned.  Otherwise it will be puhsed back and 'false' returned.
-						// Added by Cainã Figueiredo
-						// ---------------------------------------------------------------------------------------------------------------------------
-						if (colonNext && currentWord.equalsIgnoreCase("sourceDomain"))   { nextSentence = processExampleDomain(currentWord);  break; }
-						if (colonNext && currentWord.equalsIgnoreCase("targetDomain"))   { nextSentence = processExampleDomain(currentWord);  break; }
-						// ---------------------------------------------------------------------------------------------------------------------------
 						if (colonNext && currentWord.equalsIgnoreCase("define"))         { processDefinition( );  break; }
 						if (colonNext && currentWord.equalsIgnoreCase("setParam"))       { processSetParameter(); break; }
 						if (colonNext && currentWord.equalsIgnoreCase("setParameter"))   { processSetParameter(); break; }
@@ -928,9 +923,13 @@ public class FileParser {
 							nextSentence = stringHandler.getConnectedSentence(arg1, connective, arg2);
 							break;
 						}
+						if (currentWord.equalsIgnoreCase("instance")) {
+							nextSentence = processExample();
+							break;
+						}
 						// The default is to read an FOPC sentence.
 						tokenizer.pushBack();
-						nextSentence =                                                  processFOPC_sentence(0);
+						nextSentence = processFOPC_sentence(0);
 						System.out.println(nextSentence.toPrettyString2());
 						break;
 					case StreamTokenizer.TT_NUMBER:  throw new ParsingException("Should not happen in the parser:  Read this NUMBER: " + tokenizer.nval());  // See comment above as to why this won't be reached.
@@ -2452,11 +2451,30 @@ public class FileParser {
 
 	// Added By Cainã Figueiredo
 	// -------------------------------------------------------------------------------
-	private Sentence processExampleDomain(String domain) throws IllegalArgumentException, IOException {
-		Sentence sentence = processFOPC_sentence(0);
-		sentence.setExampleDomain(domain);
+	private Sentence processExample() throws IllegalArgumentException, IOException {
+		getNextToken(); // Reading '('
+		getNextToken(); // Reading <example domain>
+		String domain = tokenizer.sval();
+		getNextToken(); // Reading ','
+		String weightString = "";
+		int tokenRead = getNextToken();
+		while (tokenRead != ',') {
+			if (tokenRead == StreamTokenizer.TT_WORD) {
+				weightString = weightString + tokenizer.sval();
+			}
+			else if (tokenRead == '.') {
+				weightString = weightString + '.';
+			}
+			tokenRead = getNextToken();
+		}
+		Double weight = Double.parseDouble(weightString); 
+		getNextToken(); // Reading ','
+		Sentence sentence = processFOPC_sentenceFromThisToken(0);
 		// TODO: Remove the print below
 		// System.out.println("Test: I have read the sentence '" + sentence.toPrettyString2() + "' with domain " + sentence.getExampleDomain() + ".\n");
+		sentence.setExampleDomain(domain);
+		sentence.setExampleWeight(weight);
+		getNextToken(); // Reading ')';
 		return sentence;
 	}
 	// -------------------------------------------------------------------------------
