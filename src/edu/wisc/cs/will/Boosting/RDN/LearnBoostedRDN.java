@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import edu.wisc.cs.will.Boosting.Common.RunBoostedModels;
 import edu.wisc.cs.will.Boosting.Common.SRLInference;
@@ -732,23 +734,32 @@ public class LearnBoostedRDN {
 								eg.setOutputValue(1 - prob/(prob + (1-prob)* Math.exp(-beta)));
 							}
 						} else if (adviceGradients==null){
-							//Added By Cainã Figueiredo
+							// Neither advice nor softm
+							
+							//Modified By Cainã Figueiredo
 							// ----------------------------------------------------------
+							Pattern treeNumberPattern = Pattern.compile(".*/gradients_(\\d+).txt");
+							Matcher treeNumberMatcher = treeNumberPattern.matcher(gradFile);
+							int treeNumber = 1;
+							if (treeNumberMatcher.find()) {
+								treeNumber = Integer.parseInt(treeNumberMatcher.group(1)) + 1; // It starts on 1.
+							}
 							double weight = eg.getExampleWeight();
 							String domain = eg.getExampleDomain();
-							double sourceUtilityAlpha = cmdArgs.getSourceUtilityAlpha();
-							double targetUtilityAlpha = cmdArgs.getTargetUtilityAlpha();
+							int utilityAlphaSetIter = cmdArgs.getUtilityAlphaSetIter(); // The learning iteration where the utility alphas will be set as the values defined by the user. Before this iteration, both utility alpha will be set as 1 (equivalent to original RDN-Boost). 
+							double sourceUtilityAlpha = treeNumber >= utilityAlphaSetIter ? cmdArgs.getSourceUtilityAlpha() : 1.0;
+							double targetUtilityAlpha = treeNumber >= utilityAlphaSetIter ? cmdArgs.getTargetUtilityAlpha() : 1.0;
 							double utilityAlpha = domain.equalsIgnoreCase("sourceDomain") ? sourceUtilityAlpha : targetUtilityAlpha;
 							int originalValue = eg.getOriginalValue();
 							double predictionError = originalValue - prob;
 							double z = Math.pow(prob, originalValue) * Math.pow(1-prob, 1-originalValue);
 							double unweightedExampleGradient = Math.pow(z, 1-utilityAlpha) * predictionError;
+							// System.out.println("TreeNumber: " + treeNumber);
+							// System.out.println("Label: " + originalValue);
+							// System.out.println("Utility Alpha: " + utilityAlpha);
 							// System.out.println("Example is from " + eg.getExampleDomain() + " and has weight " + domainAlpha + "\n");
 							// ----------------------------------------------------------
 
-							// Neither advice nor softm
-							// Modified by Cainã Figueiredo
-							// ---------------------------------------------------------
 							double exampleGradient = weight * unweightedExampleGradient;
 							// TODO: Remove the following prints after fixing the issue related to weights normalization, which is reducing the gradients to zero as the number of examples increases
 							// System.out.println("State prob: " + stateProb);

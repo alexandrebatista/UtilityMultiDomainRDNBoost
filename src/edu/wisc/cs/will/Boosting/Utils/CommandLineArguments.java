@@ -149,7 +149,7 @@ public class CommandLineArguments {
 	public static final String loadModelPredFlag = "loadPredModel";
 	private Set<String> loadPredModelVal = null;
 	
-	
+
 	public static final String saveModel = "save";
 	private boolean saveModelVal=false;
 
@@ -246,6 +246,9 @@ public class CommandLineArguments {
 
 	public static final String targetUtilityAlpha = "targetUtilityAlpha";
 	private double targetUtilityAlphaVal = 1.0;
+	
+	public static final String utilityAlphaSetIter = "utilityAlphaSetIter";
+	private int utilityAlphaSetIterVal = 1;
 	// ------------------------------------------------------------------
 
 	public static final String kbpllFile = "adviceFile";
@@ -489,6 +492,11 @@ public class CommandLineArguments {
 
 			if (argMatches(args[i], targetUtilityAlpha)) {
 				setTargetUtilityAlpha(args[++i]);
+				continue;
+			}
+
+			if (argMatches(args[i], utilityAlphaSetIter)) {
+				setUtilityAlphaSetIter(args[++i]);
 				continue;
 			}
 			// -------------------------------------------
@@ -927,6 +935,7 @@ public class CommandLineArguments {
 		// --------------------------------------------------------------------------------
 		result += argPrefix + sourceUtilityAlpha + " : Source alpha hyperparameter for alpha-fairness utility function. Default: 1.0 (proportional fairness)\n";
 		result += argPrefix + targetUtilityAlpha + " : Target alpha hyperparameter for alpha-fairness utility function. Default: 1.0 (proportional fairness)\n";
+		result += argPrefix + utilityAlphaSetIter + " : The learning iteration (i.e., tree number) where the source and target utility alphas will be set as the values defined by the user for the args `sourceUtilityAlpha` and `targetUtilityAlpha`. Before this iteration, both utility alphas will be set as 1. Default: 1\n";
 		// --------------------------------------------------------------------------------
 
 		return result;
@@ -1636,6 +1645,14 @@ public class CommandLineArguments {
 
 	public Double getTargetUtilityAlpha() {
 		return targetUtilityAlphaVal;
+	}
+
+	public void setUtilityAlphaSetIter(String iter) {
+		utilityAlphaSetIterVal = Integer.parseInt(iter);
+	}
+
+	public int getUtilityAlphaSetIter() {
+		return utilityAlphaSetIterVal;
 	}
 	// ---------------------------------------------------------
 	
