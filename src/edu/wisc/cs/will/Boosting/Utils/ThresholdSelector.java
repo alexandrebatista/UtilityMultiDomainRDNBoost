@@ -29,26 +29,38 @@ public class ThresholdSelector {
 	}
 	
 	public class descendingProbs implements java.util.Comparator<ProbabilityResult> {
-		 public int compare(ProbabilityResult ob1, ProbabilityResult ob2) {
-		   if (ob1.prob == ob2.prob) {
-			   if (ob1.posEg && ob2.posEg) {
-				   return 0;
-			   }
-			   if (ob1.posEg && !ob2.posEg) {
-				   return -1;
-			   }
-			   if (!ob1.posEg && ob2.posEg) {
-				   return 1;
-			   }
-			   if (!ob1.posEg && !ob2.posEg) {
-				   return 0;
-			   }
-		   } else {
-			   return (int) Math.ceil(ob2.prob - ob1.prob);
-		   }
-		   return 0;
-		 }
-		} 
+		public int compare(ProbabilityResult ob1, ProbabilityResult ob2) {
+			// // TODO: Remove this old implementation (commented lines) because it does not compares doubles properly (Double.compare(ob2.prob, ob2.prob) should be used instead of ob1.prob == ob2.prob)
+			// if (ob1.prob == ob2.prob) {
+			// 	if (ob1.posEg && ob2.posEg) {
+			// 		return 0;
+			// 	}
+			// 	if (ob1.posEg && !ob2.posEg) {
+			// 		return -1;
+			// 	}
+			// 	if (!ob1.posEg && ob2.posEg) {
+			// 		return 1;
+			// 	}
+			// 	if (!ob1.posEg && !ob2.posEg) {
+			// 		return 0;
+			// 	}
+			// } else {
+			// 	return (int) Math.ceil(ob2.prob - ob1.prob);
+			// }
+			// return 0;
+
+			// New implementation
+			int doubleComparison = Double.compare(ob2.prob, ob1.prob);
+			if (doubleComparison != 0) {
+				return doubleComparison;
+			} else {
+				if (ob1.posEg == ob2.posEg) {
+					return 0;
+				}
+				return ob1.posEg ? -1 : 1;
+			}
+		}
+	} 
 	
 	ArrayList<ProbabilityResult> results;
 	public double lastComputedF1 = Double.NaN;
@@ -56,7 +68,9 @@ public class ThresholdSelector {
 		results = new ArrayList<ProbabilityResult>();
 	}
 	public void addProbResult(double prob, boolean posEg) {
-		results.add(new ProbabilityResult(prob, posEg));
+		ProbabilityResult probResult = new ProbabilityResult(prob, posEg);
+		// System.out.println(probResult.toString());
+		results.add(probResult);
 	}
 	
 	public double selectBestThreshold() {
