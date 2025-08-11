@@ -12,8 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -128,8 +128,8 @@ public final class WILLSetup {
 		
 		Utils.Verbosity defaultVerbosity = (Utils.isDevelopmentRun() ? Utils.Verbosity.Developer : Utils.Verbosity.Medium);
 
-	//	Utils.seedRandom((long) 12345); // Use this if we want to repeat runs exactly.
-		Utils.seedRandom(System.currentTimeMillis() % 100000); // Only use the last few digits (though probably doesn't matter).  JWS
+		Utils.seedRandom(12345); // Use this if we want to repeat runs exactly.
+	//	Utils.seedRandom(System.currentTimeMillis() % 100000); // Only use the last few digits (though probably doesn't matter).  JWS
 		Utils.setVerbosity(defaultVerbosity);
 
 		File dir = new CondorFile(directory);
@@ -288,7 +288,7 @@ public final class WILLSetup {
 		}
 		
 		List<Literal> targets = getInnerLooper().targets;
-		Set<Integer>  arities = new HashSet<Integer>(4);
+		Set<Integer>  arities = new LinkedHashSet<Integer>(4);
 		if (targets != null) for (Literal target : targets) { arities.add(target.getArity()); }
 
 		List<Example> posExamplesRaw = getOuterLooper().getPosExamples(); // Use LIST since there can (legally) be duplicates.
@@ -759,7 +759,7 @@ public final class WILLSetup {
 	
 	private void sampleHiddenExamples(double hiddenPosLitProb, double hiddenNegLitProb) {
 		if (hiddenExamples == null) {
-			hiddenExamples  = new HashMap<String, List<RegressionRDNExample>>();
+			hiddenExamples  = new LinkedHashMap<String, List<RegressionRDNExample>>();
 		}
 		Set<String> hiddenPred = cmdArgs.getHiddenPredVal();
 		if (hiddenPred == null) {
@@ -823,7 +823,7 @@ public final class WILLSetup {
 		}
 		FileParser parser = this.getInnerLooper().getParser();
 		List<Literal> hiddenLit = parser.readLiteralsInFile(file, true);
-		hiddenExamples  = new HashMap<String, List<RegressionRDNExample>>();
+		hiddenExamples  = new LinkedHashMap<String, List<RegressionRDNExample>>();
 		Set<String> hiddenPred = cmdArgs.getHiddenPredVal();
 		if (hiddenPred == null) {
 			hiddenPred = cmdArgs.getTargetPredVal();
@@ -859,8 +859,8 @@ public final class WILLSetup {
 	 * This method moves facts to Examples if they are part of the joint inference task.
 	 */
 	private void fillMissingExamples() {
-		Set<String> missingPositiveTargets = new HashSet<String>();
-		Set<String> missingNegativeTargets = new HashSet<String>();
+		Set<String> missingPositiveTargets = new LinkedHashSet<String>();
+		Set<String> missingNegativeTargets = new LinkedHashSet<String>();
 		for (String pred : cmdArgs.getTargetPredVal()) {
 			// Make sure all targets have facts
 			if (!backupPosExamples.containsKey(pred) ||
@@ -989,11 +989,11 @@ public final class WILLSetup {
 	public static final String multiclassPredPrefix = "multiclass_";
 
 	// Maintain a list of predicates that are already added, so that we can save on time.
-	private HashSet<String> predicatesAsFacts = new HashSet<String>();
-	private HashSet<Literal> addedToFactBase  = new HashSet<Literal>();	
+	private LinkedHashSet<String> predicatesAsFacts = new LinkedHashSet<String>();
+	private LinkedHashSet<Literal> addedToFactBase  = new LinkedHashSet<Literal>();	
 	private boolean disableFactBase = true;
 	
-	private Set<PredicateNameAndArity> backupTargetModes=new HashSet<PredicateNameAndArity>();
+	private Set<PredicateNameAndArity> backupTargetModes=new LinkedHashSet<PredicateNameAndArity>();
 	public void removeAllTargetsBodyModes() {
 		
 		for (PredicateNameAndArity bodyMode: getInnerLooper().getBodyModes()) {
@@ -1108,7 +1108,7 @@ public final class WILLSetup {
 			Collection<PredicateName> recomputeThese) {
 		ArrayList<PredicateName> predicateNames=new ArrayList<PredicateName>();
 		// Creating a copy to make sure, we dont erase from original
-		Set<PredicateName> inputPredicateNames = new HashSet<PredicateName>(recomputeThese);
+		Set<PredicateName> inputPredicateNames = new LinkedHashSet<PredicateName>(recomputeThese);
 		FileParser parser = getInnerLooper().getParser();
 		for (int i = 0; i < getInnerLooper().getParser().getNumberOfPrecomputeFiles(); i++) {
 			List<Sentence> precomputeThese = parser.getSentencesToPrecompute(i);
@@ -1253,7 +1253,7 @@ public final class WILLSetup {
 
 	// TODO TVK remove the common stuff from getJointExamples
 	public Map<String,List<Example>> getExamplesByPredicateName(List<Example> examples, boolean createBootstrapSample) {  // Use LIST since there can be duplicates.
-		Map<String,List<Example>> result = new HashMap<String,List<Example>>();
+		Map<String,List<Example>> result = new LinkedHashMap<String,List<Example>>();
 		if (createBootstrapSample) { // Added by JWS.
 			int numExamples = Utils.getSizeSafely(examples);
 			for (int i = 0; i < numExamples; i++) {
@@ -1276,8 +1276,8 @@ public final class WILLSetup {
 		return result;
 	}
 	
-	public HashMap<String,List<RegressionRDNExample>> getJointExamples(Set<String> targets) {
-		HashMap<String,List<RegressionRDNExample>> result = new HashMap<String,List<RegressionRDNExample>>();
+	public LinkedHashMap<String,List<RegressionRDNExample>> getJointExamples(Set<String> targets) {
+		LinkedHashMap<String,List<RegressionRDNExample>> result = new LinkedHashMap<String,List<RegressionRDNExample>>();
 		
 		// TODO Currently assuming they are marked as examples already.
 		int counterPos = 0, counterNeg = 0;
@@ -1344,7 +1344,7 @@ public final class WILLSetup {
 									  boolean forLearning, boolean removeFactsInEgListOnly) {
 		// to  be safe
 		removeFactsInEgListOnly = true;
-		Set<String> newlyAddedPredicates = new HashSet<String>();
+		Set<String> newlyAddedPredicates = new LinkedHashSet<String>();
 		//Utils.println("PredicatesAsFacts:" + Utils.toString(predicatesAsFacts, ","));
 		int counter=0;
 		if (predicate == null) {
@@ -1750,7 +1750,7 @@ public final class WILLSetup {
 	
 	public List<PredicateNameAndArity> getListOfPredicateAritiesForNeighboringFacts() {
 		if (neighboringFactFilterList == null) {
-			Set<PredicateNameAndArity> pars = new HashSet<PredicateNameAndArity>();
+			Set<PredicateNameAndArity> pars = new LinkedHashSet<PredicateNameAndArity>();
 			String lookup=null;
 			boolean addAllModes = true;
 			if ((lookup =  getHandler().getParameterSetting("useAllBodyModesForNeighboringFacts")) != null) {

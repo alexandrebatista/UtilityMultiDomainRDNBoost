@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,28 +39,28 @@ import edu.wisc.cs.will.Utils.condor.CondorFileWriter;
 public class ConditionalModelPerPredicate implements Serializable {
 	protected final static int debugLevel = 1; // Used to control output from this class (0 = no output, 1=some, 2=much, 3=all).
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 9130108889576097786L;
 
 	/**
 	 *  Prior log probability i.e. \psi_0
 	 */
-	private double log_prior = -1.8;
+	private double log_prior = -0.69;
 	/**
 	 *  List of boosted trees
 	 */
 	private List<RegressionTree[]> boostedTrees;
 	/**
 	 *  Number of trees. Generally numTrees would be the same as the
-	 *  boostedTrees size but one can reduce this, 
+	 *  boostedTrees size but one can reduce this,
 	 */
 	private int numTrees;
 
 	/**
-	 *  Step length for gradient 
+	 *  Step length for gradient
 	 */
-	private List<Double> stepLength; // All models in a array of RegressionTree[] have the same stepLength. 
+	private List<Double> stepLength; // All models in a array of RegressionTree[] have the same stepLength.
 
 	/**
 	 * Predicate for which model is learnt.
@@ -69,7 +69,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 
 	/**
 	 * Prefix for every tree used while storing the tree.
-	 * Generally set to the targetPredicate 
+	 * Generally set to the targetPredicate
 	 */
 	private String treePrefix;
 
@@ -79,11 +79,11 @@ public class ConditionalModelPerPredicate implements Serializable {
 	private boolean hasSingleTheory;
 
 	/**
-	 * Needed only with single theory as it stores the clauses 
+	 * Needed only with single theory as it stores the clauses
 	 */
 	private WILLSetup setup;
 
-	
+
 	/**
 	 * Save the constants for this predicate, if multiclass
 	 */
@@ -95,8 +95,8 @@ public class ConditionalModelPerPredicate implements Serializable {
 	private List<Sentence> theory;
 
 	private RegressionTree prior_advice;
-	
-	public ConditionalModelPerPredicate(WILLSetup willsetup) {	
+
+	public ConditionalModelPerPredicate(WILLSetup willsetup) {
 		boostedTrees = new ArrayList<RegressionTree[]>(4);
 		stepLength   = new ArrayList<Double>(          4);
 		numTrees     = 0;
@@ -128,7 +128,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 		}
 		int    counter  = 0;
 	//	Utils.println("\n% Example: " + ex);
-		
+
 		// First add the prior advice regression values
 		if (prior_advice != null) {
 			if (total_sum_grad == null) {
@@ -140,20 +140,20 @@ public class ConditionalModelPerPredicate implements Serializable {
 		int j=1;
 		for (RegressionTree[] tree : boostedTrees) {
 			if (counter == numTrees) { break; }
-			
+
 			RegressionValueOrVector sum_grad = null;
 	//		Utils.println("stepLength.get(" + counter + ")=" + stepLength.get(counter));
 	//		Utils.println("|tree|=" + tree.length);
 			for (int i = 0; i < RunBoostedRDN.numbModelsToMake; i++) {
-				if (setup == null) { Utils.error("WILLSetup object not initialized"); } 
+				if (setup == null) { Utils.error("WILLSetup object not initialized"); }
 				if (setup.cmdArgs.isPrintingTreeStats()) {
 					tree[i].setAddLeafId(true);
 				}
-				
-				//RegressionValueOrVector thisValue = stepLength.get(counter) * tree[i].getRegressionValue(ex); 
+
+				//RegressionValueOrVector thisValue = stepLength.get(counter) * tree[i].getRegressionValue(ex);
 				RegressionValueOrVector thisValue = tree[i].getRegressionValue(ex);
 				thisValue.multiply(stepLength.get(counter));
-				
+
 				if (sum_grad == null) {
 					sum_grad = thisValue;
 				} else {
@@ -181,9 +181,9 @@ public class ConditionalModelPerPredicate implements Serializable {
 		HandleFOPCstrings handler = setup.getHandler();
 		String totalStr    = handler.convertToVarString("Total");
 		Term numTreeTerm = handler.getVariableOrConstant(Integer.toString(numTrees));
-		Term totalVarTerm = handler.getVariableOrConstant(totalStr); 
+		Term totalVarTerm = handler.getVariableOrConstant(totalStr);
 		ex.addArgument(totalVarTerm);
-		
+
 		String argsString  = "";
 		// The error checking whether this matches the target predicate is done in addPrologCodeForUsingAllTrees
 		List<Literal> targets = setup.getInnerLooper().getTargets();
@@ -192,16 +192,16 @@ public class ConditionalModelPerPredicate implements Serializable {
 
 		for (int i = target.numberArgs() - 1; i >= 0; i--) { argsString = target.getArgument(i) + ", " + argsString; }
 		String clauseStr = targetPredicate +"(" + argsString + totalVarTerm +") :- " + targetPredicate + "(" + argsString + numTreeTerm +", " + totalVarTerm + ").";
-		 
+
 		Clause clause = setup.convertFactToClause(clauseStr);
 
 		BindingList list = setup.getInnerLooper().proveExampleAndReturnBindingList(clause, ex);
 		Term y = list.lookup((Variable)totalVarTerm);
-		
+
 		ex.removeArgument(totalVarTerm);
-		
+
 		return BoostingUtils.getRegressionValueOrVectorFromTerm(y);
-		
+
 	}
 
 
@@ -244,7 +244,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 
 	/**
 	 * Saves the model in the given file
-	 * NOTE: the trees are stored in different files but their 
+	 * NOTE: the trees are stored in different files but their
 	 * filename prefix is stored in the model
 	 * @param filename
 	 */
@@ -282,14 +282,14 @@ public class ConditionalModelPerPredicate implements Serializable {
 				// Also store it for the inference task
 				constList = setup.getMulticlassHandler().constantsForPredicate.get(targetPredicate);
 			}
-			
+
 			// Now save the trees.
 			for (int i = 0; i < numTrees; i++) {
 				for (int modelNumber = 0; modelNumber < RunBoostedRDN.numbModelsToMake; modelNumber++) {
-					boostedTrees.get(i)[modelNumber].saveToFile(getTreeFilename(filename, treePrefix, i, modelNumber)); 
+					boostedTrees.get(i)[modelNumber].saveToFile(getTreeFilename(filename, treePrefix, i, modelNumber));
 				}
 			}
-			writer.close();	
+			writer.close();
 		} catch (IOException e) {
 			Utils.reportStackTrace(e);
 			Utils.error("saveMode: IO exception");
@@ -297,7 +297,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 	}
 
 	/**
-	 * Loads the model from a given file 
+	 * Loads the model from a given file
 	 * @param filename
 	 * @param setup
 	 * @param loadMaxTrees Load these many trees only. If set to -1, load all trees
@@ -310,14 +310,14 @@ public class ConditionalModelPerPredicate implements Serializable {
 			addSentences(sentences);
 			return;
 		}
-	
+
 		try {
 			BufferedReader reader = new BufferedReader(new CondorFileReader(filename));
 			String line = null;
 			// Number of trees
 			line = reader.readLine();
 			int numberOfTrees = Integer.parseInt(line);
-			
+
 			// Only limit trees if >= 0
 			if (loadMaxTrees >= 0) {
 				// Make sure the numberOfTrees >= loadMaxTrees
@@ -330,7 +330,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 				}
 				numberOfTrees = loadMaxTrees;
 			}
-			
+
 			// Prefix for boosted trees
 			line = reader.readLine();
 			treePrefix = line;
@@ -342,7 +342,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 			// Split into strings
 			String[] lengths = line.split(",");
 			for (String len : lengths) {
-				stepLength.add(Double.parseDouble(len)); 
+				stepLength.add(Double.parseDouble(len));
 			}
 			// Log prior
 			line = reader.readLine();
@@ -350,7 +350,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 			// target predicate
 			line = reader.readLine();
 			targetPredicate = line;
-			
+
 			// For multi-class predicate, read constant list
 			if (setup.getMulticlassHandler().isMultiClassPredicate(targetPredicate)) {
 				line =  reader.readLine();
@@ -361,7 +361,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 					newConstList.load(setup, line);
 					setup.getMulticlassHandler().updateConstantList(targetPredicate, newConstList);
 				}
-				
+
 			}
 
 			for (int i = 0; i < numberOfTrees; i++) {
@@ -392,7 +392,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 
 	private String getTreeFilename(String modelFile, String prefix, int i, int modelNumber) {
 		int lastPos = modelFile.lastIndexOf('/');
-		String path = modelFile.substring(0, lastPos + 1); 
+		String path = modelFile.substring(0, lastPos + 1);
 		path += "Trees/" + prefix + BoostingUtils.getLabelForCurrentModel() + "Tree" + i + BoostingUtils.getLabelForModelNumber(modelNumber) + ".tree";
 		Utils.ensureDirExists(path);
 		return path;
@@ -432,11 +432,11 @@ public class ConditionalModelPerPredicate implements Serializable {
 	public ClauseBasedTree getTree(int model, int tree) {
 		return boostedTrees.get(tree)[model];
 	}
-	
+
 	public String getStepLengthSentence(int i) {
 		return LearnBoostedRDN.stepLengthPredicate(i) + "(" + stepLength.get(i - 1) + ").";
 	}
-	
+
 	public void reparseModel(WILLSetup setup) {
 		if (!hasSingleTheory) {
 			for (ClauseBasedTree[] btree : boostedTrees) {
@@ -449,7 +449,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 				prior_advice.setSetup(setup);
 				prior_advice.reparseRegressionTrees();
 			}
-			
+
 			setSetup(setup);
 		} else {
 			setSetup(setup);
@@ -460,7 +460,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 				newSentences.add(sent2);
 				Utils.println("Adding sentence: " + sent2);
 			}
-			
+
 			// Reset
 			theory=null;
 			addSentences(newSentences);
@@ -474,7 +474,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 	}
 
 	public Map<Clause, Double> convertToSingleMLN() {
-		HashMap<Clause, Double> clauses = new HashMap<Clause, Double>();
+		LinkedHashMap<Clause, Double> clauses = new LinkedHashMap<Clause, Double>();
 		for (ClauseBasedTree[] trees : boostedTrees) {
 			for (ClauseBasedTree tree : trees) {
 				for (Clause regClause : tree.getRegressionClauses()) {
@@ -489,9 +489,9 @@ public class ConditionalModelPerPredicate implements Serializable {
 		}
 		return clauses;
 	}
-	
-	
-	private void addClause(HashMap<Clause, Double> clauses, Clause regClause) {
+
+
+	private void addClause(LinkedHashMap<Clause, Double> clauses, Clause regClause) {
 		Literal old_head = regClause.getDefiniteClauseHead();
 		if (setup == null) {
 			Utils.error("Null setup");
@@ -660,7 +660,7 @@ public class ConditionalModelPerPredicate implements Serializable {
 
 	public Set<Literal> getGroundParents(RegressionRDNExample example,
 				Map<String, List<RegressionRDNExample>> jointExamples) {
-		Set<Literal> parents = new HashSet<Literal>();
+		Set<Literal> parents = new LinkedHashSet<Literal>();
 		for (RegressionTree[] trees : boostedTrees) {
 			for (RegressionTree tree : trees) {
 				Set<Literal> pars = tree.getGroundParents(example, jointExamples);
