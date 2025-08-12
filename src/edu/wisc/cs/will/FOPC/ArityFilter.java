@@ -6,7 +6,7 @@
 package edu.wisc.cs.will.FOPC;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -76,7 +76,7 @@ public class ArityFilter implements Filter<Integer>, Iterable<Integer> {
         if ( includeAllArities == false ) {
 
             if ( includedAritySet == null ) {
-                includedAritySet = new HashSet<Integer>(4);
+                includedAritySet = new LinkedHashSet<Integer>(4);
             }
 
             includedAritySet.add(arity);

@@ -3,8 +3,8 @@
  */
 package edu.wisc.cs.will.ILP;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class SingleClauseRootNode extends SingleClauseNode {
 		targetPredicateArity = head.numberArgs();
 		variablesInTarget    = variables;
 		literalAdded = head; // The root has with the empty body (i.e., it is an implicit 'true').  So we'll store the head literal here.
-		depthOfArgs = new HashMap<Term,Integer>(head.numberArgs());
+		depthOfArgs = new LinkedHashMap<Term,Integer>(head.numberArgs());
 		markDepthOfLeafTerms(head.getArguments(), 0); // The depth of all the 'leaf' terms in the root (i.e., the head) is zero.
 		this.enabler = enabler;
 		typesPresent = typesPresentInHead;
@@ -92,7 +92,7 @@ public class SingleClauseRootNode extends SingleClauseNode {
 	
 	public void addRequiredBodyVariable(Variable var) {
 		if (requiredBodyVariablesInTarget == null) {
-			requiredBodyVariablesInTarget = new HashSet<Variable>(4);
+			requiredBodyVariablesInTarget = new LinkedHashSet<Variable>(4);
 		}
 		requiredBodyVariablesInTarget.add(var);
 	}

@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,7 +93,7 @@ public class JointModelSampler extends SRLInference {
 
 		// Making a copy of the original map, since we will update the map to handle multi-class examples. 
 		// Only the map is copied, the examples are still the same. So careful while modifying the actual examples in jointExamples
-		Map<String, List<RegressionRDNExample>> jointExamples = new HashMap<String, List<RegressionRDNExample>>(originalJointExamples);
+		Map<String, List<RegressionRDNExample>> jointExamples = new LinkedHashMap<String, List<RegressionRDNExample>>(originalJointExamples);
 		for (String target : originalJointExamples.keySet()) {
 			List<RegressionRDNExample> examples = originalJointExamples.get(target);
 			MultiClassExampleHandler mcExHandler= setup.getMulticlassHandler();
@@ -101,7 +101,7 @@ public class JointModelSampler extends SRLInference {
 			if (mcExHandler.isMultiClassPredicate(target)) {
 
 				List<RegressionRDNExample> newMulticlassExamples = new ArrayList<RegressionRDNExample>();
-				Set<String> seenExamples = new HashSet<String>();
+				Set<String> seenExamples = new LinkedHashSet<String>();
 				for (RegressionRDNExample rex : examples) {
 					//					if (rex.isOriginalTruthValue()) {
 					RegressionRDNExample newRex = null;
@@ -177,12 +177,12 @@ public class JointModelSampler extends SRLInference {
 		
 		boolean needSampling = false;
 
-		Map<String,List<Example>>  posEgs = new HashMap<String,List<Example>>();
-		Map<String,List<Example>>  negEgs = new HashMap<String,List<Example>>();
+		Map<String,List<Example>>  posEgs = new LinkedHashMap<String,List<Example>>();
+		Map<String,List<Example>>  negEgs = new LinkedHashMap<String,List<Example>>();
 		// First init the pos and neg examples. The posEgs and negEgs are updated with
 		// each sample and become facts for the next round and hence need to be collected.
-		Set<String> onlyPrecomp = new HashSet<String>();
-		Map<String,List<double[]>>             counters = new HashMap<String,List<double[]>>();
+		Set<String> onlyPrecomp = new LinkedHashSet<String>();
+		Map<String,List<double[]>>             counters = new LinkedHashMap<String,List<double[]>>();
 
 		for (String target : jointExamples.keySet()) {
 			List<RegressionRDNExample> examples = jointExamples.get(target);
@@ -352,7 +352,7 @@ public class JointModelSampler extends SRLInference {
 	
 	private Map<String, ComputeAUC> getAUC(Map<String,List<RegressionRDNExample>> jointExamples,
 										   Map<String,List<double[]>> counters, int total) {
-		Map<String, ComputeAUC> aucMap = new HashMap<String, ComputeAUC>();
+		Map<String, ComputeAUC> aucMap = new LinkedHashMap<String, ComputeAUC>();
 		for (String target : jointExamples.keySet()) {
 			int i=0;
 			List<Double> posExProb = new ArrayList<Double>();
@@ -537,7 +537,7 @@ public class JointModelSampler extends SRLInference {
 			for (RegressionRDNExample rex : jointExamples.get(target)) {
 				
 				if (setup.getMulticlassHandler().isMultiClassPredicate(target)) {
-					if (exampleProbabilities == null) { exampleProbabilities = new HashMap<String, Double>();}
+					if (exampleProbabilities == null) { exampleProbabilities = new LinkedHashMap<String, Double>();}
 					ProbDistribution distr = rex.getProbOfExample();
 					for (int index = 0; index < distr.getProbDistribution().length; index++) {
 						Example ex = setup.getMulticlassHandler().createExampleFromClass(rex, index);

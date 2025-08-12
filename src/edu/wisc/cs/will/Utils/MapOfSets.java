@@ -6,8 +6,8 @@ package edu.wisc.cs.will.Utils;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -166,11 +166,11 @@ public class MapOfSets<Key, Value> implements Iterable<Value> {
     }
 
     protected Set<Value> createValueSet() {
-        return new HashSet<Value>();
+        return new LinkedHashSet<Value>();
     }
 
     protected Map<Key, Set<Value>> createMap() {
-        return new HashMap<Key, Set<Value>>();
+        return new LinkedHashMap<Key, Set<Value>>();
     }
 
     public String toString(String prefix) {

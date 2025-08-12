@@ -6,7 +6,7 @@ package edu.wisc.cs.will.Boosting.MLN;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -46,7 +46,7 @@ public class RunBoostedMLN extends RunBoostedModels {
 	//public static CommandLineArguments cmdGlob;//change by MD & DD
 	public void learn() {
 		fullModel = new JointRDNModel();
-		Map<String, LearnBoostedRDN> learners = new HashMap<String, LearnBoostedRDN>();
+		Map<String, LearnBoostedRDN> learners = new LinkedHashMap<String, LearnBoostedRDN>();
 		int minTreesInModel = Integer.MAX_VALUE;
 		
 		

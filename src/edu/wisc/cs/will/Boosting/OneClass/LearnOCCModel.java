@@ -7,7 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import edu.wisc.cs.will.Boosting.RDN.RegressionRDNExample;
@@ -325,7 +325,7 @@ public class LearnOCCModel {
 			String filename = cmdArgs.getTrainDirVal()+ "/distance_" + targetPredicate+".db";
 			Utils.ensureDirExists(filename);
 			
-			HashSet<String> storeDistance = new HashSet<String>();
+			LinkedHashSet<String> storeDistance = new LinkedHashSet<String>();
 			
 			for (RegressionRDNExample rex1 : DataSet) {
 				for(RegressionRDNExample rex2: DataSet)	{

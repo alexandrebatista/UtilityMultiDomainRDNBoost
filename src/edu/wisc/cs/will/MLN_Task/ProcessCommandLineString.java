@@ -5,7 +5,7 @@ package edu.wisc.cs.will.MLN_Task;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -192,7 +192,7 @@ public class ProcessCommandLineString {
 				if (Utils.getSizeSafely(clauses) < 1) { Utils.error("Read no clauses from " + directory + options[index]); }
 				if (posEvidPredName != null)          { Utils.error("Already have posEvidPredName from '-e' and have encountered '-dp'"); }
 				if (posEvidence     != null)          { Utils.error("Already have posEvidence and have encountered another '-dp'"); }
-				posEvidence = new HashSet<Literal>(4);
+				posEvidence = new LinkedHashSet<Literal>(4);
 				for (Clause clause : clauses) {
 					if (Utils.getSizeSafely(clause.posLiterals) > 1) { Utils.error("Too many positive literals in this clause: " + clause); }
 					if (Utils.getSizeSafely(clause.posLiterals) < 1) { Utils.error( "Too few positive literals in this clause: " + clause); }
@@ -209,7 +209,7 @@ public class ProcessCommandLineString {
 				if (Utils.getSizeSafely(clauses) < 1) { Utils.error("Read no clauses from " + directory + options[index]); }
 				if (posEvidPredName != null)          { Utils.error("Already have posEvidPredName from '-e' and have encountered '-dp'"); }
 				if (negEvidence     != null)          { Utils.error("Already have negEvidence and have encountered another '-dn'"); }
-				negEvidence = new HashSet<Literal>(4);
+				negEvidence = new LinkedHashSet<Literal>(4);
 				for (Clause clause : clauses) {
 					if (Utils.getSizeSafely(clause.posLiterals) > 1) { Utils.error("Too many positive literals in this clause: " + clause); }
 					if (Utils.getSizeSafely(clause.posLiterals) < 1) { Utils.error( "Too few positive literals in this clause: " + clause); }
@@ -224,7 +224,7 @@ public class ProcessCommandLineString {
 				String[] tokens = options[index].split(",");
 				if (queryLiterals  != null) { Utils.error("Already have queryLiterals from '-qf' or '-qs' and have encountered '-q'"); }
 				if (queryPredNames != null) { Utils.error("Already have queryPredNames and have encountered another '-q'"); }
-				queryPredNames = new HashSet<PredNameArityPair>(4);
+				queryPredNames = new LinkedHashSet<PredNameArityPair>(4);
 				for (int i = 0; i < tokens.length; i++) {
 					String[] items = tokens[i].split("/");
 					queryPredNames.add(new PredNameArityPair(stringHandler.getPredicateName(items[0]), Integer.valueOf(items[1])));
@@ -235,7 +235,7 @@ public class ProcessCommandLineString {
 				String[] tokens = options[index].split(",");
 				if (hiddenLiterals  != null) { Utils.error("Already have hiddenLiterals from '-hf' or '-hs' and have encountered '-h'"); }
 				if (hiddenPredNames != null) { Utils.error("Already have hiddenPredNames and have encountered another '-h'"); }
-				hiddenPredNames = new HashSet<PredNameArityPair>(4);
+				hiddenPredNames = new LinkedHashSet<PredNameArityPair>(4);
 				for (int i = 0; i < tokens.length; i++) {
 					String[] items = tokens[i].split("/");
 					hiddenPredNames.add(new PredNameArityPair(stringHandler.getPredicateName(items[0]), Integer.valueOf(items[1])));
@@ -245,7 +245,7 @@ public class ProcessCommandLineString {
 				String[] tokens = options[index].split(",");
 				if (posEvidence     != null) { Utils.error("Already have posEvidence from '-pf' and have encountered '-p'"); }
 				if (posEvidPredName != null) { Utils.error("Already have posEvidPredName and have encountered another '-p'"); }
-				posEvidPredName = new HashSet<PredNameArityPair>(4);
+				posEvidPredName = new LinkedHashSet<PredNameArityPair>(4);
 				for (int i = 0; i < tokens.length; i++) {
 					String[] items = tokens[i].split("/");
 					posEvidPredName.add(new PredNameArityPair(stringHandler.getPredicateName(items[0]), Integer.valueOf(items[1])));
@@ -255,7 +255,7 @@ public class ProcessCommandLineString {
 				String[] tokens = options[index].split(",");
 				if (negEvidence     != null) { Utils.error("Already have negEvidence from '-nf' and have encountered '-n'"); }
 				if (negEvidPredName != null) { Utils.error("Already have negativeEvidPredName and have encountered another '-n'"); }
-				negEvidPredName = new HashSet<PredNameArityPair>(4);
+				negEvidPredName = new LinkedHashSet<PredNameArityPair>(4);
 				for (int i = 0; i < tokens.length; i++) {
 					String[] items = tokens[i].split("/");
 					negEvidPredName.add(new PredNameArityPair(stringHandler.getPredicateName(items[0]), Integer.valueOf(items[1])));
@@ -266,7 +266,7 @@ public class ProcessCommandLineString {
 				Theory theory = new Theory(stringHandler, sentences);
 				if (queryPredNames != null) { Utils.error("Already have queryPredNames from '-q' and have encountered '-qf'"); }
 				if (queryLiterals  != null) { Utils.error("Already have queryLiterals and have encountered '-qf'"); }
-				queryLiterals  = new HashSet<Literal>(4);
+				queryLiterals  = new LinkedHashSet<Literal>(4);
 				for (Clause clause : theory.getClauses()) {	
 					Literal lit = clause.posLiterals.get(0);			
 					queryLiterals.add(lit);
@@ -291,7 +291,7 @@ public class ProcessCommandLineString {
 				Theory theory = new Theory(stringHandler, sentences);
 				if (hiddenPredNames != null) { Utils.error("Already have hiddenPredNames from '-h' and have encountered '-hf'"); }
 				if (hiddenLiterals  != null) { Utils.error("Already have hiddenLiterals and have encountered '-hf'"); }
-				hiddenLiterals  = new HashSet<Literal>(4);
+				hiddenLiterals  = new LinkedHashSet<Literal>(4);
 				for (Clause clause : theory.getClauses()) {	
 					Literal lit = clause.posLiterals.get(0);			
 					hiddenLiterals.add(lit);
@@ -317,7 +317,7 @@ public class ProcessCommandLineString {
 				List<Clause> clauses = theory.getClauses();
 				if (Utils.getSizeSafely(clauses) < 1) { Utils.error("Read no clauses from " + directory + options[index]); }
 				if (posQueries != null) { Utils.error("Already have posQueries and have encountered another '-pos'"); }
-				posQueries = new HashSet<GroundLiteral>(4);
+				posQueries = new LinkedHashSet<GroundLiteral>(4);
 				for (Clause clause : clauses) {
 					if (Utils.getSizeSafely(clause.posLiterals) > 1) { Utils.error("Too many positive literals in this clause: " + clause); }
 					if (Utils.getSizeSafely(clause.posLiterals) < 1) { Utils.error("Too few positive literals in this clause: "  + clause); }
@@ -333,7 +333,7 @@ public class ProcessCommandLineString {
 				List<Clause> clauses = theory.getClauses();
 				if (Utils.getSizeSafely(clauses) < 1) { Utils.error("Read no clauses from " + directory + options[index]); }
 				if (negQueries != null) { Utils.error("Already have negQueries and have encountered another '-neg'"); }
-				negQueries = new HashSet<GroundLiteral>(4);
+				negQueries = new LinkedHashSet<GroundLiteral>(4);
 				for (Clause clause : clauses) {
 					if (Utils.getSizeSafely(clause.posLiterals) > 1) { Utils.error("Too many positive literals in this clause: " + clause); }
 					if (Utils.getSizeSafely(clause.posLiterals) < 1) { Utils.error("Too few positive literals in this clause: "  + clause); }
@@ -427,7 +427,7 @@ public class ProcessCommandLineString {
 			} else if (options[index].equalsIgnoreCase("-noCWA")) {
 				index++;
 				String[] tokens = options[index].split(",");
-				if (noCWA_PredNames == null) { noCWA_PredNames = new HashSet<PredNameArityPair>(4); } // OK to call multiple times.
+				if (noCWA_PredNames == null) { noCWA_PredNames = new LinkedHashSet<PredNameArityPair>(4); } // OK to call multiple times.
 				for (int i = 0; i < tokens.length; i++) {
 					String[] items = tokens[i].split("/");
 					noCWA_PredNames.add(new PredNameArityPair(stringHandler.getPredicateName(items[0]), Integer.valueOf(items[1])));
@@ -435,7 +435,7 @@ public class ProcessCommandLineString {
 			} else if (options[index].equalsIgnoreCase("-yesCWA")) {
 				index++;
 				String[] tokens = options[index].split(",");
-				if (yesCWA_PredNames == null) { yesCWA_PredNames = new HashSet<PredNameArityPair>(4); } // OK to call multiple times.
+				if (yesCWA_PredNames == null) { yesCWA_PredNames = new LinkedHashSet<PredNameArityPair>(4); } // OK to call multiple times.
 				for (int i = 0; i < tokens.length; i++) {
 					String[] items = tokens[i].split("/");
 					yesCWA_PredNames.add(new PredNameArityPair(stringHandler.getPredicateName(items[0]), Integer.valueOf(items[1])));

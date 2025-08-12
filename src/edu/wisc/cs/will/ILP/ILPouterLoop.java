@@ -28,7 +28,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -423,8 +423,8 @@ public class ILPouterLoop implements GleanerFileNameProvider {
 		
 		int posCounter = 0;
 		int negCounter = 0;
-		Set<Integer> posChosen = new HashSet<Integer>(4);
-		Set<Integer> negChosen = new HashSet<Integer>(4);
+		Set<Integer> posChosen = new LinkedHashSet<Integer>(4);
+		Set<Integer> negChosen = new LinkedHashSet<Integer>(4);
 		
 		// Could be really slow if selecting nearly all of the examples, but we're limiting this to 10X tries, so don't worry about it.
 		if (innerLoopTask.allowPosSeedsToBeReselected) {
@@ -663,7 +663,7 @@ public class ILPouterLoop implements GleanerFileNameProvider {
                         }
                     }
                     if (randomlySelectWithoutReplacementThisManyModes > 0 && randomlySelectWithoutReplacementThisManyModes  < Utils.getSizeSafely(holdBodyModes)) {
-                        Set<PredicateNameAndArity> newSetOfBodyModes = new HashSet<PredicateNameAndArity>((int) randomlySelectWithoutReplacementThisManyModes);
+                        Set<PredicateNameAndArity> newSetOfBodyModes = new LinkedHashSet<PredicateNameAndArity>((int) randomlySelectWithoutReplacementThisManyModes);
                         int bodyModeSize = Utils.getSizeSafely(holdBodyModes);
                         // If we are getting almost all of the body nodes, we really should make a copy then DELETE entries until small enough.  TODO.
                         int counter = 0;
@@ -1306,8 +1306,8 @@ public class ILPouterLoop implements GleanerFileNameProvider {
         //Utils.println("%   " + Utils.reportSystemInfo()); Utils.waitHere(); 
         
         setStdILPtheory(new Theory(innerLoopTask.stringHandler, null, innerLoopTask.getInlineManager()));
-        setCoveredPosExamples(new HashSet<Example>());
-        setCoveredNegExamples(new HashSet<Example>());
+        setCoveredPosExamples(new LinkedHashSet<Example>());
+        setCoveredNegExamples(new LinkedHashSet<Example>());
         setNumberOfCycles(0);
         setNumberOfLearnedClauses(0);
         setNumberOfPosExamplesCovered(0);  // These are normal (ie, UNweighted) counts.  Wgt'ing of examples happens when they are covered (so the next round they can count 1.0 [fully], 0.0 [not at all], or somewhere in between).

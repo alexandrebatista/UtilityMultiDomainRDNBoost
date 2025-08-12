@@ -5,7 +5,7 @@ package edu.wisc.cs.will.Boosting.OneClass;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.wisc.cs.will.Boosting.Common.RunBoostedModels;
@@ -27,7 +27,7 @@ public class RunOneClassModel extends RunBoostedModels {
 	 * 
 	 */
 	public RunOneClassModel() {
-		fullModel = new HashMap<String, PropositionalizationModel>();
+		fullModel = new LinkedHashMap<String, PropositionalizationModel>();
 	}
 
 	/* (non-Javadoc)
@@ -36,7 +36,7 @@ public class RunOneClassModel extends RunBoostedModels {
 	@Override
 	public void learn() {
 		//PropositionalizationModel model = new PropositionalizationModel();
-		Map<String, LearnOCCModel> learners = new HashMap<String, LearnOCCModel>();
+		Map<String, LearnOCCModel> learners = new LinkedHashMap<String, LearnOCCModel>();
 		int minTreesInModel = Integer.MAX_VALUE;
 		
 		
@@ -91,7 +91,7 @@ public class RunOneClassModel extends RunBoostedModels {
 	@Override
 	public void loadModel() {
 		if (fullModel == null) {
-			fullModel = new HashMap<String, PropositionalizationModel>(); 
+			fullModel = new LinkedHashMap<String, PropositionalizationModel>(); 
 		}
 
 		Utils.println("\n% Getting occ's target predicates.");

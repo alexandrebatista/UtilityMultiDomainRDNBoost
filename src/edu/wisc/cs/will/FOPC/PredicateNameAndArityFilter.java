@@ -5,7 +5,7 @@
 
 package edu.wisc.cs.will.FOPC;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.wisc.cs.will.Utils.Filter;
@@ -92,7 +92,7 @@ public class PredicateNameAndArityFilter implements Filter<PredicateNameAndArity
 
     private void addArityFilterEntry(PredicateName predicateName, int arity) {
         if (nameToArityMap == null) {
-            nameToArityMap = new HashMap<PredicateName, ArityFilter>();
+            nameToArityMap = new LinkedHashMap<PredicateName, ArityFilter>();
         }
 
         ArityFilter arityFilter = nameToArityMap.get(predicateName);

@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -710,8 +710,8 @@ public class FileParser {
 	}
 
 	private static boolean                    useCacheOfReadFiles      = false;
-	private static Map<String,List<Sentence>> cacheOfReadFilesContents = new HashMap<String,List<Sentence>>(4);
-	private static Map<String,Long>           cacheOfReadFilesDates    = new HashMap<String,Long>(4);
+	private static Map<String,List<Sentence>> cacheOfReadFilesContents = new LinkedHashMap<String,List<Sentence>>(4);
+	private static Map<String,Long>           cacheOfReadFilesDates    = new LinkedHashMap<String,Long>(4);
 	public  static void clearReadFileCaches() {
 		cacheOfReadFilesContents.clear();
 		cacheOfReadFilesDates.clear();
@@ -2761,7 +2761,7 @@ public class FileParser {
 		return Double.NaN;
 	}
 
-	private Set<String> loadedLibraries = new HashSet<String>(4);
+	private Set<String> loadedLibraries = new LinkedHashSet<String>(4);
 	public List<Sentence> loadAllLibraries() throws ParsingException {
 		String[] knownLibraries = { "arithmeticInLogic", "comparisonInLogic", "differentInLogic", "listsInLogic" };
 
@@ -2783,7 +2783,7 @@ public class FileParser {
 		return results;
 	}
 
-	private Set<String> loadedBasicModes = new HashSet<String>(4);
+	private Set<String> loadedBasicModes = new LinkedHashSet<String>(4);
 	public List<Sentence> loadAllBasicModes() throws ParsingException {
 		String[] knownBasicModes = { "modes_arithmeticInLogic", "modes_comparisonInLogic", "modes_differentInLogic", "modes_listsInLogic" };
 
@@ -2947,11 +2947,11 @@ public class FileParser {
 			}
 		}
 		if (Utils.getSizeSafely(newParser.literalsToThreshold) > 0) {
-			if (literalsToThreshold == null) { literalsToThreshold = new HashSet<LiteralToThreshold>(4 + newParser.literalsToThreshold.size()); }
+			if (literalsToThreshold == null) { literalsToThreshold = new LinkedHashSet<LiteralToThreshold>(4 + newParser.literalsToThreshold.size()); }
 			literalsToThreshold.addAll(newParser.literalsToThreshold);
 		}
 		if (Utils.getSizeSafely(newParser.loadedLibraries) > 0) {
-			if (loadedLibraries == null) { loadedLibraries = new HashSet<String>(4 + newParser.loadedLibraries.size()); }
+			if (loadedLibraries == null) { loadedLibraries = new LinkedHashSet<String>(4 + newParser.loadedLibraries.size()); }
 			if (!dontPrintUnlessImportant) { Utils.println(PARSER_VERBOSE_LIBRARY_LOADING, "% Importing '" + newFileName + "' also loaded these libraries: " + newParser.loadedLibraries); }
 			loadedLibraries.addAll(newParser.loadedLibraries);
 		}
@@ -3537,7 +3537,7 @@ public class FileParser {
 		}
 		skipToEOL();
         if (literalsToThreshold == null) {
-            literalsToThreshold = new HashSet<LiteralToThreshold>(4);
+            literalsToThreshold = new LinkedHashSet<LiteralToThreshold>(4);
         }
         literalsToThreshold.add(stringHandler.getLiteralToThreshold(typedHeadLiteral.predicateName, typedHeadLiteral.getArguments(), position, maxCuts, createTiles, firstArgIsExampleID));
         if (debugLevel > 1) {

@@ -6,8 +6,8 @@ package edu.wisc.cs.will.Boosting.OneClass;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -100,8 +100,8 @@ public class InferOCCModel {
 		if (cmdArgs.getTestNegsToPosRatioVal() < 0) {
 			return; // No subsampling.
 		}
-		Map<String,Integer> numpos = new HashMap<String,Integer>();
-		Map<String,Integer> numneg = new HashMap<String,Integer>();
+		Map<String,Integer> numpos = new LinkedHashMap<String,Integer>();
+		Map<String,Integer> numneg = new LinkedHashMap<String,Integer>();
 		for (String  pred : jointExamples.keySet()) {
 			numpos.put(pred, 0);
 			numneg.put(pred, 0);
@@ -182,7 +182,7 @@ public class InferOCCModel {
 		String filename = cmdArgs.getTestDirVal()+ "/distance_" + pred +".db";
 		Utils.ensureDirExists(filename);
 		
-		HashSet<String> storeDistance = new HashSet<String>();
+		LinkedHashSet<String> storeDistance = new LinkedHashSet<String>();
 		
 		for (RegressionRDNExample rex1 : DataSet) {
 			for(RegressionRDNExample rex2: DataSet)	{

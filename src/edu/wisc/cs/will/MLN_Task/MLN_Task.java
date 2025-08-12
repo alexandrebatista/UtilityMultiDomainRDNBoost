@@ -5,8 +5,8 @@ package edu.wisc.cs.will.MLN_Task;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +124,7 @@ public class MLN_Task {
 	private   Map<PredicateName,Map<Integer,Set<Literal>>> pNameArityToLiteralMap; // Record for each predicateName/arity, the literals in which it appears.  NOTE: each literal is assumed to be UNIQUE (and not further copying can be done).  MLN_Task does create copies of each literal in pre-processing, so that should suffice.
 	protected Map<Literal,Clause>                          literalToClauseMap;     // Map literals to the clauses in which they appear. NOTE: this assumes that literals are NOT canonically represented.
 		
-	private   Map<Type,Set<Constant>> constantTypePairsHandled = new HashMap<Type,Set<Constant>>(4); // Used to prevent unnecessary calls to the stringHandler.  TODO - move this to the string handler, as a space-time tradeoff.
+	private   Map<Type,Set<Constant>> constantTypePairsHandled = new LinkedHashMap<Type,Set<Constant>>(4); // Used to prevent unnecessary calls to the stringHandler.  TODO - move this to the string handler, as a space-time tradeoff.
 	
 	private   TimeStamp timeStamp;
 	
@@ -142,14 +142,14 @@ public class MLN_Task {
 		stringHandler.setUseStrictEqualsForLiterals(false); // The MLN code does a lot of indexing on literals, and sometimes on clauses, and we don't want spurious matches (even though due to variables being separately named per literal, this probably isn't necessary).
 		stringHandler.setUseStrictEqualsForClauses( true); 
 		//Utils.println("% The procedurallyDefinedPredicates = " + prover.getProcedurallyDefinedPredicates()); Utils.waitHere();
-		hashOfTypeToConstants          = new HashMap<Type,Set<Term>>(4);
-		hashOfTypeToReducedConstants   = new HashMap<Type,Set<Term>>(4);
-		hashOfGroundLiterals           = new HashMap<Integer,List<GroundLiteral>>(4);
-	//	hashOfGroundLiterals2          = new HashMap<PredicateName,Map<Integer,Map<Constant,Map<Constant,List<GroundLiteral>>>>>(4);
-		knownQueriesThisPnameArity     = new HashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
-		knownHiddensThisPnameArity     = new HashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
-		knownPosEvidenceThisPnameArity = new HashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
-		knownNegEvidenceThisPnameArity = new HashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
+		hashOfTypeToConstants          = new LinkedHashMap<Type,Set<Term>>(4);
+		hashOfTypeToReducedConstants   = new LinkedHashMap<Type,Set<Term>>(4);
+		hashOfGroundLiterals           = new LinkedHashMap<Integer,List<GroundLiteral>>(4);
+	//	hashOfGroundLiterals2          = new LinkedHashMap<PredicateName,Map<Integer,Map<Constant,Map<Constant,List<GroundLiteral>>>>>(4);
+		knownQueriesThisPnameArity     = new LinkedHashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
+		knownHiddensThisPnameArity     = new LinkedHashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
+		knownPosEvidenceThisPnameArity = new LinkedHashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
+		knownNegEvidenceThisPnameArity = new LinkedHashMap<PredicateName,Map<Integer,Map<Term,Collection<GroundLiteral>>>>(4);
 	}
 	// Can only pass in predicateName/arity information.
 	public MLN_Task(HandleFOPCstrings stringHandler, Unifier unifier, HornClauseProver prover, 
@@ -227,7 +227,7 @@ public class MLN_Task {
 			Set<Term> allConstantsOfThisType = stringHandler.isaHandler.getAllInstances(type);
 			if (allConstantsOfThisType == null) { 
 				if (warningNoConstantsThisType == null || !warningNoConstantsThisType.contains(type)) { 
-						if (warningNoConstantsThisType == null) { warningNoConstantsThisType = new HashSet<Type>(4); }
+						if (warningNoConstantsThisType == null) { warningNoConstantsThisType = new LinkedHashSet<Type>(4); }
 						warningNoConstantsThisType.add(type);
 						Utils.warning("Have no constants of type '" + type + "'."); 
 				}
@@ -235,7 +235,7 @@ public class MLN_Task {
 			}
 			hashOfTypeToConstants.put(type, allConstantsOfThisType);
 			if (allConstantsOfThisType.size() > maxConstantsOfGivenType) {
-				Set<Term> reducedSet = new HashSet<Term>(4);
+				Set<Term> reducedSet = new LinkedHashSet<Term>(4);
 				reducedSet.addAll(allConstantsOfThisType); // A bit inefficient to copy (especially if lots discarded), but this way we get exactly the desired number.
 				hashOfTypeToReducedConstants.put(type, Utils.reduceToThisSizeByRandomlyDiscardingItemsInPlace(reducedSet, maxConstantsOfGivenType));
 			} else { hashOfTypeToReducedConstants.put(type, allConstantsOfThisType); }
@@ -258,7 +258,7 @@ public class MLN_Task {
 		calledCreateAllQueryLiterals = true;
 		if (queryPredNames == null) { return; }
 		if (queryLiterals  != null) { Utils.error("Already have some query literals: " + Utils.limitLengthOfPrintedList(queryLiterals, 25)); }
-		queryLiterals = new HashSet<GroundLiteral>(4);
+		queryLiterals = new LinkedHashSet<GroundLiteral>(4);
 		if (debugLevel > -10) { Utils.println("%  queryPredNames = " + Utils.limitLengthOfPrintedList(queryPredNames, 25)); }
 		for (PredNameArityPair predNameArityPair : queryPredNames) {
 			Set<GroundLiteral> groundings = groundThisLiteral(predNameArityPair);
@@ -281,7 +281,7 @@ public class MLN_Task {
 		calledCreateAllHiddenLiterals = true;
 		if (hiddenPredNames == null) { return; }
 		if (hiddenLiterals != null) { Utils.error("Already have some hidden literals: " + Utils.limitLengthOfPrintedList(hiddenLiterals, 25)); }
-		hiddenLiterals = new HashSet<GroundLiteral>(4);
+		hiddenLiterals = new LinkedHashSet<GroundLiteral>(4);
 		if (debugLevel > 0) { Utils.println("%  hiddenPredNames = " + hiddenPredNames); }
 		for (PredNameArityPair predNameArityPair : hiddenPredNames) {
 			Set<GroundLiteral> groundings = groundThisLiteral(predNameArityPair);
@@ -303,7 +303,7 @@ public class MLN_Task {
 		if (calledCreateAllPositiveEvidence) { return; }
 		calledCreateAllPositiveEvidence = true;
 		if (posEvidenceLiterals != null) { Utils.error("Already have some positive-evidence literals: " + Utils.limitLengthOfPrintedList(posEvidenceLiterals, 25)); }
-		posEvidenceLiterals = new HashSet<GroundLiteral>(4);
+		posEvidenceLiterals = new LinkedHashSet<GroundLiteral>(4);
 		for (PredNameArityPair predNameArityPair : posEvidencePredNames) { 
 			Set<GroundLiteral> groundings = groundThisLiteral(predNameArityPair);
 			if (true) { Utils.println("% Have " + Utils.comma(groundings) + " groundings for positive evidence " + predNameArityPair+ "."); }
@@ -322,7 +322,7 @@ public class MLN_Task {
 		if (calledCreateAllNegativeEvidence) { return; }
 		calledCreateAllNegativeEvidence = true;
 		if (negEvidenceLiterals != null) { Utils.error("Already have some negative-evidence literals: " + Utils.limitLengthOfPrintedList(negEvidenceLiterals, 25)); }
-		negEvidenceLiterals = new HashSet<GroundLiteral>(4);
+		negEvidenceLiterals = new LinkedHashSet<GroundLiteral>(4);
 		for (PredNameArityPair predNameArityPair : negEvidencePredNames) { 
 			Set<GroundLiteral> groundings = groundThisLiteral(predNameArityPair);
 			if (true) { Utils.println("% Have " + Utils.comma(groundings) + " groundings for negative evidence " + predNameArityPair+ "."); }
@@ -384,12 +384,12 @@ public class MLN_Task {
 		while(it.hasNext()){
 			GroundLiteral currLiteral = it.next();
 			if (posEvidenceLiterals!=null && posEvidenceLiterals.contains(currLiteral)) {
-				if (posEvidenceInQueryLiterals == null) { posEvidenceInQueryLiterals = new HashSet<GroundLiteral>(); }
+				if (posEvidenceInQueryLiterals == null) { posEvidenceInQueryLiterals = new LinkedHashSet<GroundLiteral>(); }
 				posEvidenceInQueryLiterals.add(currLiteral);
 				it.remove();
 			}
 			else if (negEvidenceLiterals != null && negEvidenceLiterals.contains(currLiteral)) {
-				if (negEvidenceInQueryLiterals == null) { negEvidenceInQueryLiterals = new HashSet<GroundLiteral>(); }
+				if (negEvidenceInQueryLiterals == null) { negEvidenceInQueryLiterals = new LinkedHashSet<GroundLiteral>(); }
 				negEvidenceInQueryLiterals.add(currLiteral);
 				it.remove();			
 			}
@@ -401,7 +401,7 @@ public class MLN_Task {
 	 * Populate the predNameToClauseList data structure.
 	 */
 	private void populateLiteralToClauseList() {
-		predNameToClauseList = new HashMap<PredicateName,Map<Integer,Set<Clause>>>(4);			
+		predNameToClauseList = new LinkedHashMap<PredicateName,Map<Integer,Set<Clause>>>(4);			
 		
 		if (allClauses == null) { Utils.error("Should not have allClauses = null."); }
 		for (Clause currClause : allClauses) {	// Walk through the structure (i.e., the set of clauses).		
@@ -421,14 +421,14 @@ public class MLN_Task {
 					Set<Clause>              lookup2 = null;
 					
 					if (lookup1 == null) {
-						lookup1 = new HashMap<Integer,Set<Clause>>(4);
+						lookup1 = new LinkedHashMap<Integer,Set<Clause>>(4);
 						predNameToClauseList.put(predName, lookup1);
-						lookup2 = new HashSet<Clause>(4);
+						lookup2 = new LinkedHashSet<Clause>(4);
 						lookup1.put(arity, lookup2);
 					} else {
 						lookup2 = lookup1.get(arity); // Get the clause list for this predicateName/arity pair.
 						if (lookup2 == null) {
-							lookup2 = new HashSet<Clause>(4);
+							lookup2 = new LinkedHashSet<Clause>(4);
 							lookup1.put(arity, lookup2);
 						}
 					}
@@ -456,19 +456,19 @@ public class MLN_Task {
 		allSkolemMarkers[2] = skolemMarker3;
 		allSkolemMarkers[3] = skolemMarker4;
 		allSkolemMarkers[4] = skolemMarker5;
-		setOfSkolemMarkers = new HashSet<Variable>(8);
-		skolemsPerLiteral  = new HashMap<Literal,Set<Term>>(4);
+		setOfSkolemMarkers = new LinkedHashSet<Variable>(8);
+		skolemsPerLiteral  = new LinkedHashMap<Literal,Set<Term>>(4);
 		for (int i = 0; i < numbOfSkolemMarkers; i++) { setOfSkolemMarkers.add(allSkolemMarkers[i]); }
-		skolemsInClauseMapToReplacement = new HashMap<FunctionName,Variable>(4);
+		skolemsInClauseMapToReplacement = new LinkedHashMap<FunctionName,Variable>(4);
 		boolean warning = false;
 		for (Clause clause : rawClauses) {
-			varsInLiterals = new HashSet<Variable>(4);
+			varsInLiterals = new LinkedHashSet<Variable>(4);
 			skolemsInClauseMapToReplacement.clear(); // In case clauses are ever used for resolution, consistently deal with Skolems across an entire clause.
 			locationInSkolemMarkerArray = 0; // Reset count for each CLAUSE (NOT for each literal).
 			List<Literal> newPos = processSkolemInLiterals(clause.posLiterals, true);
-			Set<Variable> varsInLiteralsPOS = new HashSet<Variable>(4);
+			Set<Variable> varsInLiteralsPOS = new LinkedHashSet<Variable>(4);
 			varsInLiteralsPOS.addAll(varsInLiterals);
-			varsInLiterals = new HashSet<Variable>(4);
+			varsInLiterals = new LinkedHashSet<Variable>(4);
 			List<Literal> newNeg = processSkolemInLiterals(clause.negLiterals, false);
 			if (Utils.getSizeSafely(clause.negLiterals) > 0) for (Variable var : varsInLiteralsPOS) if (!varsInLiterals.contains(var)) { // Don't report singletons since their use is recommended by Pedro for MLNs.  Actually, don't report unless any implication.
 				Utils.println("\n%   WARNING: Should this be an existential variable '" + var + "'?\n%    " + clause.toString(Integer.MAX_VALUE) + "?");
@@ -492,7 +492,7 @@ public class MLN_Task {
 	private List<Literal> processSkolemInLiterals(List<Literal> literals, boolean pos) {
 		if (literals == null) { return null; }
 		List<Literal> results = new ArrayList<Literal>(literals.size());
-		Set<Term> skolemMarkersThisLiteral = new HashSet<Term>(4);
+		Set<Term> skolemMarkersThisLiteral = new LinkedHashSet<Term>(4);
 		for (Literal lit : literals) {
 			if (lit.numberArgs() < 1) { results.add(lit); continue; }
 			PredicateName pName = lit.predicateName;
@@ -503,15 +503,15 @@ public class MLN_Task {
 				if (((Function) term).functionName.isaSkolem) {
 					if (!pos) { Utils.println("Note: a Skolem in a NEGATED literal found: " + term + " in " + lit); Utils.waitHere("bug somewhere?"); }
 					FunctionName fName = ((Function) term).functionName;
-					if (skolemFunctions == null) { skolemFunctions = new HashSet<FunctionName>(4); }
+					if (skolemFunctions == null) { skolemFunctions = new LinkedHashSet<FunctionName>(4); }
 					skolemFunctions.add(fName);
 
 					Variable markerToUse = skolemsInClauseMapToReplacement.get(fName);
 					if (debugLevel > 1) { Utils.println("%    Marker to use for Skolem '" + fName + "' is '" + markerToUse + "'."); }
-					if (skolemsPresent == null) { skolemsPresent = new HashMap<PredicateName,Set<Integer>>(4); }
+					if (skolemsPresent == null) { skolemsPresent = new LinkedHashMap<PredicateName,Set<Integer>>(4); }
 					Set<Integer> lookup = skolemsPresent.get(pName); // skolemsPresent not used currently, but seems worth keeping this information.
 					if (lookup == null) {
-						lookup = new HashSet<Integer>(4);
+						lookup = new LinkedHashSet<Integer>(4);
 						skolemsPresent.put(pName, lookup);
 					}
 					lookup.add(lit.numberArgs()); // Since a Set, deals with duplicates.
@@ -519,7 +519,7 @@ public class MLN_Task {
 						if (locationInSkolemMarkerArray >= 5) { Utils.error("Have too many Skolems (max = 5) in one clause.  Processing: " + lit); }
 						markerToUse = allSkolemMarkers[locationInSkolemMarkerArray++]; // Get next free one.
 						if (debugLevel > 1) { Utils.println("%       Need a NEW marker: " + markerToUse); }
-						if (skolemsInClauseMapToReplacement == null) { skolemsInClauseMapToReplacement = new HashMap<FunctionName,Variable>(4); }
+						if (skolemsInClauseMapToReplacement == null) { skolemsInClauseMapToReplacement = new LinkedHashMap<FunctionName,Variable>(4); }
 						skolemsInClauseMapToReplacement.put(fName, markerToUse);
 					}
 					skolemMarkersThisLiteral.add(markerToUse);  // A Set, so will handle duplicates properly.
@@ -546,7 +546,7 @@ public class MLN_Task {
 			clausesContainingQueryOrHiddenLiterals = allClauses;
 		} else {
 			if (debugLevel > 0) { Utils.println("\n% Creating a grounded network.  First indexing all clauses in which query or hidden literals appear."); }
-			clausesContainingQueryOrHiddenLiterals = new HashSet<Clause>(4); // Use a set so duplicates removed.
+			clausesContainingQueryOrHiddenLiterals = new LinkedHashSet<Clause>(4); // Use a set so duplicates removed.
 			
 			Utils.println("% queryPredNames=" + Utils.limitLengthOfPrintedList(queryPredNames));
 			if (queryPredNames  != null) for (PredNameArityPair pair : queryPredNames) { 
@@ -604,7 +604,7 @@ public class MLN_Task {
 		int           arity = gLit.numberArgs();
 		Map<Integer,List<GroundLiteral>> lookup1 = db.get(pName);
 		if (lookup1 == null) {
-			lookup1 = new HashMap<Integer,List<GroundLiteral>>(4);
+			lookup1 = new LinkedHashMap<Integer,List<GroundLiteral>>(4);
 			db.put(pName, lookup1); // Add to DB.
 		}
 		List<GroundLiteral> lookup2 = lookup1.get(arity);
@@ -644,7 +644,7 @@ public class MLN_Task {
 	private Set<GroundLiteral> groundThisLiteral(PredNameArityPair predNameArity) {
 		if (predNameArity == null) { Utils.error("Should not have predNameArity=null."); }
 		//Literal literal = convertPredNameArityPairToLiteral(predNameArity);
-		Set<GroundLiteral> results = new HashSet<GroundLiteral>(4);	
+		Set<GroundLiteral> results = new LinkedHashSet<GroundLiteral>(4);	
 		if (predNameArity.arity < 1) { // Handle case of a literal with NO arguments.
 			Literal lit = stringHandler.getLiteral(predNameArity.pName);
 			GroundLiteral gndLiteral = getCanonicalRepresentative(lit);
@@ -659,7 +659,7 @@ public class MLN_Task {
 		for (TypeSpec typeSpec : typeSpecs) { // Need to convert from lists of constants to lists of terms at some point.  Might as well do it here (seems work the same regardless).
 			Set<Term> constants = getReducedConstantsOfThisType(typeSpec.isaType);
 			if (constants != null) {
-				Set<Term> convertConstantsToTerms = new HashSet<Term>(4);
+				Set<Term> convertConstantsToTerms = new LinkedHashSet<Term>(4);
 				convertConstantsToTerms.addAll(constants);
 				allArgPossibilities.add(convertConstantsToTerms);
 			} else {
@@ -768,21 +768,21 @@ public class MLN_Task {
 		Map<Integer,Map<Constant,Map<Constant,List<GroundLiteral>>>> lookup1 = hashOfGroundLiterals2.get(pName);
 		if (lookup1 == null) {
 			if (!storeIfNotThere) { return null; }
-			lookup1 = new HashMap<Integer,Map<Constant,Map<Constant,List<GroundLiteral>>>>(4);
+			lookup1 = new LinkedHashMap<Integer,Map<Constant,Map<Constant,List<GroundLiteral>>>>(4);
 			hashOfGroundLiterals2.put(pName, lookup1);
 			pavedNewGround = true;
 		}
 		Map<Constant,Map<Constant,List<GroundLiteral>>> lookup2 = lookup1.get(arity);
 		if (lookup2 == null) {
 			if (!storeIfNotThere) { return null; }
-			lookup2 = new HashMap<Constant,Map<Constant,List<GroundLiteral>>>(4);
+			lookup2 = new LinkedHashMap<Constant,Map<Constant,List<GroundLiteral>>>(4);
 			lookup1.put(arity, lookup2);
 			pavedNewGround = true;
 		}
 		Map<Constant,List<GroundLiteral>> lookup3 = lookup2.get(arg0);
 		if (lookup3 == null) {
 			if (!storeIfNotThere) { return null; }
-			lookup3 = new HashMap<Constant,List<GroundLiteral>>(4);
+			lookup3 = new LinkedHashMap<Constant,List<GroundLiteral>>(4);
 			lookup2.put(arg0, lookup3);
 			pavedNewGround = true;
 		}
@@ -889,30 +889,30 @@ public class MLN_Task {
 	
 	public void setNoCWApredNames(Collection<PredNameArityPair> noCWApredNames) {
 		if (noCWApredNames == null) { return; }
-		if (neverCWAonThisPredNameArity == null) { neverCWAonThisPredNameArity = new HashMap<PredicateName,Set<Integer>>(4); }
+		if (neverCWAonThisPredNameArity == null) { neverCWAonThisPredNameArity = new LinkedHashMap<PredicateName,Set<Integer>>(4); }
 		for (PredNameArityPair pair : noCWApredNames) {
 			addAlwaysCWAonThisPredNameArity(pair.pName, pair.arity);
 		}
 	}
 	public void setYesCWApredNames(Collection<PredNameArityPair> yesCWApredNames) {
 		if (yesCWApredNames == null) { return; }
-		if (alwaysCWAonThisPredNameArity == null) { alwaysCWAonThisPredNameArity = new HashMap<PredicateName,Set<Integer>>(4); }
+		if (alwaysCWAonThisPredNameArity == null) { alwaysCWAonThisPredNameArity = new LinkedHashMap<PredicateName,Set<Integer>>(4); }
 		for (PredNameArityPair pair : yesCWApredNames) {
 			addAlwaysCWAonThisPredNameArity(pair.pName, pair.arity);
 		}
 	}
 	public void addNeverCWAonThisPredNameArity(PredicateName pName, int arity) {
-		if (neverCWAonThisPredNameArity == null) { neverCWAonThisPredNameArity = new HashMap<PredicateName,Set<Integer>>(4); }
+		if (neverCWAonThisPredNameArity == null) { neverCWAonThisPredNameArity = new LinkedHashMap<PredicateName,Set<Integer>>(4); }
 		addToCWAoverrides(pName, arity, neverCWAonThisPredNameArity);
 	}	
 	public void addAlwaysCWAonThisPredNameArity(PredicateName pName, int arity) {
-		if (alwaysCWAonThisPredNameArity == null) { alwaysCWAonThisPredNameArity = new HashMap<PredicateName,Set<Integer>>(4); }
+		if (alwaysCWAonThisPredNameArity == null) { alwaysCWAonThisPredNameArity = new LinkedHashMap<PredicateName,Set<Integer>>(4); }
 		addToCWAoverrides(pName, arity, alwaysCWAonThisPredNameArity);
 	}
 	private void addToCWAoverrides(PredicateName pName, int arity, Map<PredicateName,Set<Integer>> map) {
 		Set<Integer> lookup = map.get(pName);
 		if (lookup == null) {
-			lookup = new HashSet<Integer>(4);
+			lookup = new LinkedHashSet<Integer>(4);
 			map.put(pName, lookup);
 		}
 		lookup.add(arity);
@@ -926,12 +926,12 @@ public class MLN_Task {
 		
 		Map<Integer,Map<Term,Collection<GroundLiteral>>> lookup1 = map.get(pName);
 		if (lookup1 == null) {
-			lookup1 = new HashMap<Integer,Map<Term,Collection<GroundLiteral>>>(4);
+			lookup1 = new LinkedHashMap<Integer,Map<Term,Collection<GroundLiteral>>>(4);
 			map.put(pName, lookup1);
 		}
 		Map<Term,Collection<GroundLiteral>> lookup2 = lookup1.get(arity);
 		if (lookup2 == null) {
-			lookup2 = new HashMap<Term,Collection<GroundLiteral>>(4);
+			lookup2 = new LinkedHashMap<Term,Collection<GroundLiteral>>(4);
 			lookup1.put(arity, lookup2);
 		}
 		// Each gLit whose first argument is a constant is put in two lists.
@@ -1026,7 +1026,7 @@ public class MLN_Task {
 			Utils.error("Already have queryLiterals = " + Utils.limitLengthOfPrintedList(this.queryLiterals, 25));
 		}
 		if (queryLiterals == null) { Utils.error("Should not call with queryLiterals = null."); }
-		this.queryLiterals = new HashSet<GroundLiteral>(4);
+		this.queryLiterals = new LinkedHashSet<GroundLiteral>(4);
 		int counter = 0;
 		if (queryLiterals != null) for (Literal literal : queryLiterals) {
 			GroundLiteral   gLit = null;
@@ -1060,7 +1060,7 @@ public class MLN_Task {
 			Utils.error("Already have negQueryLiteralsForTraining = " + Utils.limitLengthOfPrintedList(negQueryLiteralsForTraining, 25));
 		}
 		if (queryLiterals == null) { Utils.error("Should not call with queryLiterals = null."); }
-		if (pos) {posQueryLiteralsForTraining = new HashSet<GroundLiteral>(4); } else { negQueryLiteralsForTraining = new HashSet<GroundLiteral>(4); }
+		if (pos) {posQueryLiteralsForTraining = new LinkedHashSet<GroundLiteral>(4); } else { negQueryLiteralsForTraining = new LinkedHashSet<GroundLiteral>(4); }
 		Collection<GroundLiteral> queryLiteralsToUse = (pos ? posQueryLiteralsForTraining : negQueryLiteralsForTraining);
 		int counter = 0;
 		if (queryLiterals != null) for (Literal literal : queryLiterals) { 
@@ -1080,7 +1080,7 @@ public class MLN_Task {
 			if (totalPos + totalNeg < total) { Utils.println("% Assuming that " + Utils.truncate(100 * fractionNeg, 2) + " of the " + Utils.comma(total - (totalPos + totalNeg)) + " unlabeled training examples are negative."); }
 			if (totalPos + totalNeg < total) { setAllQueryVariablesToFalseWithThisProbability(fractionNeg); }  // Ignores any block information.  TODO
 		}
-		Set<GroundClause> updateSatForClauses = new HashSet<GroundClause>();
+		Set<GroundClause> updateSatForClauses = new LinkedHashSet<GroundClause>();
 		if (negQueryLiteralsForTraining != null) for (GroundLiteral gLit : negQueryLiteralsForTraining) {
 			if (debugLevel > 2) { Utils.println("% Setting to FALSE this train-set query literal: '" + gLit + "'."); }
 			gLit.setValueOnly(false, timeStamp); 
@@ -1114,7 +1114,7 @@ public class MLN_Task {
 	public void setHiddenLiterals(Collection<Literal> hiddenLiterals) {
 		if (initialized) { Utils.error("Should not call after initialization."); }
 		if (hiddenLiterals == null) { Utils.error("Should not have called with hiddenLiterals = null."); }
-		this.hiddenLiterals = new HashSet<GroundLiteral>(4);
+		this.hiddenLiterals = new LinkedHashSet<GroundLiteral>(4);
 		int counter = 0;
 		if (hiddenLiterals != null) for (Literal literal : hiddenLiterals) { 
 			GroundLiteral   gLit = null;
@@ -1139,7 +1139,7 @@ public class MLN_Task {
 	public void setPosEvidenceLiterals(Collection<Literal> posEvidenceLiterals) {
 		if (initialized) { Utils.error("Should not call after initialization."); }
 		if (posEvidenceLiterals == null) { Utils.error("Should not have called with posEvidenceLiterals = null."); }
-		this.posEvidenceLiterals = new HashSet<GroundLiteral>(4);
+		this.posEvidenceLiterals = new LinkedHashSet<GroundLiteral>(4);
 		int counter = 0;
 		if (posEvidenceLiterals != null) for (Literal literal : posEvidenceLiterals) { 
 			GroundLiteral   gLit = null;
@@ -1165,7 +1165,7 @@ public class MLN_Task {
 	public void setNegEvidenceLiterals(Collection<Literal> negEvidenceLiterals) {
 		if (initialized) { Utils.error("Should not call after initialization."); }
 		if (negEvidenceLiterals == null) { Utils.error("Should not have called with negEvidenceLiterals = null."); }
-		this.negEvidenceLiterals = new HashSet<GroundLiteral>(4);
+		this.negEvidenceLiterals = new LinkedHashSet<GroundLiteral>(4);
 		int counter = 0;
 		if (negEvidenceLiterals != null) for (Literal literal : negEvidenceLiterals) { 
 			GroundLiteral gLit = null;
@@ -1195,7 +1195,7 @@ public class MLN_Task {
 		Collection<Term> results = null;
 		if (lit.numberArgs() < 1) { return null; }
 		for (Term term : lit.getArguments()) if (setOfSkolemMarkers.contains(term)) {
-			if (results == null) { results = new HashSet<Term>(4); }
+			if (results == null) { results = new LinkedHashSet<Term>(4); }
 			results.add(term);
 		}
 		return results;
@@ -1221,7 +1221,7 @@ public class MLN_Task {
 				if (qLit.predicateName == pName && qLit.numberArgs() == arity) { done = true; break; }
 			}
 			if (done) { break; }
-			if (queryPredNames == null) { queryPredNames = new HashSet<PredNameArityPair>(4); }
+			if (queryPredNames == null) { queryPredNames = new LinkedHashSet<PredNameArityPair>(4); }
 			queryPredNames.add(new PredNameArityPair(pName, arity));
 		}
 		List<PredicateName>   hiddenPredNamesReadIn = stringHandler.getHiddenPredicates();
@@ -1238,7 +1238,7 @@ public class MLN_Task {
 				if (hLit.predicateName == pName && hLit.numberArgs() == arity) { done = true; break; }
 			}
 			if (done) { break; }
-			if (hiddenPredNames == null) { hiddenPredNames = new HashSet<PredNameArityPair>(4); }
+			if (hiddenPredNames == null) { hiddenPredNames = new LinkedHashSet<PredNameArityPair>(4); }
 			hiddenPredNames.add(new PredNameArityPair(pName, arity));
 		}
 		
@@ -1260,8 +1260,8 @@ public class MLN_Task {
 	}
 	
 	private void indexLiteralsAndClauses() {
-		pNameArityToLiteralMap = new HashMap<PredicateName,Map<Integer,Set<Literal>>>(4);
-		literalToClauseMap     = new HashMap<Literal,Clause>(4);
+		pNameArityToLiteralMap = new LinkedHashMap<PredicateName,Map<Integer,Set<Literal>>>(4);
+		literalToClauseMap     = new LinkedHashMap<Literal,Clause>(4);
 		
 		if (debugLevel > 0) { Utils.println("\n% Indexing all the literals in the " + Utils.comma(Utils.getSizeSafely(allClauses))+ " clauses."); }
 		if (allClauses != null) for (Clause c : allClauses) {
@@ -1287,7 +1287,7 @@ public class MLN_Task {
 	public Collection<Clause> getClausesContainingThisPredNameAndArity(PredicateName pName, int arity) {
 		Collection<Literal> literals = getLiteralsContainingThisPredNameAndArity(pName, arity);
 		if (literals == null) { return null; }
-		Collection<Clause> results = new HashSet<Clause>(4);
+		Collection<Clause> results = new LinkedHashSet<Clause>(4);
 		for (Literal lit : literals) {
 			results.add(literalToClauseMap.get(lit));
 		}
@@ -1330,7 +1330,7 @@ public class MLN_Task {
 		if (pNameResults == null) { return null; }
 		Collection<Literal> literals = pNameResults.get(lit.numberArgs());
 		if (literals     == null) { return null; }
-		Collection<Literal> results = new HashSet<Literal>(literals.size());
+		Collection<Literal> results = new LinkedHashSet<Literal>(literals.size());
 		boolean origBLisEmpty = (bindingList == null || Utils.getSizeSafely(bindingList.theta) < 1);
 		for (Literal litInTheory : literals) {
 			if (origBLisEmpty) {
@@ -1346,12 +1346,12 @@ public class MLN_Task {
 		// Record 'reverse' pointers from literals to the clauses in which they appear.
 		Map<Integer,Set<Literal>> lookup1 = pNameArityToLiteralMap.get(lit.predicateName);
 		if (lookup1 == null) {
-			lookup1 = new HashMap<Integer,Set<Literal>>(4);
+			lookup1 = new LinkedHashMap<Integer,Set<Literal>>(4);
 			pNameArityToLiteralMap.put(lit.predicateName, lookup1);
 		}
 		Set<Literal> lookup2 = lookup1.get(lit.numberArgs());
 		if (lookup2 == null) {
-			lookup2 = new HashSet<Literal>(4);
+			lookup2 = new LinkedHashSet<Literal>(4);
 			lookup1.put(lit.numberArgs(), lookup2);
 		}
 		lookup2.add(lit);
@@ -1372,7 +1372,7 @@ public class MLN_Task {
 			Set<Constant> lookup1 = constantTypePairsHandled.get(typeSpecs.get(i).isaType);
             if (lookup1 == null) { // Never saw this type before.
             	stringHandler.addNewConstantOfThisType(c, typeSpecs.get(i).isaType);
-                lookup1 = new HashSet<Constant>(4);
+                lookup1 = new LinkedHashSet<Constant>(4);
                 constantTypePairsHandled.put(typeSpecs.get(i).isaType, lookup1);
             }
             if (!lookup1.contains(c)) { // Save a call to the stringHandler if this constant has already been processed.
@@ -1422,7 +1422,7 @@ public class MLN_Task {
 	}
 	public Map<GroundLiteral,String> makeQueryLabelsCanonical(Map<GroundLiteral,String> queryLabels) {
 		if (queryLabels == null) { return null; }
-		Map<GroundLiteral,String> results = new HashMap<GroundLiteral,String>(queryLabels.size());
+		Map<GroundLiteral,String> results = new LinkedHashMap<GroundLiteral,String>(queryLabels.size());
 		for (GroundLiteral gLit : queryLabels.keySet()) { // TODO - can this be done in place?
 			results.put(getCanonicalRepresentative(gLit), queryLabels.get(gLit));
 		}

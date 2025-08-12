@@ -169,10 +169,10 @@ public class UniversalSentence extends QuantifiedSentence {
 //        boolean variableRenamed = false;
 //
 //        if ( variables != null && variables.size() > 0) {
-//            newVariables = new HashSet<Variable>();
+//            newVariables = new LinkedHashSet<Variable>();
 //
 //            if ( usedVariables == null ) {
-//                usedVariables = new HashSet<Variable>();
+//                usedVariables = new LinkedHashSet<Variable>();
 //            }
 //
 //            for (Variable variable : variables) {

@@ -4,7 +4,7 @@
  */
 package edu.wisc.cs.will.FOPC;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -574,7 +574,7 @@ public class StandardPredicateNames { // A few FUNCTION names also appear here; 
         negationByFailure.setContainsCallable(1);
         once.setContainsCallable(1);
 
-        buildinPredicates = new HashSet<PredicateName>(32);
+        buildinPredicates = new LinkedHashSet<PredicateName>(32);
         buildinPredicates.add(trueName);
         buildinPredicates.add(falseName);
         buildinPredicates.add(fail);

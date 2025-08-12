@@ -7,7 +7,7 @@ package edu.wisc.cs.will.ResThmProver;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +29,14 @@ public class GroundNthArgumentClauseIndex<T extends DefiniteClause> {
     /** Index of clauses which might match a constant arg N.
      *
      */
-    private Map<PredicateNameAndArity, Map<Term, List<T>>> definiteClausesByArgNIndex = new HashMap<PredicateNameAndArity, Map<Term, List<T>>>();
+    private Map<PredicateNameAndArity, Map<Term, List<T>>> definiteClausesByArgNIndex = new LinkedHashMap<PredicateNameAndArity, Map<Term, List<T>>>();
 
     /** Store clauses in which the Nth arg is not ground.
      *
      * This is used to as a starting place for new definiteClause lists indexed by the
      * Nth args.  This is necessary to make sure unseen
      */
-    private Map<PredicateNameAndArity, List<T>> definiteClausesWithUngroundNthArg = new HashMap<PredicateNameAndArity, List<T>>();
+    private Map<PredicateNameAndArity, List<T>> definiteClausesWithUngroundNthArg = new LinkedHashMap<PredicateNameAndArity, List<T>>();
 
     private int indexedArgument;
     private int minimumClauseLengthToIndex;
@@ -51,12 +51,12 @@ public class GroundNthArgumentClauseIndex<T extends DefiniteClause> {
 
         if (literal.numberArgs() >= minimumClauseLengthToIndex ) {
             if (definiteClausesByArgNIndex == null) {
-                definiteClausesByArgNIndex = new HashMap<PredicateNameAndArity, Map<Term, List<T>>>();
+                definiteClausesByArgNIndex = new LinkedHashMap<PredicateNameAndArity, Map<Term, List<T>>>();
             }
 
             Map<Term, List<T>> mapForKey = definiteClausesByArgNIndex.get(key);
             if (mapForKey == null) {
-                mapForKey = new HashMap<Term, List<T>>();
+                mapForKey = new LinkedHashMap<Term, List<T>>();
                 definiteClausesByArgNIndex.put(key, mapForKey);
             }
 

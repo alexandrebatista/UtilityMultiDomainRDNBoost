@@ -22,7 +22,7 @@ public class BuildPairWiseScore {
 	}
 
 	public PairWiseExampleScore buildScore(List<RegressionRDNExample> all_exs) {
-		// Map<String, FeatureVector> currFeatures = new HashMap<String, FeatureVector>();
+		// Map<String, FeatureVector> currFeatures = new LinkedHashMap<String, FeatureVector>();
 		List<FeatureVector> features = new ArrayList<FeatureVector>();
 		// Get features for each example
 //		for (RegressionRDNExample rex : all_exs) {

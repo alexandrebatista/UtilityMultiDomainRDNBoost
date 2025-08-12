@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.Boosting.Common;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,7 +101,7 @@ public abstract class SRLInference {
 		}
 		
 		// Have to collect the predicate names because query parents returns predicatename and not strings
-		Set<String> predsInSample = new HashSet<String>(samples.getPredicates());
+		Set<String> predsInSample = new LinkedHashSet<String>(samples.getPredicates());
 		
 		// Remove multiclass prefix from predicate name
 		if (currTarget.startsWith(setup.multiclassPredPrefix)) {

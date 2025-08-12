@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -109,8 +109,8 @@ public class ThresholdManager {
 				List<Example> posExamples = innerLoopForILP.getPosExamples();
 				List<Example> negExamples = innerLoopForILP.getNegExamples();
 
-				posExIDs = new HashSet<Term>(4);
-				negExIDs = new HashSet<Term>(4);
+				posExIDs = new LinkedHashSet<Term>(4);
+				negExIDs = new LinkedHashSet<Term>(4);
 				for (Example pos : posExamples) { posExIDs.add(pos.getArgument(0)); }
 				for (Example neg : negExamples) { negExIDs.add(neg.getArgument(0)); }
 			}

@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -71,7 +71,7 @@ public class InferBoostedRDN {
 		Map<String,List<RegressionRDNExample>> targetExamples = setup.getJointExamples(cmdArgs.getTargetPredVal());
 		Map<String,List<RegressionRDNExample>> jointExamples = setup.getHiddenExamples();
 		if (jointExamples == null) {
-			jointExamples = new HashMap<String, List<RegressionRDNExample>>();
+			jointExamples = new LinkedHashMap<String, List<RegressionRDNExample>>();
 		}
 		jointExamples.putAll(targetExamples);
 		boolean negativesSampled = false;
@@ -115,9 +115,9 @@ public class InferBoostedRDN {
 			sampler.setMaxTrees(startCount);
 			Utils.println("% Trees = " + startCount);
 			sampler.getMarginalProbabilities(jointExamples);
-			HashMap<String, List<RegressionRDNExample>> backupJointExamples = null;
+			LinkedHashMap<String, List<RegressionRDNExample>> backupJointExamples = null;
 			if (startCount != cmdArgs.getMaxTreesVal()) {
-				backupJointExamples = new HashMap<String, List<RegressionRDNExample>>();
+				backupJointExamples = new LinkedHashMap<String, List<RegressionRDNExample>>();
 				for (String targ : jointExamples.keySet()) {
 					backupJointExamples.put(targ, new ArrayList<RegressionRDNExample>(jointExamples.get(targ)));
 				}
@@ -239,8 +239,8 @@ public class InferBoostedRDN {
 		if (cmdArgs.getTestNegsToPosRatioVal() < 0) {
 			return; // No subsampling.
 		}
-		Map<String,Integer> numpos = new HashMap<String,Integer>();
-		Map<String,Integer> numneg = new HashMap<String,Integer>();
+		Map<String,Integer> numpos = new LinkedHashMap<String,Integer>();
+		Map<String,Integer> numneg = new LinkedHashMap<String,Integer>();
 		for (String  pred : jointExamples.keySet()) {
 			numpos.put(pred, 0);
 			numneg.put(pred, 0);
@@ -587,7 +587,7 @@ public class InferBoostedRDN {
 	}
 	
 	/**
-	 * HashMap comparator. Needs the hash map as input since the comparator
+	 * LinkedHashMap comparator. Needs the hash map as input since the comparator
 	 * only gets the key as the input for the comparison. ValueComparator
 	 * uses the input map to find the actual values for each key and sorts
 	 * based on them.
@@ -621,8 +621,8 @@ public class InferBoostedRDN {
 	 */
 	private void printTreeStats(List<RegressionRDNExample> examples, String target) {
 		String treeStats = getTreeStatsFile(target, Utils.isRunningWindows());
-		Map<String, Integer> idCounts = new HashMap<String, Integer>();
-		Map<String, Double> idProbs = new HashMap<String, Double>();
+		Map<String, Integer> idCounts = new LinkedHashMap<String, Integer>();
+		Map<String, Double> idProbs = new LinkedHashMap<String, Double>();
 		long totalExamples = 0;
 		for (RegressionRDNExample regressionRDNExample : examples) {
 			String id = regressionRDNExample.leafId;
@@ -795,7 +795,7 @@ public class InferBoostedRDN {
 				
 				if (collectRelatedFacts) {
 					// Print related facts for this example.
-					Set<Literal> facts = new HashSet<Literal>();				
+					Set<Literal> facts = new LinkedHashSet<Literal>();				
 					int i=0;
 					for (Term arg : pex.getArguments()) {
 						if (bit_mask.get(i)) { 

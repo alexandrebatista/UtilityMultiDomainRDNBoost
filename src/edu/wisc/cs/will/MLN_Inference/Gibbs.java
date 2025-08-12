@@ -1,6 +1,6 @@
 package edu.wisc.cs.will.MLN_Inference;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class Gibbs  extends AllOfInference {
 	public Gibbs(GroundedMarkovNetwork groundedMarkovNetwork, double priorProbOfBeingTrue) {
 		this.groundedMarkovNetwork = groundedMarkovNetwork;
 		this.prior_for_being_true  = priorProbOfBeingTrue;
-		fixedLiterals = new HashSet<GroundLiteral>();
+		fixedLiterals = new LinkedHashSet<GroundLiteral>();
 	}
 	
 	public int getStepsPerSample() {

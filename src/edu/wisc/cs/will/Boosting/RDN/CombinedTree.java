@@ -2,8 +2,8 @@ package edu.wisc.cs.will.Boosting.RDN;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,11 +17,11 @@ import edu.wisc.cs.will.FOPC.TreeStructuredTheory;
  * 
  */
 public class CombinedTree {
-	private static Set<String> predicates = new HashSet<String>(); //This has all unique predicates across all trees
-	private static Set<Set<Clause>> setOfClauses = new HashSet<Set<Clause>>(); //This has the collection of trees as clauses
-	private static HashMap<String, Double> finalTree = new HashMap<>(); //This is the combined tree as a Hash Map --> not needed for any major output.
+	private static Set<String> predicates = new LinkedHashSet<String>(); //This has all unique predicates across all trees
+	private static Set<Set<Clause>> setOfClauses = new LinkedHashSet<Set<Clause>>(); //This has the collection of trees as clauses
+	private static LinkedHashMap<String, Double> finalTree = new LinkedHashMap<>(); //This is the combined tree as a Hash Map --> not needed for any major output.
 	private static ArrayList<String> finalClauses = new ArrayList<String>(); //This is the final set of clauses after combination
-	private static Set<HashMap<String, Double>> treesToAdd = new HashSet<HashMap<String, Double>>(); //This contains the collection of trees to add
+	private static Set<LinkedHashMap<String, Double>> treesToAdd = new LinkedHashSet<LinkedHashMap<String, Double>>(); //This contains the collection of trees to add
 	private static List<RegressionRDNExample> finalDataSet = new ArrayList<RegressionRDNExample>(); //it will store the final example and regression values to fit the tree on.
 	private static RegressionTree finalRegTree; //will store finalRegression Tree
 	public static CommandLineArguments cmd = null;
@@ -56,7 +56,7 @@ public class CombinedTree {
 	public static void combineTrees(){
 		//Combines the trees contained in treesToAdd analytically, implemented but not yet tested.
 		System.out.println("% Combining all boosted trees");
-		for(HashMap<String, Double> tree: CombinedTree.treesToAdd){
+		for(LinkedHashMap<String, Double> tree: CombinedTree.treesToAdd){
 			//Basic idea: Don't take combinations of unique predicates that don't occur across any of the trees
 			for(String key: tree.keySet()){
 				if(CombinedTree.finalTree.keySet().contains(key))
@@ -109,7 +109,7 @@ public class CombinedTree {
 		CombinedTree.printPredicates(); //print unique predicates
 		CombinedTree.printSetOfClauses(); //print all clauses across all trees
 		for(Set<Clause> clauses: setOfClauses){
-			HashMap<String, Double> tree = new HashMap<>();
+			LinkedHashMap<String, Double> tree = new LinkedHashMap<>();
 			for(Clause clause: clauses){
 				List<Literal> bodyList = clause.getDefiniteClauseBody();
 				Literal head = clause.getDefiniteClauseHead();

@@ -12,7 +12,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -107,7 +107,7 @@ import edu.wisc.cs.will.stdAIsearch.StateBasedSearchTask;
 
 		if something is no good in RRR for one set of seeds,
 		it will also be no good for restarts in that seed
-			- keep a hashmap for these  KEEP SAME ROOT
+			- keep a LinkedHashMap for these  KEEP SAME ROOT
 
 			save gleaner after every N outer loops?
 
@@ -316,7 +316,7 @@ public class LearnOneClause extends StateBasedSearchTask {
     protected int           totalProofsProved = 0;
 
     RelevanceStrength       currentRelevanceStrength = RelevanceStrength.getWeakestRelevanceStrength();
-    private Set<PredicateNameAndArity> factPredicateNames = new HashSet<PredicateNameAndArity>();
+    private Set<PredicateNameAndArity> factPredicateNames = new LinkedHashSet<PredicateNameAndArity>();
 
     private Boolean relevanceEnabled = true;  // When null or false, relevance is disabled.
 
@@ -911,7 +911,7 @@ public class LearnOneClause extends StateBasedSearchTask {
 							
 				}
 				variableArguments.add(arg);
-				rangeForArguments.add(new HashSet<Term>());
+				rangeForArguments.add(new LinkedHashSet<Term>());
 				int varIndex = rangeForArguments.size() - 1;
 				// Look for all possible types that this arg can have
 				for (PredicateSpec spec : pName.getTypeOnlyList()) {
@@ -1034,7 +1034,7 @@ public class LearnOneClause extends StateBasedSearchTask {
 		BindingList bl = getNextProof(groundings_prover);
 		long counter = 0;
 		// BindingList bl = proof.prove();
-		HashSet<BindingList> seen_bls = new HashSet<BindingList>();
+		LinkedHashSet<BindingList> seen_bls = new LinkedHashSet<BindingList>();
 		while(bl != null) {
 			
 			// Make sure that none of the negative literals are satisfied for exists
@@ -1096,7 +1096,7 @@ public class LearnOneClause extends StateBasedSearchTask {
 	
 	private Collection<BindingList> expandNegativeLiteralBindingList(
 			Literal lit, Collection<BindingList> negBLs) {
-		Collection<BindingList> outBLs = new HashSet<BindingList>();
+		Collection<BindingList> outBLs = new LinkedHashSet<BindingList>();
 		for (BindingList bl : negBLs) {
 			Literal newLit = lit.applyTheta(bl);
 			Collection<BindingList> thisLitBL = getAllPossibleGroundingsOf(newLit);
@@ -2262,10 +2262,10 @@ public class LearnOneClause extends StateBasedSearchTask {
             // Utils.waitHere("#1 mEstimatePos=" + getMEstimatePos() + " mEstimateNeg=" + getMEstimateNeg());
         }
 
-        HashSet<Example> truePositives  = new HashSet<Example>();
-        HashSet<Example> falsePositives = new HashSet<Example>();
-        HashSet<Example> trueNegatives  = new HashSet<Example>();
-        HashSet<Example> falseNegatives = new HashSet<Example>();
+        LinkedHashSet<Example> truePositives  = new LinkedHashSet<Example>();
+        LinkedHashSet<Example> falsePositives = new LinkedHashSet<Example>();
+        LinkedHashSet<Example> trueNegatives  = new LinkedHashSet<Example>();
+        LinkedHashSet<Example> falseNegatives = new LinkedHashSet<Example>();
 
         if ( positiveExamples != null ) {
             proveExamples(clause, positiveExamples, truePositives, falseNegatives);
@@ -2339,10 +2339,10 @@ public class LearnOneClause extends StateBasedSearchTask {
             // Utils.waitHere("#2 mEstimatePos=" + getMEstimatePos() + " mEstimateNeg=" + getMEstimateNeg());
         }
 
-        HashSet<Example> truePositives  = new LinkedHashSet<Example>(); //   Covered positives.
-        HashSet<Example> falsePositives = new LinkedHashSet<Example>(); //   Covered negatives.
-        HashSet<Example> trueNegatives  = new LinkedHashSet<Example>(); // Uncovered negatives.
-        HashSet<Example> falseNegatives = new LinkedHashSet<Example>(); // Uncovered positives.
+        LinkedHashSet<Example> truePositives  = new LinkedHashSet<Example>(); //   Covered positives.
+        LinkedHashSet<Example> falsePositives = new LinkedHashSet<Example>(); //   Covered negatives.
+        LinkedHashSet<Example> trueNegatives  = new LinkedHashSet<Example>(); // Uncovered negatives.
+        LinkedHashSet<Example> falseNegatives = new LinkedHashSet<Example>(); // Uncovered positives.
 
         if ( positiveExamples != null ) {
             falseNegatives.addAll(positiveExamples);
@@ -2531,11 +2531,11 @@ public class LearnOneClause extends StateBasedSearchTask {
 	public boolean selectSeedsRandomly(int numberPos, int numberNeg, Set<Example> seedPosExamplesUsed, Set<Example> seedNegExamplesUsed) {
 
        if ( seedPosExamplesUsed == null ) {
-           seedPosExamplesUsed = new HashSet<Example>();
+           seedPosExamplesUsed = new LinkedHashSet<Example>();
        }
 
        if ( seedNegExamplesUsed == null ) {
-           seedNegExamplesUsed = new HashSet<Example>();
+           seedNegExamplesUsed = new LinkedHashSet<Example>();
        }
 
 		int desiredNumberOfPosSeeds = Math.max(0, numberPos);
@@ -3260,7 +3260,7 @@ public class LearnOneClause extends StateBasedSearchTask {
 		task.maxSearchDepth     =  100;
 		task.verbosity          =    0;
 
-		task.selectSeedsRandomly(1, 0, new HashSet<Example>(), new HashSet<Example>());
+		task.selectSeedsRandomly(1, 0, new LinkedHashSet<Example>(), new LinkedHashSet<Example>());
 		task.performSearch();
 
 		Gleaner gleaner = (Gleaner) task.searchMonitor;

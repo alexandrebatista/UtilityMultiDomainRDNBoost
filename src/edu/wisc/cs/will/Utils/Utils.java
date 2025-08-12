@@ -37,8 +37,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -227,7 +227,7 @@ public class Utils {
     // TODO clean up so that the random instance is robust to multiple runs
     private static Random randomInstance = new Random(112957);
 
-    private static Map<String,Integer> warningCounts = new HashMap<String,Integer>();
+    private static Map<String,Integer> warningCounts = new LinkedHashMap<String,Integer>();
 
     /**
      * Waits for input on standard input after displaying the given message.
@@ -442,7 +442,7 @@ public class Utils {
 	
 	public static List<String> renameDuplicateStrings(List<String> strNames) {
 		if (strNames == null) { return null; }
-		HashMap<String,Integer> seenBefore = new HashMap<String,Integer>(4);
+		LinkedHashMap<String,Integer> seenBefore = new LinkedHashMap<String,Integer>(4);
 		List<String>            results    = new ArrayList<String>(strNames.size());
 		for (String str : strNames) {
 			Integer lookup = seenBefore.get(str);
@@ -637,7 +637,7 @@ public class Utils {
     }
     
     // Should we cache?  If we do, cache needs to be cleared whenever any of these keywords are changed.
-    private static Map<String,String> environmentVariableResolutionCache = new HashMap<String,String>(4);
+    private static Map<String,String> environmentVariableResolutionCache = new LinkedHashMap<String,String>(4);
     public static String replaceWildCards(String original) {
     	if (original == null) { return null; }
     	String lookup = environmentVariableResolutionCache.get(original);
@@ -2656,7 +2656,7 @@ public class Utils {
     	return str + "/";    	
     }
     
-    private static Set<String> ensured = new HashSet<String>(4); // OK if this is global because we're simply making and never deleting directories (unless the user does so manually).
+    private static Set<String> ensured = new LinkedHashSet<String>(4); // OK if this is global because we're simply making and never deleting directories (unless the user does so manually).
     public static File ensureDirExists(File file) {
     	if (file == null) { return null; }
     	return ensureDirExists(file.getAbsolutePath());
@@ -3083,7 +3083,7 @@ public class Utils {
             return Collections.singleton(empty);
         }
         else {
-            elements = new HashSet<ElementType>(elements);
+            elements = new LinkedHashSet<ElementType>(elements);
             return getPowerSetDestructive(elements);
         }
     }
@@ -3102,7 +3102,7 @@ public class Utils {
             return Collections.EMPTY_SET;
         }
         else if ( elements.size() == 1 ) {
-            HashSet<Set<ElementType>> s = new HashSet<Set<ElementType>>();
+            LinkedHashSet<Set<ElementType>> s = new LinkedHashSet<Set<ElementType>>();
             s.add(Collections.EMPTY_SET);
             s.add(Collections.singleton(elements.iterator().next()));
             return s;
@@ -3129,9 +3129,9 @@ public class Utils {
      * @return
      */
     private static <ElementType> Set<Set<ElementType>> getCrossProduct(Set<Set<ElementType>> setOfSets, ElementType element) {
-        Set<Set<ElementType>> cross = new HashSet<Set<ElementType>>();
+        Set<Set<ElementType>> cross = new LinkedHashSet<Set<ElementType>>();
         for (Set<ElementType> set : setOfSets) {
-            Set<ElementType> subset = new HashSet<ElementType>(set);
+            Set<ElementType> subset = new LinkedHashSet<ElementType>(set);
             subset.add(element);
             cross.add(subset);
         }
@@ -3160,11 +3160,11 @@ public class Utils {
             return copySetOfSets(set1);
         }
         else {
-            Set<Set<T>> cross = new HashSet<Set<T>>();
+            Set<Set<T>> cross = new LinkedHashSet<Set<T>>();
 
             for (Set<T> subset1 : set1) {
                 for (Set<T> subset2 : set2) {
-                    Set<T> newSubset = new HashSet<T>();
+                    Set<T> newSubset = new LinkedHashSet<T>();
                     newSubset.addAll(subset1);
                     newSubset.addAll(subset2);
 
@@ -3189,10 +3189,10 @@ public class Utils {
      * @throws CloneNotSupportedException
      */
     public  static <T> Set<Set<T>> copySetOfSets(Set<Set<T>> aSetOfSets)  {
-       Set<Set<T>> newSet = new HashSet<Set<T>>();
+       Set<Set<T>> newSet = new LinkedHashSet<Set<T>>();
 
         for (Set<T> subset : aSetOfSets) {
-            HashSet<T> newSubset = new HashSet<T>();
+            LinkedHashSet<T> newSubset = new LinkedHashSet<T>();
             newSubset.addAll(subset);
             newSet.add(newSubset);
         }

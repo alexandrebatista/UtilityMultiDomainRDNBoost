@@ -2,23 +2,23 @@ package edu.iu.cs.RelationalRandomWalks;
 
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 
 public class GenerateRandomWalks {
 	
-	HashSet<String> FinalRandomWalks = new HashSet<String>();
-	HashSet<String> IntermediateRandomWalks = new HashSet<String>();
-	HashSet<String> Storetriplets = new HashSet<String>();
+	LinkedHashSet<String> FinalRandomWalks = new LinkedHashSet<String>();
+	LinkedHashSet<String> IntermediateRandomWalks = new LinkedHashSet<String>();
+	LinkedHashSet<String> Storetriplets = new LinkedHashSet<String>();
 	
 	void AddStartEntity(String start)
 	{
 		IntermediateRandomWalks.add(start);
 	}
 	
-	void GenerateTriplets(HashMap<String,Edge> edg)
+	void GenerateTriplets(LinkedHashMap<String,Edge> edg)
 	{
 		Set<String> key = edg.keySet();
 		for(String k:key)
@@ -28,10 +28,10 @@ public class GenerateRandomWalks {
 		}
 	}
 	
-	HashMap<String,String> SplitString(String S)
+	LinkedHashMap<String,String> SplitString(String S)
 	{
 		String [] sLine = S.split("(\\()|(\\))");
-		HashMap<String,String> hs = new HashMap<String,String>();
+		LinkedHashMap<String,String> hs = new LinkedHashMap<String,String>();
 		hs.put("LastEntity", sLine[sLine.length-1]);
 		hs.put("FirstEntity", sLine[0]);
 		
@@ -68,7 +68,7 @@ public class GenerateRandomWalks {
 	
 	String CreateNewRandomWalk(String oldRandomWalk,String triplet)
 	{
-		HashMap<String,String> hs = SplitString(triplet);
+		LinkedHashMap<String,String> hs = SplitString(triplet);
 		String s = oldRandomWalk+"("+hs.get("LastRelation") + ")"+hs.get("LastEntity");
 		return s;
 	}
@@ -84,16 +84,16 @@ public class GenerateRandomWalks {
 				continue;
 			else
 			{
-				HashSet <String> cloneIntermediateRW = new HashSet <String>();
-				cloneIntermediateRW=(HashSet)IntermediateRandomWalks.clone();
+				LinkedHashSet <String> cloneIntermediateRW = new LinkedHashSet <String>();
+				cloneIntermediateRW=(LinkedHashSet)IntermediateRandomWalks.clone();
 				
 				for(String s:cloneIntermediateRW)
 				{
-					HashMap<String,String> hIntermediate = SplitString(s);
+					LinkedHashMap<String,String> hIntermediate = SplitString(s);
 									
 					for (String s2:Storetriplets)
 					{
-						HashMap<String,String> hTriplet = SplitString(s2);
+						LinkedHashMap<String,String> hTriplet = SplitString(s2);
 						if((hIntermediate.get("LastEntity")).equals(hTriplet.get("FirstEntity")))
 						{
 							if(hIntermediate.get("LastRelation")!=null)
@@ -105,7 +105,7 @@ public class GenerateRandomWalks {
 												
 							}
 							String newRW = CreateNewRandomWalk(s,s2);
-							HashMap<String,String> hnewRW = SplitString(newRW);
+							LinkedHashMap<String,String> hnewRW = SplitString(newRW);
 							
 							if(hnewRW.get("LastEntity").equals(graph.EndEntity))
 							{

@@ -5,7 +5,7 @@
 
 package edu.wisc.cs.will.FOPC;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +33,7 @@ public abstract class ProcedurallyDefinedPredicateHandler {
     }
     
     public void addHandledPrediate(PredicateNameAndArity predicateNameAndArity) {
-        if ( hashOfSupportedPredicates == null ) hashOfSupportedPredicates = new HashSet<PredicateNameAndArity>();
+        if ( hashOfSupportedPredicates == null ) hashOfSupportedPredicates = new LinkedHashSet<PredicateNameAndArity>();
         hashOfSupportedPredicates.add(predicateNameAndArity);
     }
 

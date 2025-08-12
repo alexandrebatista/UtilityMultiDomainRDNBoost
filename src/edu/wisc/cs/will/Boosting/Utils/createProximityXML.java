@@ -7,8 +7,8 @@ package edu.wisc.cs.will.Boosting.Utils;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,11 +36,11 @@ public class createProximityXML {
 		ILPMain main = new ILPMain();
 		main.setup(args1);
 		Iterable<Literal> lits = main.outerLooper.getContext().getClausebase().getFacts();
-		Set<String> users = new HashSet<String>();
-		Set<String> movies = new HashSet<String>();
-		HashMap<String, HashMap<String, String>> movie_att = new HashMap<String, HashMap<String,String>>();
+		Set<String> users = new LinkedHashSet<String>();
+		Set<String> movies = new LinkedHashSet<String>();
+		LinkedHashMap<String, LinkedHashMap<String, String>> movie_att = new LinkedHashMap<String, LinkedHashMap<String,String>>();
 		ArrayList<StringPair> genre_att = new ArrayList<StringPair>();
-		HashMap<String, HashMap<String, String>> user_att = new HashMap<String, HashMap<String,String>>();
+		LinkedHashMap<String, LinkedHashMap<String, String>> user_att = new LinkedHashMap<String, LinkedHashMap<String,String>>();
 		ArrayList<StringPair> tmp_ratings = new ArrayList<StringPair>();
 		ArrayList<StringPair>  ratings = new ArrayList<StringPair>();
 		ArrayList<String> rating_values = new ArrayList<String>();
@@ -111,7 +111,7 @@ public class createProximityXML {
 			writer.newLine();
 		}
 		//count++;
-		HashMap<String, Integer> id_to_counter = new HashMap<String, Integer>();
+		LinkedHashMap<String, Integer> id_to_counter = new LinkedHashMap<String, Integer>();
 		//writer.write("<OBJECTS>");
 		writer.newLine();
 		for (String mov : movies) {
@@ -153,7 +153,7 @@ public class createProximityXML {
 		for (String attr : movie_att.keySet()) {
 			 writer.write("<ATTRIBUTE NAME=\"" + attr + "\" ITEM-TYPE=\"O\" DATA-TYPE=\"STR\">\n");
 
-			HashMap<String, String> attr_vals = movie_att.get(attr);
+			LinkedHashMap<String, String> attr_vals = movie_att.get(attr);
 			for (String att : attr_vals.keySet()) {
 				Integer id = id_to_counter.get(att);
 				writer.write(" <ATTR-VALUE ITEM-ID=\"" + id + "\">\n");
@@ -177,7 +177,7 @@ public class createProximityXML {
 		for (String attr : user_att.keySet()) {
 			 writer.write("<ATTRIBUTE NAME=\"" + attr + "\" ITEM-TYPE=\"O\" DATA-TYPE=\"STR\">\n");
 
-			HashMap<String, String> attr_vals = user_att.get(attr);
+			LinkedHashMap<String, String> attr_vals = user_att.get(attr);
 			for (String att : attr_vals.keySet()) {
 				Integer id = id_to_counter.get(att);
 				writer.write(" <ATTR-VALUE ITEM-ID=\"" + id + "\">\n");
@@ -218,9 +218,9 @@ public class createProximityXML {
 	}
 
 	private static void addToMap(String key, String key2, String val,
-			HashMap<String, HashMap<String, String>> movieAtt) {
+			LinkedHashMap<String, LinkedHashMap<String, String>> movieAtt) {
 		if (!movieAtt.containsKey(key)) {
-			movieAtt.put(key, new HashMap<String, String>());
+			movieAtt.put(key, new LinkedHashMap<String, String>());
 		}
 		movieAtt.get(key).put(key2, val);
 	}

@@ -7,7 +7,7 @@ package edu.wisc.cs.will.Utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -256,7 +256,7 @@ public class MapOfLists<Key, Value> implements Iterable<Value> {
     }
 
     protected Map<Key, List<Value>> createMap() {
-        return new HashMap<Key, List<Value>>();
+        return new LinkedHashMap<Key, List<Value>>();
     }
 
     public String toString(String prefix) {

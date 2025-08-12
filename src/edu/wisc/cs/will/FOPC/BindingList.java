@@ -6,7 +6,7 @@ package edu.wisc.cs.will.FOPC;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,14 +20,14 @@ import edu.wisc.cs.will.Utils.Utils;
  *
  */
 public class BindingList extends AllOfFOPC {
-	public HashMap<Variable,Term> theta;
+	public LinkedHashMap<Variable,Term> theta;
 	/**
 	 * 
 	 */
 	public BindingList() {
 		theta = createMap(0);
 	}
-	public BindingList(HashMap<Variable,Term> theta) {
+	public BindingList(LinkedHashMap<Variable,Term> theta) {
 		this.theta = theta;
 	}
 	
@@ -61,7 +61,7 @@ public class BindingList extends AllOfFOPC {
 	public BindingList copy() {
 		if (theta.isEmpty()) { return new BindingList(); }
 
-        HashMap newMap = createMap(theta.size());
+        LinkedHashMap newMap = createMap(theta.size());
         newMap.putAll(theta);
 
 		return new BindingList(newMap);
@@ -74,11 +74,11 @@ public class BindingList extends AllOfFOPC {
      *
      * @return A new theta map.
      */
-    private HashMap<Variable,Term> createMap(int size) {
+    private LinkedHashMap<Variable,Term> createMap(int size) {
 
         int realSize = Math.max(16, (int)Math.ceil(size * 0.75f)+1);
 
-        return new HashMap<Variable,Term>(realSize);
+        return new LinkedHashMap<Variable,Term>(realSize);
     }
 
     public Map<Variable, Term> getTheta() {
@@ -277,7 +277,7 @@ public class BindingList extends AllOfFOPC {
 		return null;
 	}
 	
-	// Provide a way to do a lookup without needing to create a HashMap.
+	// Provide a way to do a lookup without needing to create a LinkedHashMap.
 	public static Term lookup(Variable var, List<Binding> bindings) {
 		if (bindings == null) { return null; }
 		for (Binding b : bindings) {
@@ -326,7 +326,7 @@ public class BindingList extends AllOfFOPC {
 	}
     
     public void addBindingWithoutOccursCheck(Variable var, Term term) {
-		if ( theta == null ) theta = new HashMap<Variable, Term>();
+		if ( theta == null ) theta = new LinkedHashMap<Variable, Term>();
         theta.put(var, term);
 	}
 	
@@ -335,7 +335,7 @@ public class BindingList extends AllOfFOPC {
 		else { Utils.error("Cannot find " + var + " in " + theta); }
 	}
 
-	// Collect all the bindings in the HashMap.
+	// Collect all the bindings in the LinkedHashMap.
 	public List<Binding> collectBindingsInList() {
 		if (Utils.getSizeSafely(theta) < 1) { return null; }  // Might want to instead return the empty list?
 		List<Binding> results = new ArrayList<Binding>(theta.size());

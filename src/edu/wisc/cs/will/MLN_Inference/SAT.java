@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.MLN_Inference;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -200,7 +200,7 @@ public abstract class SAT extends AllOfInference {
 	
 	// We don't, in the default case, keep a list of active clauses since adding/removing to that can be time consuming.
 	// The cost of this design decision is that when we need a random active clause, we need to spend a good deal of time
-	// if they are rare.  If we have troubles, we will switch to the HashSet variant.
+	// if they are rare.  If we have troubles, we will switch to the LinkedHashSet variant.
 	public    int  maxTriesAtGettingActiveClause   = 1000;  // If ever get this many inactive clauses in a row, give up on the default strategy.
 	public    int  maxTriesAtGettingActiveLiteral  = 1000;  // If ever get this many inactive literal in a row,throw an error.
 	private   long failuresAtGettingActiveClause   = 0; // if this becomes too extreme, switch to keeping explicit hashSets. 
@@ -270,7 +270,7 @@ public abstract class SAT extends AllOfInference {
 		countOfActiveClauses = 0;  // Still count regardless of whether or not a hard table is in use, since cheap to do so, plus good for error checking,
 		if (activeClauses != null) { activeClauses.clear(); }
 		if (useActiveClausesHashSet) {
-			if (activeClauses == null) { activeClauses = new HashSet<GroundClause>(1024); }
+			if (activeClauses == null) { activeClauses = new LinkedHashSet<GroundClause>(1024); }
 			if (useActiveClausesHashSet && countOfActiveClauses != activeClauses.size()) {
 				Utils.error("Have a mismatch between countOfActiveClauses = " + Utils.comma(countOfActiveClauses) +
 							" and |activeClauses| = " + Utils.comma(activeClauses) + ".");
@@ -302,7 +302,7 @@ public abstract class SAT extends AllOfInference {
 		if (deferred_updateActiveClauseInformation) { updateActiveClauseInformation(markedClauses, deferred_updateActiveClauseInformation_msg, deferredTimeStamp, true); }
 		if (!groundedMarkovNetwork.isaMarkedGroundClause(gndClause)) { Utils.error("This clause is not properly marked (active=" + gndClause.isActive() + ",useActiveClausesHashSet=" + useActiveClausesHashSet + "): '" + gndClause.getInfo() + "'."); }
 		if (gndClause.isActive() == false || (useActiveClausesHashSet && !activeClauses.remove(gndClause))) { Utils.error("Could not remove since not an active clause (active=" + gndClause.isActive() + ",useActiveClausesHashSet=" + useActiveClausesHashSet + "): '" + gndClause.getInfo() + "'"); } 
-		countOfActiveClauses--; // Still count regardless of using the HashSet, since cheap to do so.
+		countOfActiveClauses--; // Still count regardless of using the LinkedHashSet, since cheap to do so.
 		activeClausesSum -= gndClause.getWeightOnSentence();
 		countOfRemoves++; totalCountOfRemoves++;
 		if (!gndClause.isSatisfiedCached() && gndClause.getWeightOnSentence() > 0.0) { Utils.error("Setting inactive a pos-wgt clause that is not satisfied: " + gndClause.getInfo()); }
@@ -319,7 +319,7 @@ public abstract class SAT extends AllOfInference {
 		if (useActiveClausesHashSet) { return; }
 		Utils.println("%      Turn ON  hash table for SAT.  [caller=" + caller + ",  count of active clauses = " + Utils.comma(countOfActiveClauses) + ", size = " + Utils.comma(size) + "]"); if (++onOffCounter > 1) { Utils.error("Too many turn ONs!"); }
 		useActiveClausesHashSet = true;
-		if (activeClauses == null) { activeClauses = new HashSet<GroundClause>(1024); }
+		if (activeClauses == null) { activeClauses = new LinkedHashSet<GroundClause>(1024); }
 		activeClauses.clear();
 		if (countOfActiveClauses > 0)  {
 			// Now fill the active clauses set.
@@ -336,7 +336,7 @@ public abstract class SAT extends AllOfInference {
 		if (!useActiveClausesHashSet|| alwaysUseHashSetForActiveClauses) { return; }
 		Utils.println("%      Turn OFF hash table for SAT.  [caller=" + caller + ",  count of active clauses = " + Utils.comma(countOfActiveClauses) + ", size = " + Utils.comma(size) + "]"); if (--onOffCounter < 0) { Utils.error("Too many turn OFFs!"); }
 		useActiveClausesHashSet = false;
-		if (activeClauses == null) { activeClauses = new HashSet<GroundClause>(1024); } // Shouldn't be necessary, but leave it here.
+		if (activeClauses == null) { activeClauses = new LinkedHashSet<GroundClause>(1024); } // Shouldn't be necessary, but leave it here.
 		activeClauses.clear();
 	}
 	

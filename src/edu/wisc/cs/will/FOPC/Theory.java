@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -191,7 +191,7 @@ public class Theory extends AllOfFOPC implements Serializable, Iterable<Sentence
     	return clauses;
     	/*
     	FileParser parser = stringHandler.get();
-    	Set<Clause> results = new HashSet<Clause>(clauses.size());
+    	Set<Clause> results = new LinkedHashSet<Clause>(clauses.size());
     	for (Clause c : clauses) {
     		results.addAll(parser..xxx(c.toString())
     	}
@@ -236,7 +236,7 @@ public class Theory extends AllOfFOPC implements Serializable, Iterable<Sentence
     // It is possible some in-liners are still in a theory (eg, due to some bug).
     // So if a theory is to 'stand alone' in a new task, we need to keep the definitions of these in-liners.
     private boolean haveCollectedRemainingInLiners = false;
-    private Set<Clause> collectedSupporters = new HashSet<Clause>(4);
+    private Set<Clause> collectedSupporters = new LinkedHashSet<Clause>(4);
     public void collectAnyRemainingInliners() {
     	if (haveCollectedRemainingInLiners) { return; }
     	collectedSupporters.clear();
@@ -424,7 +424,7 @@ public class Theory extends AllOfFOPC implements Serializable, Iterable<Sentence
     
     private Clause useDeterminateLiteralsToUnifyVariables(Clause c) {
     	if (c == null || Utils.getSizeSafely(c.negLiterals) < 1) { return c; }
-    	Map<PredicateName,List<Literal>> samePredicates = new HashMap<PredicateName,List<Literal>>(4);
+    	Map<PredicateName,List<Literal>> samePredicates = new LinkedHashMap<PredicateName,List<Literal>>(4);
     	// First group literals by predicateName
     	for (Literal nLit : c.negLiterals) {
     		PredicateName pName = nLit.predicateName;

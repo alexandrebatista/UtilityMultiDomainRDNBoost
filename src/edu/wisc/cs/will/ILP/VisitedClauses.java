@@ -5,7 +5,7 @@ package edu.wisc.cs.will.ILP;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class VisitedClauses extends ClosedList {
 	 */
 	public VisitedClauses() {
 		literalComparator = new LiteralComparator();
-		canonicalClauses  = new HashMap<Integer,Map<PredicateName,List<List<Literal>>>>(64);
+		canonicalClauses  = new LinkedHashMap<Integer,Map<PredicateName,List<List<Literal>>>>(64);
 		tempBindings      = new BindingList();
 	}
 	public VisitedClauses(int maxSize) {
@@ -62,7 +62,7 @@ public class VisitedClauses extends ClosedList {
 		this();
 		this.sortLiterals = sortLiterals;
 		literalComparator = new LiteralComparator();
-		canonicalClauses  = new HashMap<Integer,Map<PredicateName,List<List<Literal>>>>(64);
+		canonicalClauses  = new LinkedHashMap<Integer,Map<PredicateName,List<List<Literal>>>>(64);
 		tempBindings      = new BindingList();
 	}
 	public VisitedClauses(int maxSize, boolean sortLiterals) {
@@ -108,7 +108,7 @@ public class VisitedClauses extends ClosedList {
 	
 	private void removeEmptyPortions() {
 		// Walk through the hash maps and discard if nothing underneath.
-		    // HashMap<Integer,Map<PredicateName,List<List<Literal>>>> canonicalClauses
+		    // LinkedHashMap<Integer,Map<PredicateName,List<List<Literal>>>> canonicalClauses
 		Set<     Entry<Integer,Map<PredicateName,List<List<Literal>>>>> entrySet1 = canonicalClauses.entrySet();
 		Iterator<Entry<Integer,Map<PredicateName,List<List<Literal>>>>> iter1     = entrySet1.iterator();
 		int countIter1removes = 0;
@@ -220,7 +220,7 @@ public class VisitedClauses extends ClosedList {
 		if (hashObj1 == null) { // No items yet with this primary key.
 			List<List<Literal>> newSecondaryObject = new ArrayList<List<Literal>>(8);  // Create a new entry.
 			newSecondaryObject.add(literals);
-			Map<PredicateName,List<List<Literal>>> newPrimaryObject = new HashMap<PredicateName,List<List<Literal>>>(8);
+			Map<PredicateName,List<List<Literal>>> newPrimaryObject = new LinkedHashMap<PredicateName,List<List<Literal>>>(8);
 			newPrimaryObject.put(secondaryKey, newSecondaryObject);
 			canonicalClauses.put(primaryKey,   newPrimaryObject);
 			return;

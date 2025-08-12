@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.DataSetUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.wisc.cs.will.FOPC.HandleFOPCstrings;
@@ -64,7 +64,7 @@ public class RegressionExample extends Example  implements Serializable {
 	private Map<SingleClauseNode, Long> cachedNumberOfGroundings = null;
 	
 	public void cacheNumGroundings(SingleClauseNode key, long num) {
-		if (cachedNumberOfGroundings == null) cachedNumberOfGroundings = new HashMap<SingleClauseNode, Long>();
+		if (cachedNumberOfGroundings == null) cachedNumberOfGroundings = new LinkedHashMap<SingleClauseNode, Long>();
 		cachedNumberOfGroundings.put(key, num);
 	}
 	

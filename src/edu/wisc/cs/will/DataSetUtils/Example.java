@@ -9,7 +9,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,7 +121,7 @@ public class Example extends Literal implements Serializable {
     	for (Example ex : examples) {
     		String label = ex.extraLabel;  // Utils.println("   makeLabel = " + label + " for " + ex);
     		if (label != null) {
-    			if (countPerLabel == null) { countPerLabel = new HashMap<String,Integer>(4); }
+    			if (countPerLabel == null) { countPerLabel = new LinkedHashMap<String,Integer>(4); }
     			Integer lookup = countPerLabel.get(label);
     			if (lookup == null) { lookup = 1; } else { lookup++; }
     			countPerLabel.put(label, lookup);

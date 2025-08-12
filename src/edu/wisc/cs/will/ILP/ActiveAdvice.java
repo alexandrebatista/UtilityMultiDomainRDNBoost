@@ -7,7 +7,7 @@ package edu.wisc.cs.will.ILP;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -224,7 +224,7 @@ public class ActiveAdvice {
 
         // If these contain non-operations, we need to expand them just
         // like we do during addAdviceClause.
-        Set<Clause> supportClause = new HashSet<Clause>();
+        Set<Clause> supportClause = new LinkedHashSet<Clause>();
 
         ConnectedSentence implication = rci.getSentence(ap.getContext());
         Sentence body = implication.getSentenceA();

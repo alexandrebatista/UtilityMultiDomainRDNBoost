@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +95,7 @@ public class Experimenter { // TODO - maybe this should be ExperimentWithSimulat
     private ReasonToStopEarly the_reasonToStopEarly = ReasonToStopEarly.useBestAccuracyToStopEarly;
 
     protected boolean useAdvice       = true;
-    private Set<String> lessonsToSkip = new HashSet<String>(32); 
+    private Set<String> lessonsToSkip = new LinkedHashSet<String>(32); 
     private   int     runNumberInUse  =  0;
     protected int     runNumberFirst  =  1; 
     protected int     runNumberLast   = 10;  
@@ -1393,13 +1393,13 @@ public class Experimenter { // TODO - maybe this should be ExperimentWithSimulat
     	List<Example> posExWithAdvice = learnOneClause.getAdviceProcessor().getExamplesWithUniqueAdvice(learnOneClause.getPosExamples());
     	List<Example> negExWithAdvice = learnOneClause.getAdviceProcessor().getExamplesWithUniqueAdvice(learnOneClause.getNegExamples());
     	
-        posExamplesWithAdvice = new HashSet<Example>();
+        posExamplesWithAdvice = new LinkedHashSet<Example>();
         for (Example ex : posExWithAdvice) {
             posExamplesWithAdvice.add(ex);
             ex.setAnnotationTerm( ex.getStringHandler().getStringConstant("% Unique Positive Advice"));
             Utils.println("% This POS example has associated advice: " + ex);
         }
-        negExamplesWithAdvice = new HashSet<Example>();
+        negExamplesWithAdvice = new LinkedHashSet<Example>();
         for (Example ex : negExWithAdvice) {
             negExamplesWithAdvice.add(ex);
             ex.setAnnotationTerm( ex.getStringHandler().getStringConstant("% Unique Negative Advice"));

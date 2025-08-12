@@ -2,8 +2,8 @@ package edu.wisc.cs.will.MLN_Inference;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +106,7 @@ public class MCSAT extends AllOfInference {
 	List<GroundClause> allNewUnitClausesFromNegWgtClause = null;
 	private void invertNegativeWeightClauses() {
 		if (negClauseMap == null) {
-			negClauseMap = new HashMap<GroundClause,List<GroundClause>>(4);
+			negClauseMap = new LinkedHashMap<GroundClause,List<GroundClause>>(4);
 		} else { negClauseMap.clear(); }
 		GroundClause gndClause = groundedMarkovNetwork.getFirstMarkedGroundClause();
         while (gndClause != null) {
@@ -203,7 +203,7 @@ public class MCSAT extends AllOfInference {
 		}
 		timeStamp = (GroundedMarkovNetwork.doMajorDebug ? new TimeStamp("MCSAT: getNextSample(" + samples + ") init unused ground literals") : null);
 		
-		Set<GroundClause> updatedClauses = new HashSet<GroundClause>();
+		Set<GroundClause> updatedClauses = new LinkedHashSet<GroundClause>();
 		// Need to do this before unit-clause propagation, since that will set some markers to null, but those literals have the correct setting.
 		int randomized = 0;
 		int numbGroundLiterals = groundedMarkovNetwork.getNumberOfGroundLiterals();
@@ -236,7 +236,7 @@ public class MCSAT extends AllOfInference {
 		int numberLiteralsForcedToBeTrue              = 0;
 		int numberLiteralsForcedToBeFalse             = 0;
 		int unitClausePropagationCounter              = 0;
-		Set<GroundLiteral> markedLiteralsRemaining = new HashSet<GroundLiteral>(markedLiterals);
+		Set<GroundLiteral> markedLiteralsRemaining = new LinkedHashSet<GroundLiteral>(markedLiterals);
 		while (!markedLiterals.isEmpty()) { // Need to keep looking until no more unit clauses remain.  Why are repeated loops necessary?  Because lit7 might get set to false, which means clause {lit1 v lit7} should now cause lit1 to be set to true.  TODO - use recursion?
 			GroundLiteral gLit = markedLiterals.pop(); // Set truth value and count at most once.
 			gLit.inLinkedList = false;  // Need multiple iterations: e.g., unit clause 3 might cause lit1 to be true, and now we can finalize clause 2 which is (lit1 v lit7).

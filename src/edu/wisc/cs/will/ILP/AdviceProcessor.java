@@ -9,8 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class AdviceProcessor {
 
     private List<RelevantModeInformation> relevantModes = new ArrayList<RelevantModeInformation>();
 
-    protected Set<Integer> unsplitableExamplePositions = new HashSet<Integer>();
+    protected Set<Integer> unsplitableExamplePositions = new LinkedHashSet<Integer>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Noise Data Generation Variables">
@@ -92,11 +92,11 @@ public class AdviceProcessor {
 
     private RelevantClauseListener relevantClauseListener;
 
-    private Set<PredicateNameAndArity> assertedRelevanceModes = new HashSet<PredicateNameAndArity>();
+    private Set<PredicateNameAndArity> assertedRelevanceModes = new LinkedHashSet<PredicateNameAndArity>();
 
-    private Set<PredicateNameAndArity> assertedRelevanceClauses = new HashSet<PredicateNameAndArity>();
+    private Set<PredicateNameAndArity> assertedRelevanceClauses = new LinkedHashSet<PredicateNameAndArity>();
 
-    private Map<PredicateNameAndArity, RelevanceStrength> originalRelevantStrengths = new HashMap<PredicateNameAndArity, RelevanceStrength>();
+    private Map<PredicateNameAndArity, RelevanceStrength> originalRelevantStrengths = new LinkedHashMap<PredicateNameAndArity, RelevanceStrength>();
 
     private MutuallyExclusiveModeConstraint constraint = null;
 
@@ -518,8 +518,8 @@ public class AdviceProcessor {
     // <editor-fold defaultstate="collapsed" desc="Example-to-advice mapping/filter methods methods">
     public <T extends RelevantInformation> MapOfSets<Example, T> filterDuplicateRelevance(MapOfSets<Example, T> activeExampleToAdviceMap) {
 
-        Map<T, T> positiveGeneralizedRelevance = new HashMap<T, T>();
-        Map<T, T> negativeGeneralizedRelevance = new HashMap<T, T>();
+        Map<T, T> positiveGeneralizedRelevance = new LinkedHashMap<T, T>();
+        Map<T, T> negativeGeneralizedRelevance = new LinkedHashMap<T, T>();
 
 
         boolean save = AllOfFOPC.renameVariablesWhenPrinting;
@@ -717,7 +717,7 @@ public class AdviceProcessor {
             Example example = entry.getKey();
             Set<RelevantClauseInformation> groundAdviceForExample = entry.getValue();
 
-//            Set<RelevantClauseInformation> generalizedAdviceForExample = new HashSet<RelevantClauseInformation>();
+//            Set<RelevantClauseInformation> generalizedAdviceForExample = new LinkedHashSet<RelevantClauseInformation>();
 
             for (RelevantClauseInformation rci : groundAdviceForExample) {
                 RelevantClauseInformation newRCI = rci.getGeneralizeRelevantInformation(); //.getSimplified(context, null);
@@ -740,9 +740,9 @@ public class AdviceProcessor {
 //            Example example = entry.getKey();
 //            Set<RelevantClauseInformation> generalizedAdviceForExample = entry.getValue();
 //
-////            Set<RelevantClauseInformation> splitAdviceForExample = new HashSet<RelevantClauseInformation>();
+////            Set<RelevantClauseInformation> splitAdviceForExample = new LinkedHashSet<RelevantClauseInformation>();
 //
-//            Set<RelevantClauseInformation> uniqueRCISet = new HashSet<RelevantClauseInformation>();
+//            Set<RelevantClauseInformation> uniqueRCISet = new LinkedHashSet<RelevantClauseInformation>();
 //
 //            // Each example will have a set of generalized clauses representing the various
 //            // pieces of conjoined advice for that particular example.  Although those clauses
@@ -795,7 +795,7 @@ public class AdviceProcessor {
 ////                }
 //
 //                // get P = power set of setOfVariablePositions.
-//                Set<Set<TermPosition>> crossSet = new HashSet<Set<TermPosition>>();
+//                Set<Set<TermPosition>> crossSet = new LinkedHashSet<Set<TermPosition>>();
 //
 //                for (Set<TermPosition> positionsForSingleVariable : setOfVariablePositions.values()) {
 //                    Set<Set<TermPosition>> P = Utils.getPowerSet(positionsForSingleVariable);
@@ -916,7 +916,7 @@ public class AdviceProcessor {
     // <editor-fold defaultstate="collapsed" desc="Support Methods (Mega & Conjunctive clauses)">
     private List<Clause> generateMegaCombinations(ActiveAdvice activeAdvice, MapOfSets<Example, RelevantClauseInformation> exampleToSplitVariableMap, RelevanceStrength relevanceStrength) {
 
-        Map<Example, RelevantClauseInformation> singleExampleConjunctMap = new HashMap<Example, RelevantClauseInformation>();
+        Map<Example, RelevantClauseInformation> singleExampleConjunctMap = new LinkedHashMap<Example, RelevantClauseInformation>();
 
         for (Map.Entry<Example, Set<RelevantClauseInformation>> entry : exampleToSplitVariableMap.entrySet()) {
             RelevantClauseInformation conjunct = null;
@@ -1149,7 +1149,7 @@ public class AdviceProcessor {
 
         for (List<RelevantClauseInformation> combination : clausesAsLists) {
             RelevantClauseInformation newConjunctRCI = null;
-            Set<RelevantClauseInformation> addedPieces = new HashSet<RelevantClauseInformation>();
+            Set<RelevantClauseInformation> addedPieces = new LinkedHashSet<RelevantClauseInformation>();
 
             for (RelevantClauseInformation anRCIPiece : combination) {
 
@@ -1239,7 +1239,7 @@ public class AdviceProcessor {
 
     // <editor-fold defaultstate="collapsed" desc="Old/Unused Methods">
     private Set<Term> getUnsplitableTerms(RelevantClauseInformation rci) {
-        Set<Term> set = new HashSet<Term>();
+        Set<Term> set = new LinkedHashSet<Term>();
         for (Integer exampleArgumentIndex : unsplitableExamplePositions) {
             if (exampleArgumentIndex < 0 || exampleArgumentIndex >= rci.example.getArity()) {
                 Utils.waitHere("Error: Example argument index " + exampleArgumentIndex + " specified as unsplitable, but example arity = " + rci.example.getArity() + ".");
@@ -1502,7 +1502,7 @@ public class AdviceProcessor {
 
 
 
-            assertedRelevanceClauses = new HashSet<PredicateNameAndArity>();
+            assertedRelevanceClauses = new LinkedHashSet<PredicateNameAndArity>();
         }
 
         if (debugLevel >= 1) {
@@ -1512,8 +1512,8 @@ public class AdviceProcessor {
             Utils.println("% [AdviceProcessor] retractRelevanceAdvice: there are " + Utils.comma(assertedRelevanceModes) + " assertedRelevanceModes to retract.");
         }
 
-        assertedRelevanceModes = new HashSet<PredicateNameAndArity>();
-        assertedRelevanceClauses = new HashSet<PredicateNameAndArity>();
+        assertedRelevanceModes = new LinkedHashSet<PredicateNameAndArity>();
+        assertedRelevanceClauses = new LinkedHashSet<PredicateNameAndArity>();
     }
 
     public void assertRelevanceAdvice(ActiveAdvice activeAdvice, RelevanceStrength minimumStrength) {

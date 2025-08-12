@@ -2,8 +2,8 @@ package edu.wisc.cs.will.Boosting.RDN.Models;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,16 +41,16 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 	}*/
 	
 	// Predicate to RDN Node map
-	// private HashMap<String, DependencyNode> stringRepToNode;
+	// private LinkedHashMap<String, DependencyNode> stringRepToNode;
 
 
 	// --------------------------------------
 	// Cache
 	// ---------------------------------------
 
-	private HashMap<String, HashMap<PredicateType, Set<PredicateName>>> predicateToAncestorMap;
-	private HashMap<String,                        Set<PredicateName>> predicateToQueryParentsMap;	
-	private HashMap<String,                        Set<PredicateName>> predicateToComputedChildrenMap;
+	private LinkedHashMap<String, LinkedHashMap<PredicateType, Set<PredicateName>>> predicateToAncestorMap;
+	private LinkedHashMap<String,                        Set<PredicateName>> predicateToQueryParentsMap;	
+	private LinkedHashMap<String,                        Set<PredicateName>> predicateToComputedChildrenMap;
 
 	/**
 	 * Set to true, if there is any target predicate that depends on another target predicate
@@ -70,7 +70,7 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 	public RelationalDependencyNetwork(JointRDNModel fullModel, WILLSetup setup) {
 		super();
 		// This is not a cached variable
-		// stringRepToNode = new HashMap<String, DependencyPredicateNode>();
+		// stringRepToNode = new LinkedHashMap<String, DependencyPredicateNode>();
 		initializeRDNUsingModel(fullModel, setup);
 		initializeRDNUsingPrecompute(setup);
 		resetCache();
@@ -81,9 +81,9 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 	 * Call this whenever a node or a link is added to the graph.
 	 */
 	private void resetCache() {
-		predicateToAncestorMap = new HashMap<String, HashMap<PredicateType, Set<PredicateName>>>();
-		predicateToQueryParentsMap = new HashMap<String, Set<PredicateName>>();
-		predicateToComputedChildrenMap = new HashMap<String, Set<PredicateName>>();
+		predicateToAncestorMap = new LinkedHashMap<String, LinkedHashMap<PredicateType, Set<PredicateName>>>();
+		predicateToQueryParentsMap = new LinkedHashMap<String, Set<PredicateName>>();
+		predicateToComputedChildrenMap = new LinkedHashMap<String, Set<PredicateName>>();
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 
 	private void initializeRDNUsingPrecompute(WILLSetup setup) {
 
-		HashMap<PredicateName, Set<PredicateName>> predicateToParents = new HashMap<PredicateName, Set<PredicateName>>();
+		LinkedHashMap<PredicateName, Set<PredicateName>> predicateToParents = new LinkedHashMap<PredicateName, Set<PredicateName>>();
 
 		for (int i = 0; i < setup.getInnerLooper().getParser().getNumberOfPrecomputeFiles(); i++) {
 			List<Sentence> sentences = setup.getInnerLooper().getParser().getSentencesToPrecompute(i);
@@ -155,7 +155,7 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 					PredicateName pName = clause.posLiterals.get(0).predicateName;
 
 					if (!predicateToParents.containsKey(pName)) {
-						predicateToParents.put(pName, new HashSet<PredicateName>());
+						predicateToParents.put(pName, new LinkedHashSet<PredicateName>());
 					}
 					Set<PredicateName> parents = predicateToParents.get(pName);
 
@@ -176,7 +176,7 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 			PredicateName pName = clause.posLiterals.get(0).predicateName;
 
 			if (!predicateToParents.containsKey(pName)) {
-				predicateToParents.put(pName, new HashSet<PredicateName>());
+				predicateToParents.put(pName, new LinkedHashSet<PredicateName>());
 			}
 			Set<PredicateName> parents = predicateToParents.get(pName);
 			if (clause.negLiterals == null || clause.negLiterals.size() <= 0) {
@@ -219,7 +219,7 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 			// Set type to query
 			getDependencyNode(predname).setType(PredicateType.QUERY);
 			ConditionalModelPerPredicate model = fullModel.get(pname);
-			Set<PredicateName> parents = new HashSet<PredicateName>();
+			Set<PredicateName> parents = new LinkedHashSet<PredicateName>();
 			model.getParentPredicates(parents);
 			for (PredicateName parent : parents) {
 				addLink(parent, predname, EdgeType.PROBABILISTIC);
@@ -319,8 +319,8 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 			DependencyNode node = stringRepToNode.get(predicate);
 			// Queue of ancestors
 			ArrayList<DependencyNetworkEdge> ancestors_queue = new ArrayList<DependencyNetworkEdge>();
-			Set<PredicateName> ancestors = new HashSet<PredicateName>();
-			Set<PredicateName> nodesConsidered = new HashSet<PredicateName>();  
+			Set<PredicateName> ancestors = new LinkedHashSet<PredicateName>();
+			Set<PredicateName> nodesConsidered = new LinkedHashSet<PredicateName>();  
 			// Search for ancestors
 			ancestors_queue.addAll(node.getParents());
 			while(!ancestors_queue.isEmpty()) {
@@ -356,8 +356,8 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 			}
 			// Queue of ancestors
 			ArrayList<DependencyNetworkEdge> ancestors = new ArrayList<DependencyNetworkEdge>();
-			HashMap<PredicateType, Set<PredicateName>> ancestorsOfType = new HashMap<PredicateType, Set<PredicateName>>();
-			Set<PredicateName> nodesConsidered = new HashSet<PredicateName>();  
+			LinkedHashMap<PredicateType, Set<PredicateName>> ancestorsOfType = new LinkedHashMap<PredicateType, Set<PredicateName>>();
+			Set<PredicateName> nodesConsidered = new LinkedHashSet<PredicateName>();  
 
 			// Search for ancestors
 			ancestors.addAll(node.getParents());
@@ -372,7 +372,7 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 
 				PredicateType aType = ancestor.getType();
 				if (!ancestorsOfType.containsKey(aType)) {
-					ancestorsOfType.put(aType, new HashSet<PredicateName>());
+					ancestorsOfType.put(aType, new LinkedHashSet<PredicateName>());
 				}
 				if (ancestorsOfType.get(aType).add(ancestor.getPredicate())) {
 					// 	Add the parents of the ancestor, if this node was never seen before
@@ -384,14 +384,14 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 		}	
 		
 		
-		HashMap<PredicateType, Set<PredicateName>> map = predicateToAncestorMap.get(predicate);
+		LinkedHashMap<PredicateType, Set<PredicateName>> map = predicateToAncestorMap.get(predicate);
 
 		// We have already computed the ancestors for this node.
 		if (map.containsKey(type)) {
 			return map.get(type);
 		}
 		// No ancestors of this type found. Return empty list
-		return new HashSet<PredicateName>();
+		return new LinkedHashSet<PredicateName>();
 	}
 
 	public Collection<PredicateName> getPredicatesComputedFrom(String predicate) {
@@ -400,8 +400,8 @@ public class RelationalDependencyNetwork extends DependencyNetwork {
 			DependencyNode node = stringRepToNode.get(predicate);
 			// Queue of ancestors
 			ArrayList<DependencyNetworkEdge> children_queue = new ArrayList<DependencyNetworkEdge>();
-			Set<PredicateName> children = new HashSet<PredicateName>();
-			Set<PredicateName> nodesConsidered = new HashSet<PredicateName>();  
+			Set<PredicateName> children = new LinkedHashSet<PredicateName>();
+			Set<PredicateName> nodesConsidered = new LinkedHashSet<PredicateName>();  
 
 			if (node != null) {
 				// Search for ancestors

@@ -3,7 +3,7 @@
  */
 package edu.wisc.cs.will.FOPC;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class FunctionName extends AllOfFOPC {
 	}
 
 	public void addExtensionalDefinition(List<Constant> inputs, Constant output) throws IllegalArgumentException {
-		if (extensionalSemantics == null) { extensionalSemantics = new HashMap<List<Constant>,Constant>(8); }
+		if (extensionalSemantics == null) { extensionalSemantics = new LinkedHashMap<List<Constant>,Constant>(8); }
 		
 		Constant current = extensionalSemantics.get(inputs);
 		if (current != null) {
@@ -42,7 +42,7 @@ public class FunctionName extends AllOfFOPC {
 	public void addNamedArgOrdering(List<String> order) {
 		int arity = Utils.getSizeSafely(order);
 		if (namedArgumentOrdering == null) {
-			namedArgumentOrdering = new HashMap<Integer,List<String>>(4);
+			namedArgumentOrdering = new LinkedHashMap<Integer,List<String>>(4);
 		}
 		List<String> lookup = namedArgumentOrdering.get(arity);
 		if (lookup == null) { // Not currently specified.

@@ -1,6 +1,6 @@
 package edu.wisc.cs.will.FOPC;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +13,7 @@ import edu.wisc.cs.will.Utils.Utils;
 public class RecordHandler {
 
 	protected RecordReferenceMap     referenceMap;
-	protected Map<String,RecordList> recordMap = new HashMap<String,RecordList>();
+	protected Map<String,RecordList> recordMap = new LinkedHashMap<String,RecordList>();
 	
 	public RecordHandler() {
 		this.referenceMap = new RecordReferenceMap();
@@ -232,7 +232,7 @@ public class RecordHandler {
 		}
 		
 		private Map<Pair<String,Integer>,List<RecordEntry>> createPredicateNameIndex() {
-			if ( predicateNameIndex == null ) predicateNameIndex = new HashMap<Pair<String,Integer>,List<RecordEntry>>();
+			if ( predicateNameIndex == null ) predicateNameIndex = new LinkedHashMap<Pair<String,Integer>,List<RecordEntry>>();
 			return predicateNameIndex;
 		}
 		

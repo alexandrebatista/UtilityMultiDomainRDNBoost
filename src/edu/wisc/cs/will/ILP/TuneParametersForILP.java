@@ -1,8 +1,8 @@
 package edu.wisc.cs.will.ILP;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -467,12 +467,12 @@ public class TuneParametersForILP {
 		//Utils.waitHere("The Onion has been created.");
 	}
 	
-	private Map<Integer,Double> bestPrecPerContext = new HashMap<Integer,Double>(32);
+	private Map<Integer,Double> bestPrecPerContext = new LinkedHashMap<Integer,Double>(32);
 	private int getKeyForPreviousBestPrecision(int clauses, int length, int flipFlop) {
 		return clauses + 1000 * length + flipFlop * 1000000;
 	}
 	private void clearPreviousBestPrecision() {	
-		bestPrecPerContext = new HashMap<Integer,Double>(32);
+		bestPrecPerContext = new LinkedHashMap<Integer,Double>(32);
 	}
 	private void setPreviousMinPrecision(int clauses, int length, int flipFlop,	double minimumPrecision) {
 		int key = getKeyForPreviousBestPrecision(clauses, length, flipFlop);
@@ -492,7 +492,7 @@ public class TuneParametersForILP {
 	// We don't want Onion layers that ONLY uses these predicates.  They will either waste time or overfit (there is a small chance some tasks have true definitions expressed only using these). 
 	private boolean novelLiteral(PredicateName pName) { // Also cross-check with Theory.simplify
 		if (notNovelPnames == null)  {
-			notNovelPnames = new HashSet<PredicateName>(16);
+			notNovelPnames = new LinkedHashSet<PredicateName>(16);
 			notNovelPnames.add(outerLooper.innerLoopTask.stringHandler.getPredicateName("sameAs"));
 			notNovelPnames.add(outerLooper.innerLoopTask.stringHandler.getPredicateName("different"));
 			notNovelPnames.add(outerLooper.innerLoopTask.stringHandler.getPredicateName("isaInterestingNumber"));

@@ -6,7 +6,7 @@
 package edu.wisc.cs.will.ResThmProver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import edu.wisc.cs.will.FOPC.PredicateNameAndArity;
  */
 public class PredicateIndex<T extends DefiniteClause> {
 
-    private Map<PredicateNameAndArity, List<T>> definiteClausesByPredicateIndex = new HashMap<PredicateNameAndArity, List<T>>();
+    private Map<PredicateNameAndArity, List<T>> definiteClausesByPredicateIndex = new LinkedHashMap<PredicateNameAndArity, List<T>>();
 
     public void indexDefiniteClause(PredicateNameAndArity key, T definiteClause) {
 

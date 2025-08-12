@@ -35,7 +35,7 @@ public class RegressionWillTree extends RegressionTree {
 	public RegressionWillTree(WILLSetup setup) {
 		// TODO Auto-generated constructor stub
 		super(setup);
-		//suppClauses = new HashSet<Clause>();
+		//suppClauses = new LinkedHashSet<Clause>();
 	}
 
 	public void reparseRegressionTrees() {

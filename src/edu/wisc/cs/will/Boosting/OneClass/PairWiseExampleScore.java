@@ -4,7 +4,7 @@
 package edu.wisc.cs.will.Boosting.OneClass;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +31,8 @@ public class PairWiseExampleScore {
 	private KernelEstimator kernelEst;
 	
 	public PairWiseExampleScore() {
-		currentPairWiseDistance = new HashMap<String, Double>();
-		exampleCategory         = new HashMap<String, Integer>();
+		currentPairWiseDistance = new LinkedHashMap<String, Double>();
+		exampleCategory         = new LinkedHashMap<String, Integer>();
 		kernelEst 				= new KernelEstimator();
 	}
 	

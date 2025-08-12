@@ -5,7 +5,7 @@ package edu.wisc.cs.will.DataSetUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -101,7 +101,7 @@ public class ComputeDatasetSize {
 	
 	public int numConstants() {
 		/*
-		Set<Term> constants = new HashSet<Term>();
+		Set<Term> constants = new LinkedHashSet<Term>();
 		for (Type type : getStringHandler().knownConstantsOfThisType.keySet()) {
 			constants.addAll(getStringHandler().knownConstantsOfThisType.get(type));
 		}
@@ -110,7 +110,7 @@ public class ComputeDatasetSize {
 	}
 	
 	public Set<String> getConstants() {
-		Set<String> constants = new HashSet<String>();
+		Set<String> constants = new LinkedHashSet<String>();
 		for (Type type : getStringHandler().getKnownConstantsOfThisType().keySet()) {
 			for (Term consts : getStringHandler().getKnownConstantsOfThisType().get(type)) {
 				constants.add(consts.toString());
@@ -119,7 +119,7 @@ public class ComputeDatasetSize {
 		return constants;
 	}
 	public int numPredicates() {
-		Set<String> preds = new HashSet<String>();
+		Set<String> preds = new LinkedHashSet<String>();
 		Iterator<Literal> lits = getFacts();
 		while(lits.hasNext()) {
 			Literal lit = lits.next();
@@ -150,7 +150,7 @@ public class ComputeDatasetSize {
 	}
 	public int numGroundLiterals() {
 		int count = 0;
-		Set<String> seenpreds = new HashSet<String>();
+		Set<String> seenpreds = new LinkedHashSet<String>();
 		for (PredicateNameAndArity pred : outerLooper.innerLoopTask.getBodyModes()) {
 			int prod = 1;
 			String pname = pred.getPredicateName().name;

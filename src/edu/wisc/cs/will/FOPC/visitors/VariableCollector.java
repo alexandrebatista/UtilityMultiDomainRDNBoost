@@ -1,6 +1,6 @@
 package edu.wisc.cs.will.FOPC.visitors;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import edu.wisc.cs.will.FOPC.Sentence;
@@ -13,7 +13,7 @@ public class VariableCollector {
 
     public static Set<Variable> collectVariables(Sentence sentence, Set<Variable> set) {
         if (set == null) {
-            set = new HashSet<Variable>();
+            set = new LinkedHashSet<Variable>();
         }
         sentence.accept(VARIABLE_COOLLECTOR_VISITOR, set);
         return set;
@@ -21,7 +21,7 @@ public class VariableCollector {
 
     public static Set<Variable> collectVariables(Term term, Set<Variable> set) {
         if (set == null) {
-            set = new HashSet<Variable>();
+            set = new LinkedHashSet<Variable>();
         }
         term.accept(VARIABLE_COOLLECTOR_VISITOR, set);
         return set;

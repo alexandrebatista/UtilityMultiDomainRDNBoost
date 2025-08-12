@@ -5,7 +5,7 @@ package edu.wisc.cs.will.Boosting.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -172,7 +172,7 @@ public class NumberGroundingsCalculator {
 		List<Literal> posLits = new ArrayList<Literal>(clause.posLiterals);
 		List<Literal> negLits = new ArrayList<Literal>();
 		boolean foundUnifyingLiteral = false;
-		Collection<Variable> seenVariables = new HashSet<Variable>();
+		Collection<Variable> seenVariables = new LinkedHashSet<Variable>();
 		for (Literal posLit: clause.posLiterals) {
 			seenVariables.addAll(posLit.collectFreeVariables(seenVariables));
 		}
@@ -453,7 +453,7 @@ public class NumberGroundingsCalculator {
 		List<Literal> result = new ArrayList<Literal>();
 		List<Literal> copy = new ArrayList<Literal>(posLits);
 		
-		Collection<Variable> seenVars = new HashSet<Variable>();
+		Collection<Variable> seenVars = new LinkedHashSet<Variable>();
 		for (int i = 0; i < posLits.size(); i++) {
 			int minVars = Integer.MAX_VALUE;
 			Literal bestLit = null;
@@ -496,7 +496,7 @@ public class NumberGroundingsCalculator {
 	
 	private Collection<BindingList> expandNegativeLiteralBindingList(
 			Literal lit, Collection<BindingList> negBLs) {
-		Collection<BindingList> outBLs = new HashSet<BindingList>();
+		Collection<BindingList> outBLs = new LinkedHashSet<BindingList>();
 		for (BindingList bl : negBLs) {
 			Literal newLit = lit.applyTheta(bl);
 			Collection<BindingList> thisLitBL = getAllPossibleGroundingsOf(newLit);
@@ -530,7 +530,7 @@ public class NumberGroundingsCalculator {
 							
 				}
 				variableArguments.add(arg);
-				rangeForArguments.add(new HashSet<Term>());
+				rangeForArguments.add(new LinkedHashSet<Term>());
 				int varIndex = rangeForArguments.size() - 1;
 				// Look for all possible types that this arg can have
 				for (PredicateSpec spec : pName.getTypeOnlyList()) {

@@ -3,8 +3,8 @@
  */
 package edu.wisc.cs.will.FOPC;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class DoBuiltInMath extends AllOfFOPC {
 
     private HandleFOPCstrings stringHandler;
 
-    private Map<FunctionName, Set<Integer>> canHandle = new HashMap<FunctionName, Set<Integer>>(16);
+    private Map<FunctionName, Set<Integer>> canHandle = new LinkedHashMap<FunctionName, Set<Integer>>(16);
 
     /**
      *
@@ -98,7 +98,7 @@ public class DoBuiltInMath extends AllOfFOPC {
 
         Set<Integer> lookup = canHandle.get(fName);
         if (lookup == null) {
-            lookup = new HashSet<Integer>(4);
+            lookup = new LinkedHashSet<Integer>(4);
             canHandle.put(fName, lookup);
         }
         lookup.add(arity);

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -1140,7 +1140,7 @@ public class Literal extends Sentence implements Serializable, DefiniteClause, L
             return;
         }
         List<NamedTerm> namedTerms = new ArrayList<NamedTerm>(numbArgs);
-        Set<String> namesSeen = new HashSet<String>(4);
+        Set<String> namesSeen = new LinkedHashSet<String>(4);
         for (int i = 0; i < numbArgs; i++) {
             String argName = argumentNames.get(i);
             if (namesSeen.contains(argName)) {

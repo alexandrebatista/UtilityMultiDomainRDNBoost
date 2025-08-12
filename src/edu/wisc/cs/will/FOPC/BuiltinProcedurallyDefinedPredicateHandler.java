@@ -10,7 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
@@ -124,7 +124,7 @@ public class BuiltinProcedurallyDefinedPredicateHandler extends ProcedurallyDefi
 	private void createBuiltins(HandleFOPCstrings stringHandler) {
 		boolean hold_cleanFunctionAndPredicateNames = stringHandler.cleanFunctionAndPredicateNames;
 		stringHandler.cleanFunctionAndPredicateNames = false;
-		hashOfSupportedPredicates = new HashSet<PredicateNameAndArity>(64);
+		hashOfSupportedPredicates = new LinkedHashSet<PredicateNameAndArity>(64);
 
 		hashOfSupportedPredicates.add(new PredicateNameAndArity(stringHandler.standardPredicateNames.dateToString,      2));
 		hashOfSupportedPredicates.add(new PredicateNameAndArity(stringHandler.standardPredicateNames.dateToUTCstring,   2));

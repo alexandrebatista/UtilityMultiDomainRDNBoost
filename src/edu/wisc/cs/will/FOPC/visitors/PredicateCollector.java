@@ -5,7 +5,7 @@
 
 package edu.wisc.cs.will.FOPC.visitors;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -96,11 +96,11 @@ public class PredicateCollector {
     }
 
     private static class PredicateCollectorData {
-        Set<PredicateNameAndArity> predicates = new HashSet<PredicateNameAndArity>();
+        Set<PredicateNameAndArity> predicates = new LinkedHashSet<PredicateNameAndArity>();
         HornClauseContext context;
         
         // Set of background knowledge predicates that have already been expanded.
-        Set<PredicateNameAndArity> closedList = new HashSet<PredicateNameAndArity>();
+        Set<PredicateNameAndArity> closedList = new LinkedHashSet<PredicateNameAndArity>();
 
         public PredicateCollectorData(HornClauseContext context) {
             this.context = context;

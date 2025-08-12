@@ -2,7 +2,7 @@ package edu.wisc.cs.will.MLN_WeightLearning;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +78,7 @@ public abstract class DiscriminativeWeightLearning {
 			numSatisfiedGroundClausesInDatabase = new double[numberOfClausesUsed];
 			currEstNumSatisfiedGroundClauses    = new double[numberOfClausesUsed];
 			indexToClause                       = new Clause[numberOfClausesUsed];  // Provide a fast way to get back to clauses when needed.
-			clauseToIndex                       = new HashMap<Clause,Integer>(4);   // And a quick way to get the index of a clause.
+			clauseToIndex                       = new LinkedHashMap<Clause,Integer>(4);   // And a quick way to get the index of a clause.
 			groundedMarkovNetwork.task.setAllQueryVariablesToTheirTrainingValues(); // Set the values of the ground literals to that in the training set.
 			for (int i = 0; i < numberOfClausesUsed; i++) { // This FOR LOOP collects the number of true groundings given the training set.
 				Clause clause = Utils.getIthItemInCollectionUnsafe(allClauses, i);
@@ -89,7 +89,7 @@ public abstract class DiscriminativeWeightLearning {
 				if (debugLevel > 1) { Utils.println("% Number of satisfied clauses in database = " + Utils.truncate(numSatisfiedGroundClausesInDatabase[i], 0) + " for '" + clause + "'"); }
 			}
 			initWeights(); // Be sure to compute AFTER setting all the queries and setting numSatisfiedGroundClausesInDatabase[].
-			holdInitialLiteralValues = new HashMap<GroundLiteral,Boolean>(4); // Probably no longer need this, but keep around for now.
+			holdInitialLiteralValues = new LinkedHashMap<GroundLiteral,Boolean>(4); // Probably no longer need this, but keep around for now.
 			Map<GroundLiteral,Block> allBlocks = groundedMarkovNetwork.getAllBlocks();
 			if (gndLiterals != null && allBlocks != null) for (GroundLiteral gndLiteral : gndLiterals) {
 				holdInitialLiteralValues.put(gndLiteral, gndLiteral.getValue());

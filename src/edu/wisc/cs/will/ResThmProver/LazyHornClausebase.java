@@ -6,7 +6,7 @@ package edu.wisc.cs.will.ResThmProver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -748,7 +748,7 @@ public class LazyHornClausebase implements HornClausebase {
 
     public void addAssertRetractListener(AssertRetractListener assertRetractListener, PredicateNameAndArity predicate) {
         if (listenerMap == null) {
-            listenerMap = new HashMap<PredicateNameAndArity, List<AssertRetractListener>>();
+            listenerMap = new LinkedHashMap<PredicateNameAndArity, List<AssertRetractListener>>();
         }
 
         List<AssertRetractListener> list = listenerMap.get(predicate);

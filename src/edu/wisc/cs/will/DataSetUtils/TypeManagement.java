@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,10 +105,10 @@ public class TypeManagement {
     private int inHash = 0;
 
     public void collectImplicitTypeConstantsViaModeAndFactInspection(PrintStream printStream, Set<PredicateNameAndArity> bodyModes, Iterable<Sentence> backgroundFacts) {
-        Map<Term, Set<Type>> alreadyCheckedConstantHash = new HashMap<Term, Set<Type>>(4096);
+        Map<Term, Set<Type>> alreadyCheckedConstantHash = new LinkedHashMap<Term, Set<Type>>(4096);
         for (PredicateNameAndArity predName : bodyModes) {
             // First need to see if this predicate can have DIFFERENT numbers of arguments.  If so, we need to treat each separately.
-            Set<Integer> sizes = new HashSet<Integer>(4);
+            Set<Integer> sizes = new LinkedHashSet<Integer>(4);
             for (PredicateSpec specs : predName.getPredicateName().getTypeList()) { // Consider each known mode for this predicate.
                 Integer length = Utils.getSizeSafely(specs.getSignature());
                 sizes.add(length);
@@ -120,7 +120,7 @@ public class TypeManagement {
             for (Integer argSize : sizes) {
                 boolean firstTime = true;
                 int size = Utils.getSizeSafely(predName.getPredicateName().getTypeListForThisArity(argSize));
-                Set<Integer> ambiguous = new HashSet<Integer>(size);
+                Set<Integer> ambiguous = new LinkedHashSet<Integer>(size);
                 List<Type> argTypes = new ArrayList<Type>(size);
                 for (PredicateSpec specs : predName.getPredicateName().getTypeListForThisArity(argSize)) { // Again consider each known mode for this predicate, but only worry about those with arity = argSize.
                     // We now have to see if all modes for this parity and arity specify the same types for the arguments.
@@ -205,7 +205,7 @@ public class TypeManagement {
                     dups++;
                 }
                 if (lookup1 == null) {
-                    lookup1 = new HashSet<Type>(4);
+                    lookup1 = new LinkedHashSet<Type>(4);
                     alreadyCheckedConstantHash.put(arg, lookup1);
                 }
                 lookup1.add(thisType);
@@ -261,7 +261,7 @@ public class TypeManagement {
     // Check all constants in facts and make sure they are typed (and uniquely!).
     public boolean checkThatTypesOfAllConstantsAreKnown(PrintStream printStream, Iterable<Sentence> backgroundFacts) {
         boolean untypedConstantFound = false;
-        Set<Term> alreadyCheckedHash = new HashSet<Term>(1024);
+        Set<Term> alreadyCheckedHash = new LinkedHashSet<Term>(1024);
 
         if (backgroundFacts != null) {
             for (Sentence sentence : backgroundFacts) {
@@ -430,11 +430,11 @@ public class TypeManagement {
             }
 
             if (beenWarnedHashMap == null) {
-                beenWarnedHashMap = new HashMap<PredicateName, Set<Type>>(4);
+                beenWarnedHashMap = new LinkedHashMap<PredicateName, Set<Type>>(4);
             }
             Set<Type> lookup1a = beenWarnedHashMap.get(predName);  // See if there has been a warning about this type from this predicate.
             if (lookup1a == null) {
-                lookup1a = new HashSet<Type>(4);
+                lookup1a = new LinkedHashSet<Type>(4);
                 beenWarnedHashMap.put(predName, lookup1a);
             }
             if (!lookup1a.contains(type)) { // TODO clean up these two println's
@@ -451,7 +451,7 @@ public class TypeManagement {
         }
 
         if (addedConstantHashMap == null) {
-            addedConstantHashMap = new HashMap<Term, Map<Type, Literal>>(1024);
+            addedConstantHashMap = new LinkedHashMap<Term, Map<Type, Literal>>(1024);
         }
         Map<Type, Literal> lookup1b = addedConstantHashMap.get(constant);  // See if this constant has been already assigned to another type, and if so report the literal that caused it to be so.
         if (lookup1b != null && !lookup1b.containsKey(type)) { // Just report the FIRST conflict, since the others can be traced back from the reports (i.e., the first one doesn't know it is a duplicate).
@@ -462,7 +462,7 @@ public class TypeManagement {
             }
         }
         if (lookup1b == null) {
-            lookup1b = new HashMap<Type, Literal>(4);
+            lookup1b = new LinkedHashMap<Type, Literal>(4);
             addedConstantHashMap.put(constant, lookup1b);
         }
         if (!lookup1b.containsKey(type)) {

@@ -6,8 +6,8 @@ package edu.wisc.cs.will.FOPC.visitors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -513,7 +513,7 @@ public class DuplicateDeterminateRemover {
 
         private PassOneData passOneData;
 
-        private Set<LitEntry> seenLiterals = new HashSet<LitEntry>();
+        private Set<LitEntry> seenLiterals = new LinkedHashSet<LitEntry>();
 
         private Map<Integer, Term> groupBindings;
 
@@ -529,7 +529,7 @@ public class DuplicateDeterminateRemover {
         }
 
         private void createBindings() {
-            groupBindings = new HashMap<Integer, Term>();
+            groupBindings = new LinkedHashMap<Integer, Term>();
 
             for (Integer integer : getPassOneData().groupToVariableMap.keySet()) {
                 Term binding = getGroupBinding(integer);
@@ -685,7 +685,7 @@ public class DuplicateDeterminateRemover {
 
     public static class PassThreeData {
 
-        private Set<Literal> seenLiterals = new HashSet<Literal>();
+        private Set<Literal> seenLiterals = new LinkedHashSet<Literal>();
 
         public PassThreeData() {
         }

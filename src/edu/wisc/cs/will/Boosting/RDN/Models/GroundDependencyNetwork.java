@@ -1,8 +1,8 @@
 package edu.wisc.cs.will.Boosting.RDN.Models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +30,7 @@ public class GroundDependencyNetwork extends DependencyNetwork {
 		super();
 		this.jointExamples = queryExamples;
 		this.willSetup     = setup;
-		this.queryExampleStr = new HashSet<String>();
+		this.queryExampleStr = new LinkedHashSet<String>();
 	}
 	
 	public void buildNetwork(JointRDNModel jointModel) {
@@ -101,7 +101,7 @@ public class GroundDependencyNetwork extends DependencyNetwork {
 	}
 	
 	public void calculateNumberofComponents(List<Map<String, List<RegressionRDNExample>>> examplesPerComponent) {
-		Set<String> seenLiterals = new HashSet<String>();
+		Set<String> seenLiterals = new LinkedHashSet<String>();
 		int numOfComponents = 0;
 		int totalSize = 0;
 		int totalExamples=0;
@@ -127,7 +127,7 @@ public class GroundDependencyNetwork extends DependencyNetwork {
 					} else {
 						if (examplesPerComponent != null) {
 							if (examplesPerComponent.size() <= numOfComponents) {
-								examplesPerComponent.add(new HashMap<String, List<RegressionRDNExample>>());
+								examplesPerComponent.add(new LinkedHashMap<String, List<RegressionRDNExample>>());
 							}
 							String predName = nodeLit.predicateName.name;
 							if (predName.startsWith(WILLSetup.multiclassPredPrefix)) { predName = predName.substring(WILLSetup.multiclassPredPrefix.length());}

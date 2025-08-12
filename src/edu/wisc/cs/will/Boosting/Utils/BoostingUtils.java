@@ -5,7 +5,7 @@ package edu.wisc.cs.will.Boosting.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class BoostingUtils {
 		if (input_rex == null) {
 			return null;
 		}
-		HashMap<T, List<Example>> output = new HashMap<T, List<Example>>();
+		LinkedHashMap<T, List<Example>> output = new LinkedHashMap<T, List<Example>>();
 		castMapToRegRDNEgToMapToEg(input_rex, output);
 		return output;
 	}

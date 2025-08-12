@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.Boosting.MLN;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.wisc.cs.will.Boosting.Common.SRLInference;
@@ -21,18 +21,18 @@ import edu.wisc.cs.will.Utils.Utils;
  */
 public class MLNInference extends SRLInference {
 
-	protected Map<String, Long> timePerModel = new HashMap<String, Long>();
+	protected Map<String, Long> timePerModel = new LinkedHashMap<String, Long>();
 	protected Map<String, Long> cachedRegressionClauseWeights = null; 
 	public MLNInference(WILLSetup setup, JointRDNModel model) {
 		super(setup);
 		this.jointModel = model;
-		cachedRegressionClauseWeights = new HashMap<String, Long>();
+		cachedRegressionClauseWeights = new LinkedHashMap<String, Long>();
 		// RDN should be built in getRDN() to ensure updated model is used.
 	//	rdn = new RelationalDependencyNetwork(model, setup);
 	}
 	
 	public void resetCache() {
-		cachedRegressionClauseWeights = new HashMap<String, Long>();
+		cachedRegressionClauseWeights = new LinkedHashMap<String, Long>();
 	}
 	@Override
 	public ProbDistribution getExampleProbability(Example eg) {

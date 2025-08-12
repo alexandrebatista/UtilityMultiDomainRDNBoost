@@ -77,7 +77,7 @@ public abstract class Constant extends Term {
 	public abstract String getName();
 	
 //	public void addGeneratorOfThisConstantsType(Literal generator) {
-//		if (generatorsOfThisConstantsTypes == null) { generatorsOfThisConstantsTypes = new HashSet<Literal>(4); }
+//		if (generatorsOfThisConstantsTypes == null) { generatorsOfThisConstantsTypes = new LinkedHashSet<Literal>(4); }
 //		generatorsOfThisConstantsTypes.add(generator);
 //	}
 //	public Set<Literal> getGeneratorOfThisConstantsType() {

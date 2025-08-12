@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,8 +25,8 @@ public class TreeStructuredTheory extends Theory {
 	private Literal                  headLiteral;
 	private TreeStructuredTheoryNode root;
 	private static int uniqueVarCounter = 1; // This is shared across multiple WILL threads, but that should be OK (if not, place counter in stringHander).
-	private static Map<String,StringConstant> flattenedVarMap = new HashMap<String,StringConstant>(4); // Ditto.
-	private Set<Literal> uniqueFlattenedLiterals = new HashSet<Literal>(4);
+	private static Map<String,StringConstant> flattenedVarMap = new LinkedHashMap<String,StringConstant>(4); // Ditto.
+	private Set<Literal> uniqueFlattenedLiterals = new LinkedHashSet<Literal>(4);
 	
 	private List<Clause> flattenedClauses;
 
@@ -131,7 +131,7 @@ public class TreeStructuredTheory extends Theory {
 	public TreeStructuredTheory createFlattenedClauses() {
     	if (getClauses() != null) {
     		List<Clause> newClauses = new ArrayList<Clause>(getClauses().size());
-    		Set<Clause> clauses = new HashSet<Clause>(); //to store set of clauses//Kaushik
+    		Set<Clause> clauses = new LinkedHashSet<Clause>(); //to store set of clauses//Kaushik
     		for (Clause c : getClauses()) if (c.isDefiniteClause()) {
     			clauses.add(c); //add every clause//added by Kaushik because he's super cool
     			Clause newClause = c;

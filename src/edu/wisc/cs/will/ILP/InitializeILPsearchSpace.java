@@ -4,7 +4,7 @@
 package edu.wisc.cs.will.ILP;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +77,7 @@ public class InitializeILPsearchSpace extends Initializer {
 			List<Term>         variables    = varLists.get(i);
 			List<ArgSpec>      specs        = specsList.get(i);
 			List<Type>         typesPresent = new ArrayList<Type>(4);
-			Map<Type,List<Term>> typesMap   = new HashMap<Type,List<Term>>(4);  // Collect the existing constants and variables that go with each type. 
+			Map<Type,List<Term>> typesMap   = new LinkedHashMap<Type,List<Term>>(4);  // Collect the existing constants and variables that go with each type. 
 			for (ArgSpec spec : specs) {
 				Type type = spec.typeSpec.isaType;
 				
@@ -219,7 +219,7 @@ public class InitializeILPsearchSpace extends Initializer {
 
 	private Map<Type,List<Term>> collectNewTypes(List<ArgSpec> argSpecs, List<Term> origVarsNeeded, List<Term> currentVarsNeeded) {
 		if (argSpecs == null) { return null; }
-		Map<Type,List<Term>> results = new HashMap<Type,List<Term>>(4);		
+		Map<Type,List<Term>> results = new LinkedHashMap<Type,List<Term>>(4);		
 		for (ArgSpec spec : argSpecs) {
 			Type       type  = spec.typeSpec.isaType;			
 			List<Term> terms = results.get(type);
@@ -253,7 +253,7 @@ public class InitializeILPsearchSpace extends Initializer {
 	// Do all these variables have a UNIQUE match?  Note: equals is properly defined for FOPC functions.
 	private boolean allUniqueBindings(BindingList bl, List<Term> vars, PredicateSpec pSpec) {
 		if (Utils.getSizeSafely(vars) < 2) { return true; } 
-		Map<Term,List<Type>> termsSeen = new HashMap<Term,List<Type>>(4);  // Use List instead instead of Set since these should be small.
+		Map<Term,List<Type>> termsSeen = new LinkedHashMap<Term,List<Type>>(4);  // Use List instead instead of Set since these should be small.
 		if (Utils.getSizeSafely(vars) != Utils.getSizeSafely(pSpec.getTypeSpecList())) { Utils.error("Mismatch: " + vars + " vs." + pSpec.getTypeSpecList()); }
 		for (int i = 0; i < vars.size(); i++) if (vars.get(i) instanceof Variable) {
 			Term var = vars.get(i);  // Utils.println("   i1=" + i + " typeSpec=" + pSpec.getTypeSpecList().get(i));
@@ -270,7 +270,7 @@ public class InitializeILPsearchSpace extends Initializer {
 	
 	private List<Term> getVarsNeeded(BindingList bl, List<Term> vars, PredicateSpec pSpec) {
 		if (Utils.getSizeSafely(vars) < 2) { return vars; } 
-		Map<Term,List<Type>> termsSeen = new HashMap<Term,List<Type>>(4);  // Use List instead instead of Set since these should be small.
+		Map<Term,List<Type>> termsSeen = new LinkedHashMap<Term,List<Type>>(4);  // Use List instead instead of Set since these should be small.
 		List<Term>          varsNeeded = new ArrayList<Term>(1);
 		if (Utils.getSizeSafely(vars) != Utils.getSizeSafely(pSpec.getTypeSpecList())) { Utils.error("Mismatch: " + vars + " vs." + pSpec.getTypeSpecList()); }
 		for (int i = 0; i < vars.size(); i++) if (vars.get(i) instanceof Variable) { // Utils.println("   i2=" + i + " typeSpec=" + pSpec.getTypeSpecList().get(i));
@@ -289,8 +289,8 @@ public class InitializeILPsearchSpace extends Initializer {
 	
 	private Map<Variable,Term> getNewTheta(BindingList bl, List<Term> vars, PredicateSpec pSpec) {
 		if (Utils.getSizeSafely(vars) < 2) { return bl.theta; } 
-		Map<Term,List<TypeVarPair>> termsSeen = new HashMap<Term,List<TypeVarPair>>(4);  // Use List instead instead of Set since these should be small.
-		Map<Variable,Term>          newTheta  = new HashMap<Variable,Term>(4);
+		Map<Term,List<TypeVarPair>> termsSeen = new LinkedHashMap<Term,List<TypeVarPair>>(4);  // Use List instead instead of Set since these should be small.
+		Map<Variable,Term>          newTheta  = new LinkedHashMap<Variable,Term>(4);
 		if (Utils.getSizeSafely(vars) != Utils.getSizeSafely(pSpec.getTypeSpecList())) { Utils.error(); }
 		for (int i = 0; i < vars.size(); i++) if (vars.get(i) instanceof Variable) {  // Utils.println("   i3=" + i + " typeSpec=" + pSpec.getTypeSpecList().get(i));
 			Variable var = (Variable) vars.get(i);

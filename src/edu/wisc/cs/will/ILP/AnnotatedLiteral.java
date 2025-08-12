@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.ILP;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +58,7 @@ public class AnnotatedLiteral extends Literal implements Serializable {
 			if (term1 instanceof Variable && newTerms               != null &&               newTerms.containsKey(term1) && // Otherwise they must both be new variables of the same type.
 				term2 instanceof Variable && newTermsInOtherLiteral != null && newTermsInOtherLiteral.containsKey(term2) &&
 				newTerms.get(term1) == newTermsInOtherLiteral.get(term2)) {   // Can use == here since type strings are uniquely mapped to type instances.
-				if (newVarsFound == null) { newVarsFound = new HashMap<Variable,Variable>(4); }
+				if (newVarsFound == null) { newVarsFound = new LinkedHashMap<Variable,Variable>(4); }
 				Variable var1    = (Variable) term1;
 				Variable var2    = (Variable) term2;
 				Variable lookup1 = newVarsFound.get(var1);

@@ -6,7 +6,7 @@ package edu.wisc.cs.will.FOPC;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -787,7 +787,7 @@ public class ConsCell extends Function implements Iterable<Term> {
         }
 
         // Collect the items in THIS that are in OTHER.
-        Set<Term> result = new HashSet<Term>(4); 
+        Set<Term> result = new LinkedHashSet<Term>(4); 
         Term      first  = getArgument(0);
         ConsCell  rest   = ensureIsaConsCell(stringHandler, getArgument(1));
         result.addAll(other.convertConsCellToList()); // Collect everything in other.

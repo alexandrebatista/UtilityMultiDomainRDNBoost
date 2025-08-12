@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -386,7 +386,7 @@ public class HornClauseProverChildrenGenerator extends ChildrenNodeGenerator<Hor
                         Clause c = nextHornSearchNode.clause;
 
                         if (searchNode.bindings != null) {
-                            Set<Variable> printVars = new HashSet<Variable>(printBindings.getVariables());
+                            Set<Variable> printVars = new LinkedHashSet<Variable>(printBindings.getVariables());
                             for (Variable variable : printVars) {
                                 Term reverseBinding = searchNode.bindings.lookup(variable);
                                 if (reverseBinding instanceof Variable && reverseBinding != null) {
@@ -1079,7 +1079,7 @@ public class HornClauseProverChildrenGenerator extends ChildrenNodeGenerator<Hor
                 factResolutions++;
 
 //                if (bindingList.theta.size() > 0) {
-//                    bindingList.theta = new HashMap<Variable, Term>();
+//                    bindingList.theta = new LinkedHashMap<Variable, Term>();
 //                } // Revert to the empty binding list.
                 BindingList theta = unify(negatedLiteral, fact, new BindingList());
 

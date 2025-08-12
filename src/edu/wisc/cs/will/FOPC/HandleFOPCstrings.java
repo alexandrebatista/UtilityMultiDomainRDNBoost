@@ -10,8 +10,8 @@ import static edu.wisc.cs.will.Utils.MessageType.STRING_HANDLER_VARIABLE_INDICAT
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -147,7 +147,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 	public  boolean useFastHashCodeForLiterals  = true;
 	public  boolean useFastHashCodeForClauses   = true;
 
-    private Map<String,Integer> nameCounter    = new HashMap<String,Integer>(4);  // Unique name counter for anonymous names...
+    private Map<String,Integer> nameCounter    = new LinkedHashMap<String,Integer>(4);  // Unique name counter for anonymous names...
 
 	private   static Map<String,Integer> precedenceTableForOperators_static   = null; // To avoid the need to pass around a stringHandler, there is also a static version that uses String.equals instead of '=='.
 	private   static Map<String,Integer> precedenceTableForConnectives_static = null;
@@ -161,7 +161,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 	private Map<PredicateName,Map<Integer,UserDefinedLiteral>> userAddedProcDefinedPredicates = null;
     private UserDefinedLiteralCache userDefinedLiteralCache = null; // Cache for user defined literals.
 
-    private Set<String> filesLoaded = new HashSet<String>(8);
+    private Set<String> filesLoaded = new LinkedHashSet<String>(8);
 
     // This group records information used by the MLN code.
 	private List<PredicateName> queryPredicates;
@@ -181,7 +181,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
     /** Clausebase handling for facts added to the clausebase. */
     public VariantClauseAction variantRuleHandling = WARN_AND_REMOVE_VARIANTS;
 
-    private Map<Literal, Literal> literalAliases = new HashMap<Literal, Literal>();
+    private Map<Literal, Literal> literalAliases = new LinkedHashMap<Literal, Literal>();
 
 	public HandleFOPCstrings() {
 		this(false);
@@ -200,19 +200,19 @@ public final class HandleFOPCstrings implements CallbackRegister {
 		boolean hold = cleanFunctionAndPredicateNames;
 		cleanFunctionAndPredicateNames = false;
 
-		knownConstantsOfThisType = new HashMap<Type,Set<Term>>(4);
+		knownConstantsOfThisType = new LinkedHashMap<Type,Set<Term>>(4);
 		knownModes          = new ArrayList<PredicateNameAndArity>(16);
 		disallowedModes     = new ArrayList<PredicateNameAndArity>(4);
-		predicateNameHash   = new HashMap<String,PredicateName>(64);
-		functionNameHash    = new HashMap<String,FunctionName>(16);
-		connectiveNameHash  = new HashMap<String,ConnectiveName>(16);
-		variableHash        = new HashMap<String,Stack<Variable>>(1024);  // Need some cleanup (garbage collection) mechanism ..  TODO
-		variableNamesSeen         = new HashSet<String>(1024);
-		internalVariableNamesSeen = new HashSet<String>(1024);
+		predicateNameHash   = new LinkedHashMap<String,PredicateName>(64);
+		functionNameHash    = new LinkedHashMap<String,FunctionName>(16);
+		connectiveNameHash  = new LinkedHashMap<String,ConnectiveName>(16);
+		variableHash        = new LinkedHashMap<String,Stack<Variable>>(1024);  // Need some cleanup (garbage collection) mechanism ..  TODO
+		variableNamesSeen         = new LinkedHashSet<String>(1024);
+		internalVariableNamesSeen = new LinkedHashSet<String>(1024);
 		stackOfVariableHashes     = new Stack<Map<String,Stack<Variable>>>();
-		stringConstantHash  = new HashMap<String,StringConstant>(32);
-		numericConstantHash = new HashMap<String,NumericConstant>(32);
-		constantToTypesMap  = new HashMap<Term,List<Type>>(256); // Likely to be a lot of these, and of not, the testbed is a small one and space unimportant
+		stringConstantHash  = new LinkedHashMap<String,StringConstant>(32);
+		numericConstantHash = new LinkedHashMap<String,NumericConstant>(32);
+		constantToTypesMap  = new LinkedHashMap<Term,List<Type>>(256); // Likely to be a lot of these, and of not, the testbed is a small one and space unimportant
 
 
         standardPredicateNames = new StandardPredicateNames(this);
@@ -230,12 +230,12 @@ public final class HandleFOPCstrings implements CallbackRegister {
 		cutLiteral          = this.getLiteral(standardPredicateNames.cut);
 		trueClause          = this.getClause(trueLiteral,  true);
 		falseClause         = this.getClause(falseLiteral, false);
-		precedenceTableForOperators   = new HashMap<FunctionName,  Integer>( 8);
-		precedenceTableForConnectives = new HashMap<ConnectiveName,Integer>(24);
+		precedenceTableForOperators   = new LinkedHashMap<FunctionName,  Integer>( 8);
+		precedenceTableForConnectives = new LinkedHashMap<ConnectiveName,Integer>(24);
 		initPrecedences(precedenceTableForOperators, precedenceTableForConnectives);
 		if (precedenceTableForOperators_static == null) {
-			precedenceTableForOperators_static   = new HashMap<String,Integer>( 8);
-			precedenceTableForConnectives_static = new HashMap<String,Integer>(24);
+			precedenceTableForOperators_static   = new LinkedHashMap<String,Integer>( 8);
+			precedenceTableForConnectives_static = new LinkedHashMap<String,Integer>(24);
 			initPrecedences_static(precedenceTableForOperators_static, precedenceTableForConnectives_static);
 		}
 
@@ -1183,7 +1183,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 	}
 	public Set<Term> getSetNil() {
 		if (nil == null) { nil = this.getConsCell(); } // The list containing the empty cons cell.
-		if (setNIL == null) { setNIL = new HashSet<Term>(4); setNIL.add(nil); }
+		if (setNIL == null) { setNIL = new LinkedHashSet<Term>(4); setNIL.add(nil); }
 		return setNIL;
 	}
 
@@ -1393,7 +1393,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 		return startsWithLowerCase;
 	}
 
-	private Map<String,Integer> mapForGetUniqueStringConstant = new HashMap<String,Integer>(4);
+	private Map<String,Integer> mapForGetUniqueStringConstant = new LinkedHashMap<String,Integer>(4);
 	public StringConstant getUniqueStringConstant(String string) {
 		Integer lookup = mapForGetUniqueStringConstant.get(string);
 		if (lookup == null) {
@@ -1598,7 +1598,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 
 			if (hashedValue != null) {
 				if (hashedValue.argumentName != null) {
-					Utils.error("This numeric constant has a name: '" + hashedValue.argumentName + "', so cannot be unnamed.  StdName='" + stdName + "'.\n hashedValue='" + hashedValue + "'  hashMap=" + numericConstantHash);
+					Utils.error("This numeric constant has a name: '" + hashedValue.argumentName + "', so cannot be unnamed.  StdName='" + stdName + "'.\n hashedValue='" + hashedValue + "'  LinkedHashMap=" + numericConstantHash);
 				}
 				return hashedValue;
 			}
@@ -1757,7 +1757,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 			int count = 0;
 			for (Term d : possibleValues) if (c.equals(d)) { count++; }
 			if (count > 1) {
-				if (duplicated == null) { duplicated = new HashSet<Term>(4); }
+				if (duplicated == null) { duplicated = new LinkedHashSet<Term>(4); }
 				duplicated.add(c);
 				Utils.println("  Warning: multiple copies (" + count + ") of '" + c + "' in types for " + category + " = " + possibleValues + ".  Discarding the duplicates.");
 				dups += count;
@@ -1771,7 +1771,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 				cleanedPossibleValues.add(c);
 			}
 
-			// Now need to add ONE copy of all the duplicated items.  TODO - this loses order, so if that matters, add the FIRST duplicate and mark in a 2nd hashMap.
+			// Now need to add ONE copy of all the duplicated items.  TODO - this loses order, so if that matters, add the FIRST duplicate and mark in a 2nd LinkedHashMap.
 			for (Iterator<Term> cIter = duplicated.iterator(); cIter.hasNext(); ) {
 			     cleanedPossibleValues.add(cIter.next());
 			}
@@ -1800,10 +1800,10 @@ public final class HandleFOPCstrings implements CallbackRegister {
      * @return The constants of exactly the given type as a list, or null if
 	 *         there are no such constants.  A FRESH list is returned.
 	 */
-	public Set<Term> getConstantsOfExactlyThisTypeAsList(Type type) { // TODO if this is too slow, keep a HashSet AND a list version (i.e., the usual time-space tradeoff).
+	public Set<Term> getConstantsOfExactlyThisTypeAsList(Type type) { // TODO if this is too slow, keep a LinkedHashSet AND a list version (i.e., the usual time-space tradeoff).
 	    Set<Term> types = getKnownConstantsOfThisType().get(type);
 	    if (types == null) { return null; }
-	    Set<Term> result =  new HashSet<Term>(4);
+	    Set<Term> result =  new LinkedHashSet<Term>(4);
 	    result.addAll(types);
 	    return result;
 	}
@@ -1819,7 +1819,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 		Set<Term> existingConstantsOfThisType = getConstantsOfExactlyThisType(type);
 
 		if (existingConstantsOfThisType == null) { // Create this if needed.
-			existingConstantsOfThisType = new HashSet<Term>(32);
+			existingConstantsOfThisType = new LinkedHashSet<Term>(32);
 			getKnownConstantsOfThisType().put(type, existingConstantsOfThisType);
 		}
 		if (existingConstantsOfThisType.contains(constant)) { return; } // Already in the map.
@@ -1857,7 +1857,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 	public void pushVariableHash() { // Utils.println(" pushVariableHash");
 		if (variableHash == null) { Utils.error("variableHash should not be null!"); }
 		stackOfVariableHashes.push(variableHash);
-		variableHash = new HashMap<String,Stack<Variable>>(16); // Assume these are small, since used for renaming, etc.
+		variableHash = new LinkedHashMap<String,Stack<Variable>>(16); // Assume these are small, since used for renaming, etc.
 	}
 	public void popVariableHash() { // Utils.println(" popVariableHash");
 		if (stackOfVariableHashes != null) { variableHash = stackOfVariableHashes.pop(); } // Revert to previous.
@@ -1941,7 +1941,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 	// This is used to keep track of the parent of a variable when it arises from copying.  Currently only Variable.copy() adds to it.
 	// It is used when in a hack for the WisconsinRelevanceInterpreter and should not be used elsewhere.
 	// The same map is used here as in Binding so applyTheta can be used to reverse these copies where doing so is needed.
-	public Map<Variable,Term> parentVarMap = new HashMap<Variable,Term>(4);
+	public Map<Variable,Term> parentVarMap = new LinkedHashMap<Variable,Term>(4);
 	private boolean recordParentVariables = false;
 	public void recordParentVariable(Variable newVar, Variable oldVar) {
 		if (recordParentVariables) { parentVarMap.put(newVar, oldVar); }
@@ -2202,7 +2202,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 		Map<List<Term>,List<Literal>> entry = hashedFactsByAllArgs.get(lit.predicateName);
 
 		if (entry == null) { // New entry.
-			entry = new HashMap<List<Term>,List<Literal>>(4);
+			entry = new LinkedHashMap<List<Term>,List<Literal>>(4);
 			hashedFactsByAllArgs.put(lit.predicateName, entry);
 		}
 		List<Literal> listOfLiterals = entry.get(argsAsConstants);
@@ -2228,7 +2228,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 	public void setRelevance(PredicateName name, int arity, RelevanceStrength strength) {
 		RelevantLiteral newStatement = new RelevantLiteral(name, arity, strength);
 
-		if (relevantLiterals == null) { relevantLiterals = new HashSet<RelevantLiteral>(4); }
+		if (relevantLiterals == null) { relevantLiterals = new LinkedHashSet<RelevantLiteral>(4); }
 		relevantLiterals.add(newStatement);
 
 		name.setRelevance(arity, strength);
@@ -2242,7 +2242,7 @@ public final class HandleFOPCstrings implements CallbackRegister {
 		return relevantLiterals;
 	}
 
-	private Map<String,SetParamInfo> hashOfSetParameters = new HashMap<String,SetParamInfo>(4);
+	private Map<String,SetParamInfo> hashOfSetParameters = new LinkedHashMap<String,SetParamInfo>(4);
 	// If doing joint inference, one target would be evidence for other predicate
 	// So it may have more than one mode for target. This prevents the error check.
 	public boolean dontComplainIfMoreThanOneTargetModes = false;
@@ -2323,11 +2323,11 @@ public final class HandleFOPCstrings implements CallbackRegister {
 	public void addUserProvidedProcDefinedPred(PredicateName pName, int arity, UserDefinedLiteral userLit) throws IllegalStateException {
 		//Utils.waitHere("New user-defined literal: " + pName + "/" + arity + "   " + userLit);
 		if (userLit == null) { return; }
-		if (userAddedProcDefinedPredicates == null) { userAddedProcDefinedPredicates = new HashMap<PredicateName,Map<Integer,UserDefinedLiteral>>(4); }
+		if (userAddedProcDefinedPredicates == null) { userAddedProcDefinedPredicates = new LinkedHashMap<PredicateName,Map<Integer,UserDefinedLiteral>>(4); }
 
 		Map<Integer,UserDefinedLiteral> lookup1 = userAddedProcDefinedPredicates.get(pName);
 		if (lookup1 == null) {
-			lookup1 = new HashMap<Integer,UserDefinedLiteral>(4);
+			lookup1 = new LinkedHashMap<Integer,UserDefinedLiteral>(4);
 			userAddedProcDefinedPredicates.put(pName, lookup1);
 		}
 		UserDefinedLiteral lookup2 = lookup1.get(arity);

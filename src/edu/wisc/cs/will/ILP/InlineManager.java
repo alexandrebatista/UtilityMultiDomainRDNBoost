@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.ILP;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -190,7 +190,7 @@ public class InlineManager {
 					BindingList bl = literalMatchesDeterminateClause(functAtLit, c2, blToUse);
 					if (bl == null) { continue; }
 					List<Clause> recurResults = help_handleInlinerAndSupportingClauses(c2.applyTheta(bl.theta), depth + 1);
-					if (supporters == null) { supporters = new HashSet<Clause>(1); }
+					if (supporters == null) { supporters = new LinkedHashSet<Clause>(1); }
 					//	Utils.println("%   supporters = " + recurResults);
 					if (Utils.getSizeSafely(recurResults) > 0) { supporters.addAll(recurResults); }
 				}
@@ -235,7 +235,7 @@ public class InlineManager {
                             if (bl == null) { continue; }
 
                             List<Clause> recurResults = help_handleInlinerAndSupportingClauses(c2.applyTheta(bl.theta), depth + 1);
-                            if (supporters == null) { supporters = new HashSet<Clause>(1); }
+                            if (supporters == null) { supporters = new LinkedHashSet<Clause>(1); }
                             //Utils.println("%   supporters = " + recurResults);
                             if (Utils.getSizeSafely(recurResults) > 0) { supporters.addAll(recurResults); }
                         }
@@ -245,7 +245,7 @@ public class InlineManager {
                         List<Clause> moreClauses = help_handleInlinerAndSupportingClauses(litAsDefiniteClause, depth+1);
                         if ( moreClauses != null && moreClauses.size() > 1 ) {
                             for (int i = 1; i < moreClauses.size(); i++) {
-                                if (supporters == null) { supporters = new HashSet<Clause>(1); }
+                                if (supporters == null) { supporters = new LinkedHashSet<Clause>(1); }
                                 supporters.add(moreClauses.get(i));
                             }
                         }
@@ -264,7 +264,7 @@ public class InlineManager {
 					BindingList bl = literalMatchesDeterminateClause(lit, c2, blToUse);
 					if (bl == null) { continue; }
 					//stringHandler.reportVarsInFOPC(c2);
-					if (supporters == null) { supporters = new HashSet<Clause>(1); }
+					if (supporters == null) { supporters = new LinkedHashSet<Clause>(1); }
 					List<Clause> recurResults = help_handleInlinerAndSupportingClauses(c2.applyTheta(bl.theta), depth + 1);
 					
 					if (Utils.getSizeSafely(recurResults) > 0) { supporters.addAll(recurResults); }
@@ -279,7 +279,7 @@ public class InlineManager {
 				List<Clause> recurResults = help_handleInlinerAndSupportingClauses(newDefn, depth + 1);
 				if (Utils.getSizeSafely(recurResults) < 1) { Utils.error("recurResults = " + recurResults + " for newliner = " + lit + "\n newDefn = " + newDefn + "\n overall bindings =" + overallBindings); }
 				
-				if (supporters == null) { supporters = new HashSet<Clause>(1); }
+				if (supporters == null) { supporters = new LinkedHashSet<Clause>(1); }
 				Clause        result       = recurResults.remove(0);
 				if (debugLevel > 3) { indentAndPrintln(depth, " INLINE result: " + result.toString(Integer.MAX_VALUE)); }
 				if (debugLevel > 3) { indentAndPrintln(depth, " Overall binds: " + bindingsToDetailedString(overallBindings)); }

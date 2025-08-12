@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -38,13 +38,13 @@ public class Predicates {
 	    
 	}
 	
-	void CreatePredicatesInAlchemyFormat(HashSet<String> RW,String path) throws IOException
+	void CreatePredicatesInAlchemyFormat(LinkedHashSet<String> RW,String path) throws IOException
 	{
 		String NewLine,StoreAddress;
 		boolean var;
 		NewLine="";
 		int stat;
-		HashMap<Integer,Integer> statistics = new HashMap<Integer,Integer>(); 
+		LinkedHashMap<Integer,Integer> statistics = new LinkedHashMap<Integer,Integer>(); 
 		
 		File file2 = new File(path);
 		String parentDirName = file2.getAbsoluteFile().getParent();

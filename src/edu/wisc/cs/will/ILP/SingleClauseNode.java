@@ -7,8 +7,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -113,8 +113,8 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 					if (LearnOneClause.debugLevel > 2) { Utils.println("%  New literal '" + literalAdded + "' constrains argument #" + argNumber + " (" + argN + ")\n% from type = '" + oldType + "' to type '" + newType + "'."); }
 					// Update the type list stored at this node, overriding what is at a parent.
 					if ( this.typesPresent    == null)        { this.typesPresent    = new ArrayList<Type>(1); }
-					if ( this.typesOfNewTerms == null)        { this.typesOfNewTerms = new HashMap<Term,Type>(4); }
-					if ( this.typesMap        == null)        { this.typesMap        = new HashMap<Type,List<Term>>(4); }
+					if ( this.typesOfNewTerms == null)        { this.typesOfNewTerms = new LinkedHashMap<Term,Type>(4); }
+					if ( this.typesMap        == null)        { this.typesMap        = new LinkedHashMap<Type,List<Term>>(4); }
 					if (!this.typesPresent.contains(newType)) { this.typesPresent.add(newType); }
 					List<Term> newList = this.typesMap.get(newType);
 					if (newList == null) { newList = new ArrayList<Term>(1); }
@@ -147,7 +147,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 		this.typesOfNewTerms = typesOfNewTerms;
 	}
 	protected void addTypeOfNewTerm(Term term, Type type) {
-		if (typesOfNewTerms == null) { typesOfNewTerms = new HashMap<Term,Type>(4); }
+		if (typesOfNewTerms == null) { typesOfNewTerms = new LinkedHashMap<Term,Type>(4); }
 		typesOfNewTerms.put(term, type);
 	}
 	protected Type getTypeOfThisTerm(Term arg) {
@@ -693,7 +693,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 		if (theILPtask.getPosExamples() != null) for (Example posEx : theILPtask.getPosExamples()) {
 			// proveExample() clears the bindings, so no need to do so here.
 			if (!proveExampleBodies(theILPtask, target, optimizedClauseBodies, posEx, theILPtask.bindings)) {
-				if (results == null) { results = new HashSet<Example>(4); }
+				if (results == null) { results = new LinkedHashSet<Example>(4); }
 				results.add(posEx);
 				counter++;
 				if (counter >= k) { return results; }
@@ -714,7 +714,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 		if (theILPtask.getNegExamples() != null) for (Example negEx : theILPtask.getNegExamples()) {
 			// proveExample() clears the bindings, so no need to do so here.
 			if (proveExampleBodies(theILPtask, target, optimizedClauseBodies, negEx, theILPtask.bindings)) {
-				if (results == null) { results = new HashSet<Example>(4); }
+				if (results == null) { results = new LinkedHashSet<Example>(4); }
 				results.add(negEx);
 				counter++;
 				if (counter >= k) { return results; }
@@ -779,7 +779,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 
 							if (newState != null &&
 									!newState.equals(lastState)) {
-								Set<PredicateName> modifiedPredicates = new HashSet<PredicateName>();
+								Set<PredicateName> modifiedPredicates = new LinkedHashSet<PredicateName>();
 								HiddenLiteralState.statePredicateDifference(lastState, newState, modifiedPredicates, target.predicateName.name);
 								// Check if predicates present in the newly added node
 								List<Literal> newLits = getClauseBody(true);
@@ -803,7 +803,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 						}
 						else { if (localDebugLevel > 2) { Utils.println("%       MISSED POS (due to last literal): " + posEx); } // NOTE: this doesn't report those examples that failed EARLIER
 						maxPossiblePosCoverage -= posEx.getWeightOnExample(); // Lost out on this.
-						if (posExamplesThatFailedHere == null) { posExamplesThatFailedHere = new HashSet<Example>(); }
+						if (posExamplesThatFailedHere == null) { posExamplesThatFailedHere = new LinkedHashSet<Example>(); }
 						posExamplesThatFailedHere.add(posEx);
 						if (theILPtask.regressionTask && !theILPtask.oneClassTask) {
 							if (cachedLocalRegressionInfoHolder == null) {  // Don't create until needed.
@@ -889,7 +889,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 					negCoverage += negEx.getWeightOnExample();
 				}
 				else { 
-					if (negExamplesThatFailedHere == null) { negExamplesThatFailedHere = new HashSet<Example>(); }
+					if (negExamplesThatFailedHere == null) { negExamplesThatFailedHere = new LinkedHashSet<Example>(); }
 					negExamplesThatFailedHere.add(negEx);
 				}
 				totalResolutions += prover.getNodesCreated(); 
@@ -1138,7 +1138,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 		if (thisTypesOfNewTerms != null) {
 			for (Term term : args) { // Only keep those new terms (if any) that are in this 'rejected' literal.  (Could see if ALL are there, and if so, no need to copy, but seems better to simply always copy.)
 				if (thisTypesOfNewTerms.containsKey(term)) {
-					if (typesOfNewTermsInTheseArgs == null) { typesOfNewTermsInTheseArgs = new HashMap<Term,Type>(4); }
+					if (typesOfNewTermsInTheseArgs == null) { typesOfNewTermsInTheseArgs = new LinkedHashMap<Term,Type>(4); }
 					typesOfNewTermsInTheseArgs.put(term, thisTypesOfNewTerms.get(term));
 				}
 			}
@@ -2033,7 +2033,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 */
    
     
-    public HashMap<Example, Set<BindingList>> cachedBindingLists = new HashMap<Example, Set<BindingList>>();
+    public LinkedHashMap<Example, Set<BindingList>> cachedBindingLists = new LinkedHashMap<Example, Set<BindingList>>();
     private boolean cacheBLs = false;
 	public void resetGroundingCache() {
 		cachedBindingLists = null;
@@ -2134,7 +2134,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 		Clause clause = learnClause.getStringHandler().getClause(newPos, newNeg);
 		
 		Set<BindingList> blSet = null;
-		if (cacheBLs) { blSet = new HashSet<BindingList>();}
+		if (cacheBLs) { blSet = new LinkedHashSet<BindingList>();}
 		// Add this example 
 		learnClause.getContext().getClausebase().assertFact(eg);
 		long pos_num = learnClause.numberOfGroundings(clause, blSet); 
@@ -2143,7 +2143,7 @@ public class SingleClauseNode extends SearchNode implements Serializable{
 		num = pos_num - neg_num;
 		*/
 		Set<BindingList> blSet = null;
-		if (cacheBLs) { blSet = new HashSet<BindingList>();}
+		if (cacheBLs) { blSet = new LinkedHashSet<BindingList>();}
 		//num = learnClause.numberOfGroundings(clause, blSet);
 		num = groundingsCalc.countGroundingsForConjunction(new_body, new ArrayList<Literal>(), blSet);
 		if (num <= 0) {

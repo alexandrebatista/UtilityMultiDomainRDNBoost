@@ -5,8 +5,8 @@ package edu.wisc.cs.will.Boosting.EM;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class HiddenLiteralSamples {
 		worldStates = new ArrayList<HiddenLiteralState>();
 		probabilities = new ArrayList<Double>();
 		counts = new ArrayList<Long>();
-		worldStateToIndex = new HashMap<HiddenLiteralState, Integer>();
+		worldStateToIndex = new LinkedHashMap<HiddenLiteralState, Integer>();
 	}
 	
 	
@@ -166,7 +166,7 @@ public class HiddenLiteralSamples {
 
 	public Set<String> getPredicates() {
 		if (worldStates.size() == 0) {
-			return new HashSet<String>();
+			return new LinkedHashSet<String>();
 		}
 		return worldStates.get(0).getPredicates();
 	}
@@ -288,7 +288,7 @@ public class HiddenLiteralSamples {
 		}
 		
 		// Rebuild map
-		worldStateToIndex = new HashMap<HiddenLiteralState, Integer>();
+		worldStateToIndex = new LinkedHashMap<HiddenLiteralState, Integer>();
 		for (int i = 0; i < worldStates.size(); i++) {
 			worldStateToIndex.put(worldStates.get(i), i);
 		}

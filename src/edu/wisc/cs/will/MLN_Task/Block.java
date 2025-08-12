@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.MLN_Task;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -94,7 +94,7 @@ public class Block {
 	
 	private void initGndClauses() {
 		if (debugLevel > 0) { Utils.println("*** Initializing list of ground clauses in " + literal + "'s block"); }
-		gndClauses = new HashSet<GroundClause>();
+		gndClauses = new LinkedHashSet<GroundClause>();
 		for (GroundLiteral gndLiteral : gndLiterals) {			
 			for (GroundClause gndClause : gndLiteral.getGndClauseSet()) {
 				gndClauses.add(gndClause);
@@ -354,7 +354,7 @@ public class Block {
 	public Set<GroundLiteral> getNeighbors() {
 		Utils.error("need to fix this code"); return null;
 		/*
-		Set<GroundLiteral> neighbors = new HashSet<GroundLiteral>(4);
+		Set<GroundLiteral> neighbors = new LinkedHashSet<GroundLiteral>(4);
 		if (!valuesInited) { initValues(); }
 		for (GroundClause gndClause : gndClauses) {
 			for (GroundLiteral gndLiteral : gndClause.getLiterals()) if (!neighbors.contains(gndLiteral)) {

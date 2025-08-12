@@ -6,7 +6,7 @@
 package edu.wisc.cs.will.ResThmProver;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -90,7 +90,7 @@ public class DefaultHornClausebaseIndexer<T extends DefiniteClause> implements H
 
         built = false;
 
-        constructedIndices = new HashSet<PredicateNameAndArity>();
+        constructedIndices = new LinkedHashSet<PredicateNameAndArity>();
     }
 
     @Override

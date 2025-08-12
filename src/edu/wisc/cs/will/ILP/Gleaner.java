@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -316,7 +316,7 @@ public class Gleaner extends SearchMonitor implements Serializable {
 		currentGleaner = gleaners.get(marker);
 		
 		if (currentGleaner == null) { // See if we already have a gleaner of this type.  If not, create a new one.
-			currentGleaner = new HashMap<Integer,SavedClause>(8);
+			currentGleaner = new LinkedHashMap<Integer,SavedClause>(8);
 			gleaners.put(marker, currentGleaner);
 			markerList.add(marker);
 			addsToCurrentGleaner              = 0;
@@ -329,7 +329,7 @@ public class Gleaner extends SearchMonitor implements Serializable {
 		currentGleaner = null;
 		defaultGleaner = null;
 		markerList     = new ArrayList<String>(8);
-		gleaners       = new HashMap<String,Map<Integer,SavedClause>>(8);
+		gleaners       = new LinkedHashMap<String,Map<Integer,SavedClause>>(8);
 		setCurrentMarker(defaultMarker); // Create the default Gleaner.
 		defaultGleaner = currentGleaner; // Hold on to the default - we keep the best of all clauses per bin in here.
 		addedAnItem    = false;
@@ -353,7 +353,7 @@ public class Gleaner extends SearchMonitor implements Serializable {
 		Utils.println("%  |defaultGleaner| = " + Utils.comma(defaultGleaner));
 	}
 	
-	/* THESE NEED HASHMAPs, SO IF WANT TO USE, CHANGE FROM Map TO HashMap.
+	/* THESE NEED HASHMAPs, SO IF WANT TO USE, CHANGE FROM Map TO LinkedHashMap.
 	// Copy the entire gleaner data structure in case someone wants to use it directly,
 	@SuppressWarnings("unchecked")
 	protected Map<Object,Map<Integer,SingleClauseNode>> copyAllGleaners() {

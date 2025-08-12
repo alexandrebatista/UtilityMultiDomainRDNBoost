@@ -3,7 +3,7 @@ package edu.wisc.cs.will.MLN_Inference;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -197,7 +197,7 @@ public class Infer extends AllOfInference {
 				Utils.flush();
 				line = br.readLine();
 				String queryStr = commandLineProcessor.formatLine(line);				
-				Set<Literal> queryLiterals = new HashSet<Literal>(Wrapper.convertStringToLiteralList(queryStr, parser, stringHandler));
+				Set<Literal> queryLiterals = new LinkedHashSet<Literal>(Wrapper.convertStringToLiteralList(queryStr, parser, stringHandler));
 				task.setQueryLiterals(queryLiterals, false); // Allow overriding of previous query.
 				infer();
 				Utils.println("Do you want to continue? ");

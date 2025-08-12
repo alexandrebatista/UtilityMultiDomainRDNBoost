@@ -4,7 +4,7 @@
 package edu.wisc.cs.will.Boosting.EM;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class HiddenLiteralState {
 	private double statePseudoProbability  = 1;
 	
 	public HiddenLiteralState(List<RegressionRDNExample> groundLits) {
-		predNameToLiteralMap = new HashMap<String, List<RegressionRDNExample>>();
+		predNameToLiteralMap = new LinkedHashMap<String, List<RegressionRDNExample>>();
 		for (RegressionRDNExample lit : groundLits) {
 			String predName = lit.predicateName.name;
 			if (!predNameToLiteralMap.containsKey(predName)) {
@@ -58,11 +58,11 @@ public class HiddenLiteralState {
 		initAssignment();
 	}
 	public HiddenLiteralState(Map<String, List<RegressionRDNExample>> jointExamples, Map<String, List<Integer>> assignment) {
-		predNameToLiteralMap = new HashMap<String, List<RegressionRDNExample>>(jointExamples);
-		predNameToAssignMap = new HashMap<String, List<Integer>>(assignment);
+		predNameToLiteralMap = new LinkedHashMap<String, List<RegressionRDNExample>>(jointExamples);
+		predNameToAssignMap = new LinkedHashMap<String, List<Integer>>(assignment);
 	}
 	public HiddenLiteralState(Map<String, List<RegressionRDNExample>> jointExamples) {
-		predNameToLiteralMap = new HashMap<String, List<RegressionRDNExample>>(jointExamples);
+		predNameToLiteralMap = new LinkedHashMap<String, List<RegressionRDNExample>>(jointExamples);
 		initAssignment();
 	}
 
@@ -81,7 +81,7 @@ public class HiddenLiteralState {
 	}
 	
 	public void initAssignment() {
-		predNameToAssignMap = new HashMap<String, List<Integer>>();
+		predNameToAssignMap = new LinkedHashMap<String, List<Integer>>();
 		for (String predName : predNameToLiteralMap.keySet()) {
 			for (RegressionRDNExample lit : predNameToLiteralMap.get(predName)) {
 				if (!predNameToAssignMap.containsKey(predName)) {
@@ -170,7 +170,7 @@ public class HiddenLiteralState {
 	}
 	
 	public void buildLiteralToAssignMap() {
-		literalRepToAssignMap = new HashMap<String, Integer>();
+		literalRepToAssignMap = new LinkedHashMap<String, Integer>();
 		for (String predName : predNameToLiteralMap.keySet()) {
 			for (int i = 0; i < predNameToLiteralMap.get(predName).size(); i++) {
 				String litRep = predNameToLiteralMap.get(predName).get(i).toPrettyString("");
@@ -349,7 +349,7 @@ public class HiddenLiteralState {
 		if (literalRepToAssignMap == null) {
 			Utils.error("Make sure to call buildLiteralToAssignMap before this method call");
 		}
-		literalRepToCondDistrMap = new HashMap<String, ProbDistribution>();
+		literalRepToCondDistrMap = new LinkedHashMap<String, ProbDistribution>();
 		statePseudoProbability   = 1;
 		SRLInference.updateFactsFromState(setup, this);
 		for (String predName : predNameToLiteralMap.keySet()) {

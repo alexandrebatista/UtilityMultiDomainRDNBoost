@@ -7,7 +7,7 @@ package edu.wisc.cs.will.ILP;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -372,7 +372,7 @@ public class ILPouterLoopState implements Serializable, Cloneable {
      * @return the seedPosExamplesUsed
      */
     protected Set<Example> getSeedPosExamplesUsed() {
-        if ( seedPosExamplesUsed == null ) seedPosExamplesUsed = new HashSet<Example>();
+        if ( seedPosExamplesUsed == null ) seedPosExamplesUsed = new LinkedHashSet<Example>();
 
         return seedPosExamplesUsed;
     }
@@ -388,18 +388,18 @@ public class ILPouterLoopState implements Serializable, Cloneable {
      * @return the seedNegExamplesUsed
      */
     protected Set<Example> getSeedNegExamplesUsed() {
-        if ( seedNegExamplesUsed == null ) seedNegExamplesUsed = new HashSet<Example>();
+        if ( seedNegExamplesUsed == null ) seedNegExamplesUsed = new LinkedHashSet<Example>();
 
         return seedNegExamplesUsed;
     }
     
     protected void clearSeedPosExamplesUsed() {
-    	if ( seedPosExamplesUsed == null ) { seedPosExamplesUsed = new HashSet<Example>(4); return; }
+    	if ( seedPosExamplesUsed == null ) { seedPosExamplesUsed = new LinkedHashSet<Example>(4); return; }
     	seedPosExamplesUsed.clear();
     }
     
     protected void clearSeedNegExamplesUsed() {
-    	if ( seedNegExamplesUsed == null ) { seedNegExamplesUsed = new HashSet<Example>(4);return; }
+    	if ( seedNegExamplesUsed == null ) { seedNegExamplesUsed = new LinkedHashSet<Example>(4);return; }
     	seedNegExamplesUsed.clear();
     }
 

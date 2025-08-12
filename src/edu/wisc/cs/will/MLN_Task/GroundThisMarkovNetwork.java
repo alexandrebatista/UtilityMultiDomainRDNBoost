@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -248,7 +248,7 @@ public class GroundThisMarkovNetwork {
 	private double               totalCountOfPossibleGroundings   = -1; // Sum over all clauses.  TODO BUGGY with pop/push? 
 	public  double               totalNumberOfGroundingsRemaining = -1; // Sum over all clauses.  TODO BUGGY with pop/push?  
 	
-	private Set<Clause>          clausesFullyGrounded = new HashSet<Clause>(4); // Have fully grounded these clauses.
+	private Set<Clause>          clausesFullyGrounded = new LinkedHashSet<Clause>(4); // Have fully grounded these clauses.
 	
 	private Map<PredicateName,Map<Term,List<List<Term>>>> allPosEvidenceIndexed; // Hash by predicate name and first argument for faster lookup. 
 	private Map<PredicateName,Map<Term,List<List<Term>>>> allNegEvidenceIndexed; // Terms used here so no need to cast Literal arguments to Constants.
@@ -325,7 +325,7 @@ public class GroundThisMarkovNetwork {
 	private Set<PredicateName>    procedurallyDefinedPredicatesInUse;
 	private Unifier               unifier;
 	
-	private Set<Term>                 dummySingletonSetOfConstants = new HashSet<Term>(4); // Needed as a place holder for aggregated variables.
+	private Set<Term>                 dummySingletonSetOfConstants = new LinkedHashSet<Term>(4); // Needed as a place holder for aggregated variables.
 	private Map<Clause,Long>              totalLiteralGroundingsConsidered;
 	private Map<Clause,Map<Literal,Long>> totalLiteralGroundingsConsideredThisLiteral;
 	private Collection<Clause>            errorThrownOnTheseClauses; // Record which clauses throw an error for needing too many cpu cycles or storage.
@@ -343,15 +343,15 @@ public class GroundThisMarkovNetwork {
 	// Keep track of the clauses that exist after reduction.
 	/* TVK : Not used here.
 	private List<Clause>                            reducedClauses  = new ArrayList<Clause>(1); 
-	private Map<Clause,Collection<Clause>>       reducedClausesMap  = new HashMap<Clause,Collection<Clause>>(4); 
-	private Map<Clause,Clause>                clauseToReducedClause = new HashMap<Clause,Clause>(4);
-	private Map<Clause,BindingList>   clauseToReducedClauseBindings = new HashMap<Clause,BindingList>(4);
+	private Map<Clause,Collection<Clause>>       reducedClausesMap  = new LinkedHashMap<Clause,Collection<Clause>>(4); 
+	private Map<Clause,Clause>                clauseToReducedClause = new LinkedHashMap<Clause,Clause>(4);
+	private Map<Clause,BindingList>   clauseToReducedClauseBindings = new LinkedHashMap<Clause,BindingList>(4);
 	*/
 	
 	// Keep a CANONICAL collection of ground clauses.
-	protected Map<Integer,List<GroundClause>> hashOfGroundClauses = new HashMap<Integer,List<GroundClause>>(4);
+	protected Map<Integer,List<GroundClause>> hashOfGroundClauses = new LinkedHashMap<Integer,List<GroundClause>>(4);
 	// Keys: #negLits, #posLits, firstNegGndLit (or null), firstPosGndLit (or null), hashcode
-	///TODO private Map<Integer,Map<Integer,Map<GroundLiteral,Map<GroundLiteral,Map<Integer,List<GroundClause>>>>>> hashOfGroundClauses2 = new HashMap<Integer,Map<Integer,Map<GroundLiteral,Map<GroundLiteral,Map<Integer,GroundClause>>>>>(4);
+	///TODO private Map<Integer,Map<Integer,Map<GroundLiteral,Map<GroundLiteral,Map<Integer,List<GroundClause>>>>>> hashOfGroundClauses2 = new LinkedHashMap<Integer,Map<Integer,Map<GroundLiteral,Map<GroundLiteral,Map<Integer,GroundClause>>>>>(4);
 
 	private boolean clearListsOfConstantsAtEnd = false; // Set to true if OK to clear all data structures at the end (other than the counts).
 	private boolean weightsLearnt = false;              // Initially set to false. Set to true, when the weights learnt for the MLN.
@@ -363,21 +363,21 @@ public class GroundThisMarkovNetwork {
 		// Each clause will be COPIED.  In one copy, reduction is on the TRUEs; on the other reduction is on the FALSEs.
 		this.allClauses = new ArrayList<Clause>(allClauses); // Play it safe and get a fresh copy.  Plus, this way we can be sure it is an array list (assuming that matters somewhere ...).
 		this.unifier    = task.unifier;  // Since can be called a lot, create a direct pointer.
-		clauseToIndex   = new HashMap<Clause,Integer>(4);
+		clauseToIndex   = new LinkedHashMap<Clause,Integer>(4);
 		int counter = 0;
 		for (Clause clause : allClauses) { clauseToIndex.put(clause, ++counter); } // NOTE: if we sort later, to work on clauses according to their #groundings, these counts will change!
 		dummySingletonSetOfConstants.add(task.stringHandler.getStringConstant("PlaceHolderConstant"));
 		trueLit                 = task.stringHandler.trueLiteral;
 		falseLit                = task.stringHandler.falseLiteral;
 		variableInFactMarker    = task.stringHandler.getStringConstant("VarInThisFact");
-		allQueriesIndexed       = new HashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
-		allPosEvidenceIndexed   = new HashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
-		allNegEvidenceIndexed   = new HashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
-		allHiddensIndexed       = new HashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
-		allQueryPredNames       = new HashMap<PredicateName,Set<Integer>>(4);
-		allPosEvidencePredNames = new HashMap<PredicateName,Set<Integer>>(4);
-		allNegEvidencePredNames = new HashMap<PredicateName,Set<Integer>>(4);
-		allHiddenPredNames      = new HashMap<PredicateName,Set<Integer>>(4);
+		allQueriesIndexed       = new LinkedHashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
+		allPosEvidenceIndexed   = new LinkedHashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
+		allNegEvidenceIndexed   = new LinkedHashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
+		allHiddensIndexed       = new LinkedHashMap<PredicateName,Map<Term,List<List<Term>>>>(4);
+		allQueryPredNames       = new LinkedHashMap<PredicateName,Set<Integer>>(4);
+		allPosEvidencePredNames = new LinkedHashMap<PredicateName,Set<Integer>>(4);
+		allNegEvidencePredNames = new LinkedHashMap<PredicateName,Set<Integer>>(4);
+		allHiddenPredNames      = new LinkedHashMap<PredicateName,Set<Integer>>(4);
 		hashSetOfFacts(task.getQueryLiterals(),        allQueriesIndexed);
 		hashSetOfFacts(task.getPosEvidenceLiterals(),  allPosEvidenceIndexed);
 		hashSetOfFacts(task.getNegEvidenceLiterals(),  allNegEvidenceIndexed);
@@ -389,56 +389,56 @@ public class GroundThisMarkovNetwork {
 		errorThrownOnTheseClauses     = new ArrayList<Clause>(1); // Use a list so they stay in numeric order.
 		
 		numberOfClausesToAnalyze      = allClauses.size();
-		doneWithThisClause            = new HashSet<Clause>(4);  // Do NOT reset this when restarting since once DONE, no need to continue (TODO confirm????)
-		countOfTRUEs                  = new HashMap<Clause,Double>(4);
-		countOfFALSEs                 = new HashMap<Clause,Double>(4);
-		countOfSatisfiableGndClauses  = new HashMap<Clause,Double>(4);
-		multiplierPerSatisfiedClause  = new HashMap<Clause,Double>(4);
-		countOfPossibleGroundings     = new HashMap<Clause,Double>(4);
-		largestSizeOfStoredGroundings = new HashMap<Clause,Double>(4);
-		largestCrossProductCreated    = new HashMap<Clause,Double>(4);
-		minPosArityEncountered        = new HashMap<Clause,Integer>(4);
-		minNegArityEncountered        = new HashMap<Clause,Integer>(4);
-		maxPosArityEncountered        = new HashMap<Clause,Integer>(4);
-		maxNegArityEncountered        = new HashMap<Clause,Integer>(4);
-		numberOfLiteralsActive        = new HashMap<Clause,Integer>(4);
-		literalsToKeep                = new HashMap<Clause,Set<Literal>>(4);
-		literalsStillToReduce         = new HashMap<Clause,Set<Literal>>(4);
-		literalsRejectedForReduction  = new HashMap<Clause,Set<Literal>>(4);
-		variablesInClause             = new HashMap<Clause,Set<Variable>>(4);
-		variablesRemainingInClause    = new HashMap<Clause,Set<Variable>>(4);
-		accountedForVariables         = new HashMap<Clause,Set<Variable>>(4);
-		literalAlwaysInQuery          = new HashMap<Clause,Set<Literal>>(4);
-		literalAlwaysHidden           = new HashMap<Clause,Set<Literal>>(4);
-		literalAlwaysInPosEvidence    = new HashMap<Clause,Set<Literal>>(4);
-		literalAlwaysInNegEvidence    = new HashMap<Clause,Set<Literal>>(4);
-		literalsContainingConstants   = new HashMap<Clause,Set<Literal>>(4);
-		posLiteralsWithThisArity      = new HashMap<Clause,Map<Integer,List<Literal>>>(4);
-		negLiteralsWithThisArity      = new HashMap<Clause,Map<Integer,List<Literal>>>(4);
-		varsToConstantsMap            = new HashMap<Clause,Map<Variable,Set<Term>>>(4);
-		freeVarsMap                   = new HashMap<Clause,Map<Literal,List<Variable>>>(4);
-		litsToConstantsMap            = new HashMap<Clause,Map<Literal,CacheLiteralGrounding>>(4);
-		aggregatorMap                 = new HashMap<Clause,Map<Variable,VariableIndexPair>>(4);
-		aggVarsToAggregatedConstantsMap             = new HashMap<Clause,Map<AggVar,List<List<Term>>>>(4);
-		totalLiteralGroundingsConsidered            = new HashMap<Clause,Long>(4);
-		totalLiteralGroundingsConsideredThisLiteral = new HashMap<Clause,Map<Literal,Long>>(4);
-		firstVariableAppearance                     = new HashMap<Clause,Map<Literal,List<Integer>>>(4);
+		doneWithThisClause            = new LinkedHashSet<Clause>(4);  // Do NOT reset this when restarting since once DONE, no need to continue (TODO confirm????)
+		countOfTRUEs                  = new LinkedHashMap<Clause,Double>(4);
+		countOfFALSEs                 = new LinkedHashMap<Clause,Double>(4);
+		countOfSatisfiableGndClauses  = new LinkedHashMap<Clause,Double>(4);
+		multiplierPerSatisfiedClause  = new LinkedHashMap<Clause,Double>(4);
+		countOfPossibleGroundings     = new LinkedHashMap<Clause,Double>(4);
+		largestSizeOfStoredGroundings = new LinkedHashMap<Clause,Double>(4);
+		largestCrossProductCreated    = new LinkedHashMap<Clause,Double>(4);
+		minPosArityEncountered        = new LinkedHashMap<Clause,Integer>(4);
+		minNegArityEncountered        = new LinkedHashMap<Clause,Integer>(4);
+		maxPosArityEncountered        = new LinkedHashMap<Clause,Integer>(4);
+		maxNegArityEncountered        = new LinkedHashMap<Clause,Integer>(4);
+		numberOfLiteralsActive        = new LinkedHashMap<Clause,Integer>(4);
+		literalsToKeep                = new LinkedHashMap<Clause,Set<Literal>>(4);
+		literalsStillToReduce         = new LinkedHashMap<Clause,Set<Literal>>(4);
+		literalsRejectedForReduction  = new LinkedHashMap<Clause,Set<Literal>>(4);
+		variablesInClause             = new LinkedHashMap<Clause,Set<Variable>>(4);
+		variablesRemainingInClause    = new LinkedHashMap<Clause,Set<Variable>>(4);
+		accountedForVariables         = new LinkedHashMap<Clause,Set<Variable>>(4);
+		literalAlwaysInQuery          = new LinkedHashMap<Clause,Set<Literal>>(4);
+		literalAlwaysHidden           = new LinkedHashMap<Clause,Set<Literal>>(4);
+		literalAlwaysInPosEvidence    = new LinkedHashMap<Clause,Set<Literal>>(4);
+		literalAlwaysInNegEvidence    = new LinkedHashMap<Clause,Set<Literal>>(4);
+		literalsContainingConstants   = new LinkedHashMap<Clause,Set<Literal>>(4);
+		posLiteralsWithThisArity      = new LinkedHashMap<Clause,Map<Integer,List<Literal>>>(4);
+		negLiteralsWithThisArity      = new LinkedHashMap<Clause,Map<Integer,List<Literal>>>(4);
+		varsToConstantsMap            = new LinkedHashMap<Clause,Map<Variable,Set<Term>>>(4);
+		freeVarsMap                   = new LinkedHashMap<Clause,Map<Literal,List<Variable>>>(4);
+		litsToConstantsMap            = new LinkedHashMap<Clause,Map<Literal,CacheLiteralGrounding>>(4);
+		aggregatorMap                 = new LinkedHashMap<Clause,Map<Variable,VariableIndexPair>>(4);
+		aggVarsToAggregatedConstantsMap             = new LinkedHashMap<Clause,Map<AggVar,List<List<Term>>>>(4);
+		totalLiteralGroundingsConsidered            = new LinkedHashMap<Clause,Long>(4);
+		totalLiteralGroundingsConsideredThisLiteral = new LinkedHashMap<Clause,Map<Literal,Long>>(4);
+		firstVariableAppearance                     = new LinkedHashMap<Clause,Map<Literal,List<Integer>>>(4);
 
-		singletonVarsInClauseProcessed         = new HashMap<Clause,Set<Variable>>(4);                // This needs to be reset each trial.
-		varsToConstantsMapForSingletonLiterals = new HashMap<PredicateName,List<CacheLiteralGrounding>>(4); // Do NOT need to reset this for repeated trials.
+		singletonVarsInClauseProcessed         = new LinkedHashMap<Clause,Set<Variable>>(4);                // This needs to be reset each trial.
+		varsToConstantsMapForSingletonLiterals = new LinkedHashMap<PredicateName,List<CacheLiteralGrounding>>(4); // Do NOT need to reset this for repeated trials.
 		
 		// Information to save about the best solution found so far (if we do multiple restarts).
-		saved_countOfTRUEs                    = new HashMap<Clause,Double>(4);
-		saved_countOfFALSEs                   = new HashMap<Clause,Double>(4);
-		saved_countOfSatisfiableGndClauses    = new HashMap<Clause,Double>(4);
-		saved_multiplierPerSatisfiedClause    = new HashMap<Clause,Double>(4);
-		saved_literalsToKeep                  = new HashMap<Clause,Set<Literal>>(4);
-		saved_literalsStillToReduce           = new HashMap<Clause,Set<Literal>>(4);
-		saved_literalsRejectedForReduction    = new HashMap<Clause,Set<Literal>>(4);
-		saved_aggregatorMap                   = new HashMap<Clause,Map<Variable,VariableIndexPair>>(4);
-		saved_varsToConstantsMap              = new HashMap<Clause,Map<Variable,Set<Term>>>(4);
-		saved_aggVarsToAggregatedConstantsMap = new HashMap<Clause,Map<AggVar,List<List<Term>>>>(4);
-		cycle_when_solved                     = new HashMap<Clause,Integer>(4);
+		saved_countOfTRUEs                    = new LinkedHashMap<Clause,Double>(4);
+		saved_countOfFALSEs                   = new LinkedHashMap<Clause,Double>(4);
+		saved_countOfSatisfiableGndClauses    = new LinkedHashMap<Clause,Double>(4);
+		saved_multiplierPerSatisfiedClause    = new LinkedHashMap<Clause,Double>(4);
+		saved_literalsToKeep                  = new LinkedHashMap<Clause,Set<Literal>>(4);
+		saved_literalsStillToReduce           = new LinkedHashMap<Clause,Set<Literal>>(4);
+		saved_literalsRejectedForReduction    = new LinkedHashMap<Clause,Set<Literal>>(4);
+		saved_aggregatorMap                   = new LinkedHashMap<Clause,Map<Variable,VariableIndexPair>>(4);
+		saved_varsToConstantsMap              = new LinkedHashMap<Clause,Map<Variable,Set<Term>>>(4);
+		saved_aggVarsToAggregatedConstantsMap = new LinkedHashMap<Clause,Map<AggVar,List<List<Term>>>>(4);
+		cycle_when_solved                     = new LinkedHashMap<Clause,Integer>(4);
 		
 		resetAllInstanceVariables(false);
 	}
@@ -476,36 +476,36 @@ public class GroundThisMarkovNetwork {
 			    minNegArityEncountered.put(       clause, Integer.MAX_VALUE);
 			    maxPosArityEncountered.put(       clause, Integer.MIN_VALUE);
 			    maxNegArityEncountered.put(       clause, Integer.MIN_VALUE);
-				posLiteralsWithThisArity.put(     clause, new HashMap<Integer,List<Literal>>(4));
-				negLiteralsWithThisArity.put(     clause, new HashMap<Integer,List<Literal>>(4));
+				posLiteralsWithThisArity.put(     clause, new LinkedHashMap<Integer,List<Literal>>(4));
+				negLiteralsWithThisArity.put(     clause, new LinkedHashMap<Integer,List<Literal>>(4));
 			    largestSizeOfStoredGroundings.put(clause, 0.0); // Calculate this over ALL retries (maybe have another pair of variables that are PER TRIAL?).
 			    largestCrossProductCreated.put(   clause, 0.0);
 				totalLiteralGroundingsConsidered.put(           clause, (long)0);
-				freeVarsMap.put(                                clause, new HashMap<Literal,List<Variable>>(4));
-				firstVariableAppearance.put(                    clause, new HashMap<Literal,List<Integer>>(4));
-				totalLiteralGroundingsConsideredThisLiteral.put(clause, new HashMap<Literal,Long>(4));
-				litsToConstantsMap.put(                         clause, new HashMap<Literal,CacheLiteralGrounding>(4));
-				singletonVarsInClauseProcessed.put(             clause, new HashSet<Variable>(4));
+				freeVarsMap.put(                                clause, new LinkedHashMap<Literal,List<Variable>>(4));
+				firstVariableAppearance.put(                    clause, new LinkedHashMap<Literal,List<Integer>>(4));
+				totalLiteralGroundingsConsideredThisLiteral.put(clause, new LinkedHashMap<Literal,Long>(4));
+				litsToConstantsMap.put(                         clause, new LinkedHashMap<Literal,CacheLiteralGrounding>(4));
+				singletonVarsInClauseProcessed.put(             clause, new LinkedHashSet<Variable>(4));
 
 				// The remainder need to be reset for each new trial.
-		    	accountedForVariables.put(        clause, new HashSet<Variable>(4));
-				variablesInClause.put(            clause, new HashSet<Variable>(4)); // NOTE: this does not change, but it needs to be empty in order for varsToConstantsMap to be properly built.
-				varsToConstantsMap.put(           clause, new HashMap<Variable,Set<Term>>(4));
-				aggregatorMap.put(                clause, new HashMap<Variable,VariableIndexPair>(4));
+		    	accountedForVariables.put(        clause, new LinkedHashSet<Variable>(4));
+				variablesInClause.put(            clause, new LinkedHashSet<Variable>(4)); // NOTE: this does not change, but it needs to be empty in order for varsToConstantsMap to be properly built.
+				varsToConstantsMap.put(           clause, new LinkedHashMap<Variable,Set<Term>>(4));
+				aggregatorMap.put(                clause, new LinkedHashMap<Variable,VariableIndexPair>(4));
 				numberOfLiteralsActive.put(       clause, Utils.getSizeSafely(clause.posLiterals) + Utils.getSizeSafely(clause.negLiterals));
-				aggVarsToAggregatedConstantsMap.put(      clause, new HashMap<AggVar,List<List<Term>>>(4));
-				saved_varsToConstantsMap.put(             clause, new HashMap<Variable,Set<Term>>(4));
-				saved_aggregatorMap.put(                  clause, new HashMap<Variable,VariableIndexPair>(4));
-				saved_aggVarsToAggregatedConstantsMap.put(clause, new HashMap<AggVar,List<List<Term>>>(4));
+				aggVarsToAggregatedConstantsMap.put(      clause, new LinkedHashMap<AggVar,List<List<Term>>>(4));
+				saved_varsToConstantsMap.put(             clause, new LinkedHashMap<Variable,Set<Term>>(4));
+				saved_aggregatorMap.put(                  clause, new LinkedHashMap<Variable,VariableIndexPair>(4));
+				saved_aggVarsToAggregatedConstantsMap.put(clause, new LinkedHashMap<AggVar,List<List<Term>>>(4));
 		    }
 			if (isaReset) {
 				literalsToKeep.get(       clause).clear();
 				literalsStillToReduce.get(clause).clear();
 				literalsRejectedForReduction.get(clause).clear();
 			} else {
-				literalsToKeep.put(       clause, new HashSet<Literal>(4));
-				literalsStillToReduce.put(clause, new HashSet<Literal>(4));
-				literalsRejectedForReduction.put(clause, new HashSet<Literal>(4));
+				literalsToKeep.put(       clause, new LinkedHashSet<Literal>(4));
+				literalsStillToReduce.put(clause, new LinkedHashSet<Literal>(4));
+				literalsRejectedForReduction.put(clause, new LinkedHashSet<Literal>(4));
 			}
 			if (clause.posLiterals != null) for (Literal  pLit : clause.posLiterals) { 
 				literalsToKeep.get(               clause).add(pLit); // Initially put everything in here, then remove if no longer needed.
@@ -521,7 +521,7 @@ public class GroundThisMarkovNetwork {
 		}
 	}
 	
-	private Map<Term,Integer> variablesSeenSoFar = new HashMap<Term,Integer>(4); // Reuse this memory space.	
+	private Map<Term,Integer> variablesSeenSoFar = new LinkedHashMap<Term,Integer>(4); // Reuse this memory space.	
 	private void collectInitialLiteralInfo(Clause clause, Literal lit, boolean pos) {	
 		
 		// Store the free-variables list for each literal appearing in the clauses.
@@ -535,7 +535,7 @@ public class GroundThisMarkovNetwork {
 				int counter = 1; // Note that for this encoding, counting starts at 1.
 				for (Term term : lit.getArguments()) {
 					if      (term instanceof Term)               { varAppearanceMap.add(0);  // Indicate constants via '0.'
-																	   if (literalsContainingConstants.get(clause) == null) { literalsContainingConstants.put(clause, new HashSet<Literal>(4)); }
+																	   if (literalsContainingConstants.get(clause) == null) { literalsContainingConstants.put(clause, new LinkedHashSet<Literal>(4)); }
 					                                                   literalsContainingConstants.get(clause).add(lit); }
 					else if (task.setOfSkolemMarkers.contains(term)) { varAppearanceMap.add(0); } // These will become constants.
 					else if (term instanceof Function) { throw new Error("Cannot handle functions here.  Should be removed before this is point."); }
@@ -553,7 +553,7 @@ public class GroundThisMarkovNetwork {
 		// See if any procedurally defined predicates are in use.  These will only be in clauses, never in facts (by construction).
 		PredicateName pName = lit.predicateName;
 		if (task.prover.isProcedurallyDefined(pName,lit.numberArgs())) {
-		 	 if (procedurallyDefinedPredicatesInUse == null) { procedurallyDefinedPredicatesInUse = new HashSet<PredicateName>(4); }
+		 	 if (procedurallyDefinedPredicatesInUse == null) { procedurallyDefinedPredicatesInUse = new LinkedHashSet<PredicateName>(4); }
 		 	 // TODO - use arity as well?
 			 if (!procedurallyDefinedPredicatesInUse.contains(pName)) {
 		 		Utils.println("\n% Procedurally defined predicate in use: '" + pName + "'");
@@ -571,7 +571,7 @@ public class GroundThisMarkovNetwork {
 		if (arity > 1 && arity > (pos ? maxPosArityEncountered.get(clause) : maxNegArityEncountered.get(clause))) { if (pos) maxPosArityEncountered.put(clause, arity); else maxNegArityEncountered.put(clause, arity); }
 		Map<Integer,List<Literal>> lookup1b = (pos ? posLiteralsWithThisArity.get(clause) : negLiteralsWithThisArity.get(clause));
 		if (lookup1b == null) { 
-			lookup1b = new HashMap<Integer,List<Literal>>(4); 
+			lookup1b = new LinkedHashMap<Integer,List<Literal>>(4); 
 			if (pos) { posLiteralsWithThisArity.put(clause, lookup1b); } else { negLiteralsWithThisArity.put(clause, lookup1b); }
 		}
 		List<Literal> lookup2b = lookup1b.get(arity);
@@ -599,7 +599,7 @@ public class GroundThisMarkovNetwork {
 					Set<Term> cList = task.getReducedConstantsOfThisType(type); // Collect all the constants of this type.
 					varsToConstantsMap.get(clause).put(var, cList);
 					//Utils.println("  Storing " + cList.size() + " contants for variable '" + var + "'. " + literal + "  " + clause);
-					// varsToConstantsMapNew.get(clause).put(var, new HashSet<Term>(4)); // Will add to this later, as we find constants we need to keep around.
+					// varsToConstantsMapNew.get(clause).put(var, new LinkedHashSet<Term>(4)); // Will add to this later, as we find constants we need to keep around.
 				}
 			}
 		}
@@ -666,17 +666,17 @@ public class GroundThisMarkovNetwork {
 				Set<Term> groundingsOfThisVariable = varsToConstantsMap.get(clause).get(var);
 				if (debugLevel > 1) { Utils.print(" " + var); }
 				allArgPossibilities.add(groundingsOfThisVariable);
-				if (unAggregatedVars  == null) { unAggregatedVars  = new HashSet<Variable>(4); }
+				if (unAggregatedVars  == null) { unAggregatedVars  = new LinkedHashSet<Variable>(4); }
 				unAggregatedVars.add(var);
 			} else {
-				if (aggregatedVars    == null) {   aggregatedVars  = new HashSet<Variable>(4); }
+				if (aggregatedVars    == null) {   aggregatedVars  = new LinkedHashSet<Variable>(4); }
 				if (aggregatedVars.contains(var)) { Utils.error("Already have '" + var + "' in aggregatedVars=" + aggregatedVars); } // Should never happen, but check anyway.
 				aggregatedVars.add(var);
 				if (aggregatorsNeeded == null) { aggregatorsNeeded = new ArrayList<AggVar>(1); }
 				AggVar aggVar = aggregatorMap.get(clause).get(var).aggVar;
 				if (!aggregatorsNeeded.contains(aggVar)) { // Collect the aggregators.
 					aggregatorsNeeded.add(aggVar);
-					if (mapVariablesToPositionInAggregatorList == null) { mapVariablesToPositionInAggregatorList = new HashMap<Term,Integer>(4); }
+					if (mapVariablesToPositionInAggregatorList == null) { mapVariablesToPositionInAggregatorList = new LinkedHashMap<Term,Integer>(4); }
 					if (mapVariablesToPositionInAggregatorList.containsKey(var)) { Utils.error("Already have '" + var + "' in " + mapVariablesToPositionInAggregatorList); }
 					mapVariablesToPositionInAggregatorList.put(var, aggregatorsNeeded.size() - 1);
 				} else { // Walk through the existing aggregators and record which one 'owns' this variable.
@@ -770,12 +770,12 @@ public class GroundThisMarkovNetwork {
 					counter++; // Increment before the continue.
 					if (sizeThisAggVar < 100) { indexesForAggVarConstants.add(null); continue; } // Simply walk through short lists, i.e., don't waste time and space creating an index.
 					crossProductOfAggregatedVars.clearThisEntry(counter); // Return this space just in case doing so prevents overflow.
-					Map<Term,Set<List<Term>>> indexDB = new HashMap<Term,Set<List<Term>>>(4);
+					Map<Term,Set<List<Term>>> indexDB = new LinkedHashMap<Term,Set<List<Term>>>(4);
 					indexesForAggVarConstants.add(indexDB);
 					for (List<Term> args : argPossibility) {
 						Term arg0 = args.get(0);
 						Set<List<Term>> lookup = indexDB.get(arg0);
-						if (lookup == null) { lookup = new HashSet<List<Term>> (4); indexDB.put(arg0, lookup); }
+						if (lookup == null) { lookup = new LinkedHashSet<List<Term>> (4); indexDB.put(arg0, lookup); }
 						lookup.add(args); // We just want to see if IN the cross product and don't care how many times it appears.
 					}
 				}
@@ -997,7 +997,7 @@ public class GroundThisMarkovNetwork {
 	
 	// Keep track of which literals are known to always be one of {query, hidden, positive, negative}.
 	private void addLiteralToAlwaysInMap(Clause clause, Literal literal, Map<Clause,Set<Literal>> map, String mapName) {
-		if (map.get(clause) == null) { map.put(clause, new HashSet<Literal>(4)); }
+		if (map.get(clause) == null) { map.put(clause, new LinkedHashSet<Literal>(4)); }
 		if (debugLevel > 2) { Utils.println("% ****   ADD " + wrapLiteral(clause, literal) + " to always map '" + mapName + "' which currently contains " + Utils.comma(map.get(clause).size()) + " items."); }
 		map.get(clause).add(literal);
 	}
@@ -1278,7 +1278,7 @@ public class GroundThisMarkovNetwork {
 			int counterForOuterWhileLoop = 0; // Keep this extra variable, since it helps the readability of the code below.
 			BestLiteralInfo bestLiteralInfo = new BestLiteralInfo();
 			boolean inFinalPassToReduceLargeCases = false;  // When done with the 'easy' cases, do one last pass through the hard-to-reduce cases.
-			Map<Clause,Integer> numberOfRejections = new HashMap<Clause,Integer>(4);
+			Map<Clause,Integer> numberOfRejections = new LinkedHashMap<Clause,Integer>(4);
 			int minArity = Math.min(minNegArityEncountered.get(clause), minPosArityEncountered.get(clause));
 			int maxArity = Math.max(maxNegArityEncountered.get(clause), maxPosArityEncountered.get(clause));
 			while (!doneWithThisClause.contains(clause)) {
@@ -1398,7 +1398,7 @@ public class GroundThisMarkovNetwork {
 	
 	private void reportFinalStatistics() {
 		if (false) return; // In case we want to turn this off.
-		Set<Clause> consistencyChecked = new HashSet<Clause>(4);
+		Set<Clause> consistencyChecked = new LinkedHashSet<Clause>(4);
 		if (debugLevel > 0 || Utils.getSizeSafely(allClauses) < 25)
 			for (Clause clause : allClauses) { if (countOfPossibleGroundings.get(clause) > minNumberOfGroundingsToReportStats) {	
 			Utils.println("\n% Results " + getSolvedAtString(clause) + " for clause #" + Utils.comma(clauseToIndex.get(clause)) + ": '" + clause.toString(Integer.MAX_VALUE) + "'.");
@@ -1440,7 +1440,7 @@ public class GroundThisMarkovNetwork {
 				if (Utils.getSizeSafely(accountedForVariables.get(clause)) > 0) {
 					Utils.println(  "%     Accounted for variables: " + accountedForVariables.get(clause));
 				}
-				Set<AggVar> aggVarsSeen = new HashSet<AggVar>(4);
+				Set<AggVar> aggVarsSeen = new LinkedHashSet<AggVar>(4);
 				boolean lookingForFirst = true;
 				for (Variable var : variablesInClause.get(clause)) {
 					VariableIndexPair pair = aggregatorMap.get(clause).get(var);
@@ -1771,10 +1771,10 @@ public class GroundThisMarkovNetwork {
 				if (freeVars != null) for (Variable var : freeVars) {
 					VariableIndexPair currentOwnerOfVar = aggregators.get(var);
 					if (currentOwnerOfVar == null) {
-						if (varsThatMustBeKept    == null) { varsThatMustBeKept    = new HashSet<Variable>(4); }
+						if (varsThatMustBeKept    == null) { varsThatMustBeKept    = new LinkedHashSet<Variable>(4); }
 						varsThatMustBeKept.add(var);
 					} else {
-						if (aggVarsThatMustBeKept == null) { aggVarsThatMustBeKept = new HashSet<AggVar>(  4); }
+						if (aggVarsThatMustBeKept == null) { aggVarsThatMustBeKept = new LinkedHashSet<AggVar>(  4); }
 						aggVarsThatMustBeKept.add(currentOwnerOfVar.aggVar);
 					}
 				}
@@ -1810,7 +1810,7 @@ public class GroundThisMarkovNetwork {
 						accountedForVariables.get(clause).add(var);
 						Utils.waitHere("cleaningUpAggVar '" + aggVar + ".");
 					}
-					if (aggregatorsUsed == null) { aggregatorsUsed = new HashSet<AggVar>(4); }
+					if (aggregatorsUsed == null) { aggregatorsUsed = new LinkedHashSet<AggVar>(4); }
 					aggregatorsUsed.add(aggVar);
 				}
 			}
@@ -1838,7 +1838,7 @@ public class GroundThisMarkovNetwork {
 		for (Literal lit : litsSurviving) {
 			Collection<Variable> freeVars = freeVarsMap.get(clause).get(lit);
 			if (Utils.getSizeSafely(freeVars) > 0) {
-				if (remainingVariables == null) { remainingVariables = new HashSet<Variable>(4); }
+				if (remainingVariables == null) { remainingVariables = new LinkedHashSet<Variable>(4); }
 				remainingVariables.addAll(freeVars);
 			}						
 		}
@@ -1866,7 +1866,7 @@ public class GroundThisMarkovNetwork {
 	
 	private Set<Term> extractItemNfromListsIntoList(List<List<Term>> items, int i) {
 		if (items == null) { return null; }
-		Set<Term> results = new HashSet<Term>(4);
+		Set<Term> results = new LinkedHashSet<Term>(4);
 		for (List<Term> list : items) { results.add(list.get(i)); }
 		return results;
 	}	
@@ -1889,7 +1889,7 @@ public class GroundThisMarkovNetwork {
 			VariableIndexPair currentOwnerOfVar = aggregatorMap.get(clause).get(var); // Note: the new aggregator will not ADD any constants not already active, so no problem if we lose the pointer to the previous aggregator.
 			if (currentOwnerOfVar != null) {
 				if (debugLevel > 1) { Utils.println("%     Need to join with a previous aggregator: previously '" + var + "' was aggregated by position " + currentOwnerOfVar.index + " of " + currentOwnerOfVar.aggVar + "."); }
-				if (intersectingAggVars == null) { intersectingAggVars = new HashSet<AggVar>(4); }
+				if (intersectingAggVars == null) { intersectingAggVars = new LinkedHashSet<AggVar>(4); }
 				intersectingAggVars.add(currentOwnerOfVar.aggVar); // Since a SET, will not add duplicates.
 			}
 		}
@@ -1948,7 +1948,7 @@ public class GroundThisMarkovNetwork {
 		
 		int[] positionsOfArgumentsInLiteralToUse = new int[varsToCombineSize]; // Indicate where the variables for literalToUse are in the full list of variables.
 		int   varCounter = 0;
-		Set<Variable> foundThisVar = new HashSet<Variable>(4);
+		Set<Variable> foundThisVar = new LinkedHashSet<Variable>(4);
 		if (debugLevel > 3) { Utils.print("%      ********** The map of the variables of " + wrapLiteral(clause, literalToUse) + " in the full-grounding vector is: "); }
 		for (Variable var : variablesToCombine) if (!foundThisVar.contains(var)) {
 			int location = fullSetOfVariables.indexOf(var);
@@ -1995,7 +1995,7 @@ public class GroundThisMarkovNetwork {
 				result  *= size;
 				newSize += size;
 				if (debugLevel > 1) { Utils.print("x" + Utils.comma(size)+ "[" + currentOwnerOfVar.aggVar + "]"); }
-				if (aggregatorsUsed == null) { aggregatorsUsed = new HashSet<AggVar>(4); }
+				if (aggregatorsUsed == null) { aggregatorsUsed = new LinkedHashSet<AggVar>(4); }
 				aggregatorsUsed.add(currentOwnerOfVar.aggVar);
 			}
 			if (result <= 0.0 && debugLevel <= 1) { break; }  // Continue to end only if printing sizes.
@@ -2021,7 +2021,7 @@ public class GroundThisMarkovNetwork {
 				if (oldConstants.get(var) != null) { Utils.println("%     There are " + Utils.comma(oldConstants.get(var)) + " remaining constants for regular variable '" + var + "': " + Utils.limitLengthOfPrintedList(oldConstants.get(var), 10)); }
 			} else if (aggregatorsUsed == null || !aggregatorsUsed.contains(currentOwnerOfVar.aggVar)) { // Don't double report aggregators.
 				if (aggsToConstants.get(currentOwnerOfVar.aggVar) != null) { Utils.println("%     There are " + Utils.comma(aggsToConstants.get(currentOwnerOfVar.aggVar)) + " remaining constant lists for aggregator '" + currentOwnerOfVar.aggVar + "': " + Utils.limitLengthOfPrintedList(aggsToConstants.get(currentOwnerOfVar.aggVar), 10)); }
-				if (aggregatorsUsed == null) { aggregatorsUsed = new HashSet<AggVar>(4); }
+				if (aggregatorsUsed == null) { aggregatorsUsed = new LinkedHashSet<AggVar>(4); }
 				aggregatorsUsed.add(currentOwnerOfVar.aggVar);
 			}
 		}
@@ -2360,7 +2360,7 @@ public class GroundThisMarkovNetwork {
 			// See if any facts containing variables are in use.
 			if (lit.numberArgs() > 0) for (Term term : args) if (!(term instanceof Term)) {
 				if (term instanceof Function) { Utils.error("Need to handle functions (before getting) here!"); }
-				if (factsWithVariables == null) { factsWithVariables = new HashSet<PredicateName>(4); }
+				if (factsWithVariables == null) { factsWithVariables = new LinkedHashSet<PredicateName>(4); }
 				// TODO - use arity as well?  Or assume the overall cost is minor?
 			 	//if (!factsWithVariables.contains(pName)) {
 			 		//Utils.println("% Fact with variable(s) in use: " + lit); // Already reported when read (search for reportFactsWithVariables).
@@ -2371,7 +2371,7 @@ public class GroundThisMarkovNetwork {
 			}
 			
 			if (lookup1 == null) { 
-				lookup1 = new HashMap<Term,List<List<Term>>>(4);
+				lookup1 = new LinkedHashMap<Term,List<List<Term>>>(4);
 				hasher.put(pName, lookup1);
 			}
 			List<List<Term>> lookup2 = lookup1.get(term1);
@@ -2389,7 +2389,7 @@ public class GroundThisMarkovNetwork {
 			for (PredNameArityPair pNameArityPair : predNames) {
 				Set<Integer> lookup = hash.get(pNameArityPair.pName);				
 				if (lookup == null) {
-					lookup = new HashSet<Integer>(4);
+					lookup = new LinkedHashSet<Integer>(4);
 					hash.put(pNameArityPair.pName, lookup);
 				}
 				lookup.add(pNameArityPair.arity);
@@ -2418,7 +2418,7 @@ public class GroundThisMarkovNetwork {
 			if (countOfSatisfiableGndClauses.get(clause) > maxNumberClauseGroundings) {
 				checkForUnacceptableLazyClause(clause);
 				if (debugLevel > -110) { Utils.println("%    This clause has too many groundings (" + Utils.truncate(countOfSatisfiableGndClauses.get(clause), 0) + ") and will not be grounded: '" + clause + "'."); }
-				if (stillTooLargeAfterReduction == null) { stillTooLargeAfterReduction = new HashSet<Clause>(4); }
+				if (stillTooLargeAfterReduction == null) { stillTooLargeAfterReduction = new LinkedHashSet<Clause>(4); }
 				stillTooLargeAfterReduction.add(clause);
 				continue;
 			}
@@ -2427,13 +2427,13 @@ public class GroundThisMarkovNetwork {
 			} catch (MLNreductionProblemTooLargeException e) {
 				checkForUnacceptableLazyClause(clause);
 				if (debugLevel > -110) { Utils.println("% Clause #" + Utils.comma(clauseToIndex.get(clause)) + " is too large to fully ground, so it will require lazy evaluation."); }
-				if (stillTooLargeAfterReduction == null) { stillTooLargeAfterReduction = new HashSet<Clause>(4); }
+				if (stillTooLargeAfterReduction == null) { stillTooLargeAfterReduction = new LinkedHashSet<Clause>(4); }
 				stillTooLargeAfterReduction.add(clause);
 				continue;
 			}
 			//if (Utils.getSizeSafely(literalsRejectedForReduction.get(clause)) > 0) {
 			//	Utils.error("Think this code through to see if it makes sense with 'reject's: " + literalsRejectedForReduction.get(clause)); 
-			////remainingUnsatisfiedLiteralGroundings = new HashMap<Clause,Map<Literal,Collection<GroundLiteral>>>(4);
+			////remainingUnsatisfiedLiteralGroundings = new LinkedHashMap<Clause,Map<Literal,Collection<GroundLiteral>>>(4);
 			//}
 		}
 		collectAllGroundClauses();
@@ -2503,7 +2503,7 @@ public class GroundThisMarkovNetwork {
 			// Recall that ground clauses can represent SETS of groundings, and need to account for that when calculating weights.
 			bl.theta.clear();
 			GroundClause groundClause = getGroundClause(task, clause, getFreeVarMap(variablesRemainingInClause.get(clause), bl, existingBindings), timeStamp);
-			if (results == null) { results = new HashSet<GroundClause>(4); }
+			if (results == null) { results = new LinkedHashSet<GroundClause>(4); }
 			results.add(groundClause);
 			return results; // Added (11/2/09) by JWS.
 		}
@@ -2524,13 +2524,13 @@ public class GroundThisMarkovNetwork {
 			VariableIndexPair currentOwnerOfVar = aggregatorMap.get(clause).get(var);
 			if (currentOwnerOfVar == null) {
 				if (debugLevel > 0) { Utils.println("% VAR '" + var + "' has these constants " + Utils.limitLengthOfPrintedList(varsToConstantsMap.get(clause).get(var), 25)); }
-				if (unAggregatedVars == null) { unAggregatedVars  = new HashSet<Variable>(4); }
+				if (unAggregatedVars == null) { unAggregatedVars  = new LinkedHashSet<Variable>(4); }
 				if (unAggregatedVars.contains(var)) { Utils.error("Already have '" + var + "' in unAggregatedVars=" + unAggregatedVars); } // Should never happen, but check anyway.
 				unAggregatedVars.add(var);
 				size *= Utils.getSizeSafely(varsToConstantsMap.get(clause).get(var));
 				allArgPossibilities.add(varsToConstantsMap.get(clause).get(var));
 			} else { // This else might be called multiple times with the same aggVar, so keep track.
-				if (aggregatedVars == null) { aggregatedVars  = new HashSet<Variable>(4); }
+				if (aggregatedVars == null) { aggregatedVars  = new LinkedHashSet<Variable>(4); }
 				if (aggregatedVars.contains(var)) { Utils.error("Already have '" + var + "' in aggregatedVars=" + aggregatedVars); } // Should never happen, but check anyway.
 				aggregatedVars.add(var);
 				AggVar aggVar = aggregatorMap.get(clause).get(var).aggVar;
@@ -2541,7 +2541,7 @@ public class GroundThisMarkovNetwork {
 					if (allAggArgPossibilities == null) { allAggArgPossibilities = new ArrayList<List<List<Term>>>(1); }
 					allAggArgPossibilities.add( aggVarsToAggregatedConstantsMap.get(clause).get(aggVar));				
 					size *= Utils.getSizeSafely(aggVarsToAggregatedConstantsMap.get(clause).get(aggVar));
-					if (mapVariablesToPositionInAggregatorList == null) { mapVariablesToPositionInAggregatorList = new HashMap<Variable,Integer>(4); }
+					if (mapVariablesToPositionInAggregatorList == null) { mapVariablesToPositionInAggregatorList = new LinkedHashMap<Variable,Integer>(4); }
 					if (mapVariablesToPositionInAggregatorList.containsKey(var)) { Utils.error("Already have '" + var + "' in " + mapVariablesToPositionInAggregatorList); }
 					mapVariablesToPositionInAggregatorList.put(var, aggregatorsNeeded.size() - 1);
 				} else {
@@ -2669,7 +2669,7 @@ public class GroundThisMarkovNetwork {
 					if (freeVarMap == null && existingBindings != null) { Utils.error("freeVarMap=null: bl=" + bl + " existing=" + existingBindings + " clause " + clause); }
 					// Recall that ground clauses can represent SETS of groundings, and need to account for that when calculating weights.
 					GroundClause gndClause = getGroundClause(clause, posLitsRemaining, negLitsRemaining, freeVarMap, timeStamp);
-					if (results == null) { results = new HashSet<GroundClause>(4); } // We don't want to remove duplicates here.  (TODO - if lots of duplicates, could count them up and keep only one, along with a count of duplicates.)
+					if (results == null) { results = new LinkedHashSet<GroundClause>(4); } // We don't want to remove duplicates here.  (TODO - if lots of duplicates, could count them up and keep only one, along with a count of duplicates.)
 					results.add(gndClause);
 					if (debugLevel > 3) { Utils.println("  bindings: " + bl + " produced ground clause #" + Utils.comma(results) + " '" + gndClause + "'."); }
 					// This should have been checked above, but leave here nevertheless.
@@ -2707,7 +2707,7 @@ public class GroundThisMarkovNetwork {
 
 	// Expand all the Skolems in this literal.  Do this by looking up all possible constants for each Skolem, doing a cross product if necessary.
 	private Collection<GroundLiteral> expandSkolems(Literal lit, Collection<Term> skolemsToExpand) throws MLNreductionProblemTooLargeException {
-		Collection<GroundLiteral> results = new HashSet<GroundLiteral>(4);
+		Collection<GroundLiteral> results = new LinkedHashSet<GroundLiteral>(4);
 		List<TypeSpec> typeSpecs = task.collectLiteralArgumentTypes(lit);
 		int counter = 0;
 		double size = 1.0;
@@ -2720,7 +2720,7 @@ public class GroundThisMarkovNetwork {
 				allArgPossibilities.add(existingConstants);
 				size *= Utils.getSizeSafely(existingConstants);
 			} else { // Also need to fold in the non-Skolems.
-				Set<Term> termInSet = new HashSet<Term>(4);
+				Set<Term> termInSet = new LinkedHashSet<Term>(4);
 				termInSet.add(term);
 				allArgPossibilities.add(termInSet);
 			}
@@ -2750,7 +2750,7 @@ public class GroundThisMarkovNetwork {
 		if (lit.numberArgs() < 1) { // Handle zero-arity predicates.
 			GroundLiteral gLit = task.getCanonicalRepresentative(lit, true, postponeSavingGroundLiterals);
 			if (!isSatisfiable(gLit)) { return null; } // This case shouldn't happen (I think) with zero-arity literals, but check if it is still satisfiable (see comments below for the reason for this check).
-			results = new HashSet<GroundLiteral>(4);
+			results = new LinkedHashSet<GroundLiteral>(4);
 			if (postponeSavingGroundLiterals) { task.storeGroundLiteralBeingHeld(); } 
 			results.add(gLit);
 			return results;
@@ -2781,7 +2781,7 @@ public class GroundThisMarkovNetwork {
 						else if (varMap  != null && varMap.containsKey(litTerm)) { arguments2.add(varMap.get(litTerm)); } // Already have seen this variable.
 						else 						   {                           arguments2.add(terms.get(termCounter));
 							if (litTerm instanceof Variable) { // Need to remember this binding.
-								if (varMap == null) { varMap = new HashMap<Term,Term>(4); }
+								if (varMap == null) { varMap = new LinkedHashMap<Term,Term>(4); }
 								varMap.put(litTerm, terms.get(termCounter));
 							}
 							termCounter++;
@@ -2798,7 +2798,7 @@ public class GroundThisMarkovNetwork {
 				gLit = task.getCanonicalRepresentative(litToGround, true, postponeSavingGroundLiterals);
 			}
 			if (isSatisfiable(gLit)) {  // Due to the nature and order of the joins, some specific cases can remain where we know the truth value.
-				if (results == null) { results = new HashSet<GroundLiteral>(4); }
+				if (results == null) { results = new LinkedHashSet<GroundLiteral>(4); }
 				if (containsSkolem) {
 					Collection<GroundLiteral> expandedSkolems;
 					try {
@@ -2828,7 +2828,7 @@ public class GroundThisMarkovNetwork {
 		for (Clause clause : candidateClauses) if (Utils.getSizeSafely(allGroundClausesPerClause.get(clause)) > 0) {
 			for (GroundClause gndClause : allGroundClausesPerClause.get(clause)) if (gndClause.getLength() > 0) {
 				for (int i = 0; i < gndClause.getLength(); i++) {
-					if (results == null) { results = new HashSet<GroundLiteral>(4); }
+					if (results == null) { results = new LinkedHashSet<GroundLiteral>(4); }
 					results.add(gndClause.getIthLiteral(i));
 				}
 				
@@ -2846,7 +2846,7 @@ public class GroundThisMarkovNetwork {
 		Set<Clause> results = null;		
 		for (Literal candidate : task.getLiteralsContainingThisPredNameAndArity(queryGroundLiteral.predicateName, queryGroundLiteral.numberArgs())) {
 			if (unifier.unify(candidate, queryGroundLiteral) != null) {
-				if (results == null) { results = new HashSet<Clause>(4); }
+				if (results == null) { results = new LinkedHashSet<Clause>(4); }
 				Clause clause = task.literalToClauseMap.get(candidate);
 				if (debugLevel > 3) { Utils.println("% task.literalToClauseMap.get(" + candidate + ") = '" + clause + "'"); }
 				if (Utils.getSizeSafely(literalsToKeep.get(clause)) > 0) { results.add(clause); }
@@ -2862,7 +2862,7 @@ public class GroundThisMarkovNetwork {
 			if (size > 0) for (int i = 0; i < size; i++) {
 				GroundLiteral gLit = gndClause.getIthLiteral(i);
 				if (gLit == queryGroundLiteral) {
-					if (results == null) { results = new HashSet<GroundClause>(4); }
+					if (results == null) { results = new LinkedHashSet<GroundClause>(4); }
 					results.add(gndClause); }
 			}
 		}	
@@ -2941,7 +2941,7 @@ public class GroundThisMarkovNetwork {
 			help_collectAllGroundLiterals();
 			return; 
 		}
-		Set<GroundLiteral> allGroundLiteralsAsSet = new HashSet<GroundLiteral>(4); // Initially use a set, so duplicates will be removed.
+		Set<GroundLiteral> allGroundLiteralsAsSet = new LinkedHashSet<GroundLiteral>(4); // Initially use a set, so duplicates will be removed.
 		for (GroundClause gndClause : allGroundClausesOrig) {
 			//Utils.println("% There are " + Utils.comma(allLits) + " remaining literals in '" + clause.toString(Integer.MAX_VALUE) + "': " + Utils.limitLengthOfPrintedList(allLits, 25));
 			if (gndClause.getLength() > 0) for (int i = 0; i < gndClause.getLength(); i++) {
@@ -2976,7 +2976,7 @@ public class GroundThisMarkovNetwork {
 		allGroundLiterals         = allGroundLiteralsOrig;
 		allGroundLiteralsOrigSize = Utils.getSizeSafely(allGroundLiteralsOrig);
 		collectQueryGroundLiteralsNotInReducedNetwork();
-		groundQueryLiteralNotInReducedNetworkOrig = new HashSet<GroundLiteral>(4);
+		groundQueryLiteralNotInReducedNetworkOrig = new LinkedHashSet<GroundLiteral>(4);
 		groundQueryLiteralNotInReducedNetworkOrig.addAll(groundQueryLiteralNotInReducedNetwork);
 		numberOfNonLazyGroundLiterals = Utils.getSizeSafely(allGroundLiterals);
 		resetNextGroundLiteral();
@@ -2986,10 +2986,10 @@ public class GroundThisMarkovNetwork {
 	private Set<GroundLiteral> groundQueryLiteralNotInReducedNetwork     = null;
 	private Set<GroundLiteral> groundQueryLiteralNotInReducedNetworkOrig = null;
 	private void collectQueryGroundLiteralsNotInReducedNetwork() {
-		groundQueryLiteralNotInReducedNetwork = new HashSet<GroundLiteral>(4); // Make anew, so groundQueryLiteralNotInReducedNetworkOrig not touched.
+		groundQueryLiteralNotInReducedNetwork = new LinkedHashSet<GroundLiteral>(4); // Make anew, so groundQueryLiteralNotInReducedNetworkOrig not touched.
 		Set<GroundLiteral> qLits = task.getQueryLiterals();
 		if (qLits == null) { Utils.error("Should have some query literals?"); }
-		Set<GroundLiteral> tempGndLits = new HashSet<GroundLiteral>(2 * allGroundLiterals.size());
+		Set<GroundLiteral> tempGndLits = new LinkedHashSet<GroundLiteral>(2 * allGroundLiterals.size());
 		tempGndLits.addAll(allGroundLiterals); // Use space to create this to save time with lookups.
 		for (GroundLiteral gLit : qLits) if (!tempGndLits.contains(gLit)) {
 			groundQueryLiteralNotInReducedNetwork.add(gLit);
@@ -3051,7 +3051,7 @@ public class GroundThisMarkovNetwork {
 	}
 
 	private Collection<GroundClause> getAllClauseGroundings(Clause clause, TimeStamp timeStamp) throws MLNreductionProblemTooLargeException {
-		if (allGroundClausesPerClause == null) { allGroundClausesPerClause = new HashMap<Clause,Set<GroundClause>>(4); }
+		if (allGroundClausesPerClause == null) { allGroundClausesPerClause = new LinkedHashMap<Clause,Set<GroundClause>>(4); }
 		Set<GroundClause> results = allGroundClausesPerClause.get(clause);
 		if (Utils.getSizeSafely(results) == countOfSatisfiableGndClauses.get(clause)) { return results; }
 		if (results != null) { Utils.writeMe("Already have some groundings here ..."); } // If we simply overwrite these, might mess up other data structures.
@@ -3081,7 +3081,7 @@ public class GroundThisMarkovNetwork {
 		}
 		allGroundClausesOrig      = new ArrayList<GroundClause>();
 		// Initializing here, causes it to reset the values and it is not necessary to initialize it here.
-		// allGroundClausesPerClause = new HashMap<Clause,Set<GroundClause>>(4); // Does this need to also be PerClause??? MOD TVK. Not used
+		// allGroundClausesPerClause = new LinkedHashMap<Clause,Set<GroundClause>>(4); // Does this need to also be PerClause??? MOD TVK. Not used
 		for (Integer code : hashOfGroundClauses.keySet()) {
 			allGroundClausesOrig.addAll(hashOfGroundClauses.get(code));
 		}
@@ -3450,7 +3450,7 @@ public class GroundThisMarkovNetwork {
 			savedGroundLiteralState[counter++] = gLit.getValue();
 		}
 		if (savedLazyGroundLiteralState == null) {
-			savedLazyGroundLiteralState = new HashSet<GroundLiteral>(4);
+			savedLazyGroundLiteralState = new LinkedHashSet<GroundLiteral>(4);
 		}
 		if (allLazyGroundLiterals != null) for (GroundLiteral gLit : allLazyGroundLiterals) {
 			boolean truthValue = gLit.getValue();
@@ -3465,7 +3465,7 @@ public class GroundThisMarkovNetwork {
 		if (allGroundLiterals != null) for (GroundLiteral gLit : allGroundLiterals) {
 			gLit.setValue(savedGroundLiteralState[counter++], null, timeStamp); // Use null as the 2nd argument here, since we need to fully recompute the isSatisfied of clauses if we want a final 'actives' count (below).
 		}
-		Set<GroundLiteral> usedThisLazyGlit = new HashSet<GroundLiteral>(4);
+		Set<GroundLiteral> usedThisLazyGlit = new LinkedHashSet<GroundLiteral>(4);
 		if (allLazyGroundLiterals != null) for (GroundLiteral gLit : allLazyGroundLiterals) {
 			gLit.setValue(savedLazyGroundLiteralState.contains(gLit), null, timeStamp);	
 			usedThisLazyGlit.add(gLit);
@@ -3521,10 +3521,10 @@ public class GroundThisMarkovNetwork {
 		if (gLit == null) { Utils.error("Cannot have gLit==null"); }
 		if (Utils.getSizeSafely(allGroundLiterals) < 1 || Utils.getSizeSafely(allGroundClauses) < 1) { return getMarkerInUse(); } // Have no groundings left, so done.
 		
-		Set<GroundLiteral>        newGroundLiterals = new HashSet<GroundLiteral>(4); // Use sets here for fast contains() calls.  Later these wil be come array lists (for fast sampling).
-		Set<GroundClause>         newGroundClauses  = new HashSet<GroundClause>( 4);
-		Set<GroundLiteral> gndLiteralsToBeExplored  = new HashSet<GroundLiteral>(4);
-		Set<GroundLiteral> groundLiteralsConsidered = new HashSet<GroundLiteral>(4);
+		Set<GroundLiteral>        newGroundLiterals = new LinkedHashSet<GroundLiteral>(4); // Use sets here for fast contains() calls.  Later these wil be come array lists (for fast sampling).
+		Set<GroundClause>         newGroundClauses  = new LinkedHashSet<GroundClause>( 4);
+		Set<GroundLiteral> gndLiteralsToBeExplored  = new LinkedHashSet<GroundLiteral>(4);
+		Set<GroundLiteral> groundLiteralsConsidered = new LinkedHashSet<GroundLiteral>(4);
 		newGroundLiterals.add(      gLit);
 		gndLiteralsToBeExplored.add(gLit);
 		groundLiteralsConsidered.add(gLit);
@@ -3712,15 +3712,15 @@ public class GroundThisMarkovNetwork {
 	 * @param predNameToLiteral
 	 */
 	private void initPredNameArityToBlock(TimeStamp timeStamp) {
-		Map<PredicateName,Set<Integer>> predNameArityPairsSeen = new HashMap<PredicateName,Set<Integer>>(4);
-		predNameArityToBlockList = new HashMap<PredicateName,Map<Integer,List<Block>>>(4);
+		Map<PredicateName,Set<Integer>> predNameArityPairsSeen = new LinkedHashMap<PredicateName,Set<Integer>>(4);
+		predNameArityToBlockList = new LinkedHashMap<PredicateName,Map<Integer,List<Block>>>(4);
 		if (debugLevel > 0) { Utils.println("\n% Initialize the predicate-name blocks."); }
 		for (GroundLiteral gLit : allGroundLiterals) if (gLit.numberArgs() > 0) {			
 			PredicateName predName = gLit.predicateName;
 			int           arity    = gLit.numberArgs();
 			Set<Integer>  lookup   = predNameArityPairsSeen.get(predName);
 			if (lookup == null) { 
-				lookup =  new HashSet<Integer>(4);
+				lookup =  new LinkedHashSet<Integer>(4);
 				predNameArityPairsSeen.put(predName,lookup);
 			}
 			if (lookup.contains(arity)) { continue; }
@@ -3740,7 +3740,7 @@ public class GroundThisMarkovNetwork {
 	private void addPredNameAndArityToBlockList(PredicateName pName, int arity, List<Block> blockList, Map<PredicateName,Map<Integer,List<Block>>> map) {
 		Map<Integer,List<Block>> lookup1 = predNameArityToBlockList.get(pName);
 		if (lookup1 == null) {
-			lookup1 = new HashMap<Integer,List<Block>>(4);
+			lookup1 = new LinkedHashMap<Integer,List<Block>>(4);
 			map.put(pName, lookup1);
 		}
 		List<Block> lookup2 = lookup1.get(arity);
@@ -3779,7 +3779,7 @@ public class GroundThisMarkovNetwork {
 				Block block = new Block(gLit, temp, timeStamp);
 				gLit.setBlock(block);
 				blockList.add(block);
-				if (allBlocks == null) { allBlocks = new HashMap<GroundLiteral,Block>(4); }
+				if (allBlocks == null) { allBlocks = new LinkedHashMap<GroundLiteral,Block>(4); }
 				allBlocks.put(gLit, block);
 			}
 		}		
@@ -3855,9 +3855,9 @@ public class GroundThisMarkovNetwork {
 				if (aggVarPositionForThisBasicVar != null) { // See if this variable is owned by some aggregator.
 					if (debugLevel > 3) { Utils.println("% *** Checking if aggregated constant '" + gLitArg + "' still exists (for position " + varCounter + ")."); }
 					// If so, need to collect ALL gLitArgs that are in this same aggregator, so we can check for the existence of the tuple all together.
-					if (constantsForAggVars      == null)                          { constantsForAggVars      = new HashMap<Integer,List<Term>>(4); } // Wait to create until needed.
-					if (locationsInAggVars       == null)                          { locationsInAggVars       = new HashMap<Integer,List<Integer>>(4);  }
-					if (constantsForAggVarsINDEX == null && aggVarIndexes != null) { constantsForAggVarsINDEX = new HashMap<Integer,Map<Term,Set<List<Term>>>>(4); }
+					if (constantsForAggVars      == null)                          { constantsForAggVars      = new LinkedHashMap<Integer,List<Term>>(4); } // Wait to create until needed.
+					if (locationsInAggVars       == null)                          { locationsInAggVars       = new LinkedHashMap<Integer,List<Integer>>(4);  }
+					if (constantsForAggVarsINDEX == null && aggVarIndexes != null) { constantsForAggVarsINDEX = new LinkedHashMap<Integer,Map<Term,Set<List<Term>>>>(4); }
 					List<Term> lookup1 = constantsForAggVars.get(aggVarPositionForThisBasicVar);
 					List<Integer>  lookup2 = locationsInAggVars.get( aggVarPositionForThisBasicVar);
 					if (lookup1 == null) { // First time for this aggregated variable.
@@ -4128,7 +4128,7 @@ public class GroundThisMarkovNetwork {
 				}
 				if (debugLevel > 2) { Utils.println("% Have collected " + Utils.comma(newGroundClauses) + " bindings from these extra variables."); }
 				if (Utils.getSizeSafely(newGroundClauses) > 0) {
-					if (newGroundings == null) { newGroundings = new HashSet<GroundClause>(4); }
+					if (newGroundings == null) { newGroundings = new LinkedHashSet<GroundClause>(4); }
 					if (debugLevel > 0) {
 						for (GroundClause newGndClause : newGroundClauses) if (!addGroundingUnlessAlreadyExists(newGndClause, newGroundings)) {	dupGroundCounter++; }
 					} else { addGroundingUnlessAlreadyExists(newGroundClauses, newGroundings); }
@@ -4148,7 +4148,7 @@ public class GroundThisMarkovNetwork {
 					negLitsRemaining.add(gLitNew);
 				}
 				GroundClause newGndClause = getGroundClause(clause, posLitsRemaining, negLitsRemaining, getFreeVarMap(variablesRemainingInClause.get(clause), null, bindings), timeStamp);
-				if (newGroundings == null) { newGroundings = new HashSet<GroundClause>(4); }
+				if (newGroundings == null) { newGroundings = new LinkedHashSet<GroundClause>(4); }
 				if (addGroundingUnlessAlreadyExists(newGndClause, newGroundings)) { dupGroundCounter++; }
 			}
 		}		
@@ -4156,7 +4156,7 @@ public class GroundThisMarkovNetwork {
 		if (debugLevel > 2) { Utils.println("%    Adding " + Utils.comma(newGroundings) + " new clause groundings (and " + Utils.comma(dupGroundCounter) + "duplicates) from '" + gLit + "' from '" + clause + "'."); }
 		Set<GroundClause> groundingsSoFar = allGroundClausesPerClause.get(clause);
 		if (groundingsSoFar == null) {
-			groundingsSoFar = new HashSet<GroundClause>(newGroundings.size() + 4);
+			groundingsSoFar = new LinkedHashSet<GroundClause>(newGroundings.size() + 4);
 			allGroundClausesPerClause.put(clause, groundingsSoFar);
 		}
 		groundingsSoFar.addAll(newGroundings);
@@ -4304,7 +4304,7 @@ public class GroundThisMarkovNetwork {
 			Block block = new Block(gLit, temp, timeStamp);
 			gLit.setBlock(block);
 			blockList.add(block);
-			if (allLazyBlocks == null) { allLazyBlocks = new HashMap<GroundLiteral,Block>(4); }
+			if (allLazyBlocks == null) { allLazyBlocks = new LinkedHashMap<GroundLiteral,Block>(4); }
 			allLazyBlocks.put(gLit, block);
 		}
 	}

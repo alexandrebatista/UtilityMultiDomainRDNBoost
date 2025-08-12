@@ -6,7 +6,7 @@ package edu.wisc.cs.will.ResThmProver;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ import edu.wisc.cs.will.FOPC.Term;
  */
 public class GroundClauseIndex<T extends DefiniteClause> {
 
-    private Map<PredicateNameAndArity, Map<List<Term>, List<T>>> definiteClausesAllArgsIndex = new HashMap<PredicateNameAndArity, Map<List<Term>, List<T>>>();
+    private Map<PredicateNameAndArity, Map<List<Term>, List<T>>> definiteClausesAllArgsIndex = new LinkedHashMap<PredicateNameAndArity, Map<List<Term>, List<T>>>();
 
     /** Store clauses in which one or more of the args is not ground.
      *
@@ -31,19 +31,19 @@ public class GroundClauseIndex<T extends DefiniteClause> {
      * all args.  This is necessary to make sure unseen term combinations
      * start with the unground clauses in their index.
      */
-    private Map<PredicateNameAndArity, List<T>> definiteClausesWithUngroundArgs = new HashMap<PredicateNameAndArity, List<T>>();
+    private Map<PredicateNameAndArity, List<T>> definiteClausesWithUngroundArgs = new LinkedHashMap<PredicateNameAndArity, List<T>>();
 
     public void indexDefiniteClause(PredicateNameAndArity key, T definiteClause) {
         Literal headLiteral = definiteClause.getDefiniteClauseHead();
 
 
         if (definiteClausesAllArgsIndex == null) {
-            definiteClausesAllArgsIndex = new HashMap<PredicateNameAndArity, Map<List<Term>, List<T>>>();
+            definiteClausesAllArgsIndex = new LinkedHashMap<PredicateNameAndArity, Map<List<Term>, List<T>>>();
         }
 
         Map<List<Term>, List<T>> mapForKey = definiteClausesAllArgsIndex.get(key);
         if (mapForKey == null) {
-            mapForKey = new HashMap<List<Term>, List<T>>();
+            mapForKey = new LinkedHashMap<List<Term>, List<T>>();
             definiteClausesAllArgsIndex.put(key, mapForKey);
         }
 

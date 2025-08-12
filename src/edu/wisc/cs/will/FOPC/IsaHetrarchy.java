@@ -2,8 +2,8 @@ package edu.wisc.cs.will.FOPC;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -38,9 +38,9 @@ public class IsaHetrarchy {
 		
 		this.stringHandler  = stringHandler;
 
-		isaTypeHash         = new HashMap<String,Type>(16);
-		isaHetrarchy        = new HashMap<Type,List<Type>>(4);  // Might not have any of these, but go ahead and make the hash map.
-		reverseIsaHetrarchy = new HashMap<Type,List<Type>>(4);  // Ditto.
+		isaTypeHash         = new LinkedHashMap<String,Type>(16);
+		isaHetrarchy        = new LinkedHashMap<Type,List<Type>>(4);  // Might not have any of these, but go ahead and make the hash map.
+		reverseIsaHetrarchy = new LinkedHashMap<Type,List<Type>>(4);  // Ditto.
 		rootOfISA           = getIsaType(WILL_ANYTHING_TYPE_NAME); // Be sure to use getIsaType() so the proper case is used.
 		reverseIsaHetrarchy.put(rootOfISA, new ArrayList<Type>(32));
 		willListType    = getIsaType(WILL_LIST_TYPE_NAME);
@@ -279,22 +279,22 @@ public class IsaHetrarchy {
 		Type typeAorig = typeA; // Hold for reporting.
 		Type typeBorig = typeB;
 		
-		Set<Type> parentsOfOriginalA = new HashSet<Type>(4);
-		Set<Type> parentsOfOriginalB = new HashSet<Type>(4);
+		Set<Type> parentsOfOriginalA = new LinkedHashSet<Type>(4);
+		Set<Type> parentsOfOriginalB = new LinkedHashSet<Type>(4);
 		
 		List<Type> typeAinIsa = isaHetrarchy.get(typeA);
 		List<Type> typeBinIsa = isaHetrarchy.get(typeB);
 		if (typeAinIsa == null) { Utils.warning("Cannot find '" + typeA + "' in the isa: " + Utils.limitLengthOfPrintedList(isaHetrarchy)); return rootOfISA; }
 		if (typeBinIsa == null) { Utils.warning("Cannot find '" + typeB + "' in the isa: " + Utils.limitLengthOfPrintedList(isaHetrarchy)); return rootOfISA; }
-		Set<Type> ancestorsA = new HashSet<Type>(typeAinIsa);
-		Set<Type> ancestorsB = new HashSet<Type>(typeBinIsa);
+		Set<Type> ancestorsA = new LinkedHashSet<Type>(typeAinIsa);
+		Set<Type> ancestorsB = new LinkedHashSet<Type>(typeBinIsa);
 		
 		int counter = 0;
 		
 		while (Utils.getSizeSafely(ancestorsA) > 0 ||  Utils.getSizeSafely(ancestorsB) > 0) {
 			
 			if (Utils.getSizeSafely(ancestorsA) > 0) { 
-				Set<Type> newAncestorsA = new HashSet<Type>(4); // TODO - should be able to write without needing new memory cells.  Just have two OPEN lists and append at END.  But how to alternate between them?  The current implementation explicitly does level-by-level.
+				Set<Type> newAncestorsA = new LinkedHashSet<Type>(4); // TODO - should be able to write without needing new memory cells.  Just have two OPEN lists and append at END.  But how to alternate between them?  The current implementation explicitly does level-by-level.
 				for (Type ancestor : ancestorsA) { // Go through the current level and collect all new nodes.
 					if (parentsOfOriginalB.contains(ancestor)) { 
 						if (debugLevel > 1) { Utils.println("% The closest common parent of '" + typeAorig + "' and '" + typeBorig + "' is '" + ancestor + "."); }
@@ -307,7 +307,7 @@ public class IsaHetrarchy {
 				ancestorsA = newAncestorsA;
 			}
 			if (Utils.getSizeSafely(ancestorsB) > 0) {
-				Set<Type> newAncestorsB = new HashSet<Type>(4);
+				Set<Type> newAncestorsB = new LinkedHashSet<Type>(4);
 				for (Type ancestor : ancestorsB) {
 					if (parentsOfOriginalA.contains(ancestor)) { 
 						if (debugLevel > 1) { Utils.println("% The closest common parent of '" + typeAorig + "' and '" + typeBorig + "' is '" + ancestor + "."); }
@@ -359,7 +359,7 @@ public class IsaHetrarchy {
 		if (children != null) for (Type child : children) { 
 			Set<Term> childrenInstances = getAllInstances(child);
 			if (childrenInstances == null) { continue; }
-			if (results == null) { results = new HashSet<Term>(4); }
+			if (results == null) { results = new LinkedHashSet<Term>(4); }
 			results.addAll(childrenInstances);
 		}
 		return results;

@@ -166,10 +166,10 @@ public class ExistentialSentence extends QuantifiedSentence {
 //
 //        if ( variables != null && variables.size() > 0) {
 //
-//            newVariables = new HashSet<Variable>();
+//            newVariables = new LinkedHashSet<Variable>();
 //
 //            if ( usedVariables == null ) {
-//                usedVariables = new HashSet<Variable>();
+//                usedVariables = new LinkedHashSet<Variable>();
 //            }
 //
 //            for (Variable variable : variables) {

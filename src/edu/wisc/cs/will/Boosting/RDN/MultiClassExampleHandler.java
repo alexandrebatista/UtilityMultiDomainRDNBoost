@@ -5,7 +5,7 @@ package edu.wisc.cs.will.Boosting.RDN;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class MultiClassExampleHandler {
 	 */
 	public void initArgumentLocation(WILLSetup setup) {
 		this.setup = setup;
-		predicateToClassArgIndex = new HashMap<String, List<Integer>>();
+		predicateToClassArgIndex = new LinkedHashMap<String, List<Integer>>();
 		// For each predicate
 		for (PredicateNameAndArity pnaa : setup.getHandler().getKnownModes()) {
 			String predName = pnaa.getPredicateName().name;
@@ -155,7 +155,7 @@ public class MultiClassExampleHandler {
 
 	public void addConstantsFromLiterals(List<? extends Literal> facts) {
 		if (constantsForPredicate == null) {
-			constantsForPredicate = new HashMap<String, MultiClassExampleHandler.ConstantLookupList>();
+			constantsForPredicate = new LinkedHashMap<String, MultiClassExampleHandler.ConstantLookupList>();
 		}
 		
 		for (Literal lit : facts) {
@@ -229,7 +229,7 @@ public class MultiClassExampleHandler {
 		
 		public ConstantLookupList() {
 			this.constants = new ArrayList<ArgumentList<Term>>();
-			this.constantIndex = new HashMap<ArgumentList<Term>, Integer>();
+			this.constantIndex = new LinkedHashMap<ArgumentList<Term>, Integer>();
 		}
 
 		public int getIndex(ArgumentList<Term> constList) {

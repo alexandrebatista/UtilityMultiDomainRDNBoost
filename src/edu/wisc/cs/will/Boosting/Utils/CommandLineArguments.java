@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.Boosting.Utils;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import edu.wisc.cs.will.Boosting.RDN.RunBoostedRDN;
@@ -332,7 +332,7 @@ public class CommandLineArguments {
 					case 9: target += "teamFinalScore_ScoreNFLTeamNFLGame"; break;
 				}
 
-				targetPredVal = new HashSet<String>();
+				targetPredVal = new LinkedHashSet<String>();
 				targetPredVal.add(target);
 				
 				if (modelDirVal   == null) { modelDirVal   = "/u/shavlikgroup/people/Jude/MRtestbedResults/NFL/"; }
@@ -393,7 +393,7 @@ public class CommandLineArguments {
 					case 9: target += "teamFinalScore_ScoreNFLTeamNFLGame"; break;
 				}
 
-				targetPredVal = new HashSet<String>();
+				targetPredVal = new LinkedHashSet<String>();
 				targetPredVal.add(target);
 				
 				if (modelDirVal == null) { modelDirVal = "/u/shavlikgroup/people/Jude/MRtestbedResults/NFL/"; }	
@@ -760,19 +760,19 @@ public class CommandLineArguments {
 			}
 			if (argMatches(args[i], targetPred)) {
 				String targetStr = args[++i];
-				targetPredVal = new HashSet<String>();
+				targetPredVal = new LinkedHashSet<String>();
 				targetPredVal.addAll(Arrays.asList(targetStr.split(",")));
 				continue;
 			}
 			if (argMatches(args[i], hiddenPredFlag)) {
 				String targetStr = args[++i];
-				hiddenPredVal = new HashSet<String>();
+				hiddenPredVal = new LinkedHashSet<String>();
 				hiddenPredVal.addAll(Arrays.asList(targetStr.split(",")));
 				continue;
 			}
 			if (argMatches(args[i], loadModelPredFlag)) {
 				String targetStr = args[++i];
-				loadPredModelVal = new HashSet<String>();
+				loadPredModelVal = new LinkedHashSet<String>();
 				loadPredModelVal.addAll(Arrays.asList(targetStr.split(",")));
 				continue;
 			}

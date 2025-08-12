@@ -10,7 +10,7 @@ package edu.wisc.cs.will.Utils.parameters;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +78,7 @@ public class ParameterList implements Iterable<Parameter>, Cloneable {
      */
     public Map<String,String> setParameters(Object owner, Map<String,String> parameterValueMap) throws IllegalParameterException, ParameterRequiredException {
 
-        Map<String,String> remainingParameters = new HashMap<String,String>( parameterValueMap );
+        Map<String,String> remainingParameters = new LinkedHashMap<String,String>( parameterValueMap );
 
         for (Parameter p : this) {
             String parameterName = p.getName();

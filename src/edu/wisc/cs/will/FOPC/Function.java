@@ -6,7 +6,7 @@ package edu.wisc.cs.will.FOPC;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -510,7 +510,7 @@ public class Function extends Term implements LiteralOrFunction {
 		}
 		if (numbArgs < 2) { return; }
 		List<NamedTerm> namedTerms = new ArrayList<NamedTerm>(numbArgs);
-		Set<String> namesSeen = new HashSet<String>(4);
+		Set<String> namesSeen = new LinkedHashSet<String>(4);
 		for (int i = 0; i < numbArgs; i++) {
 			String argName = argumentNames.get(i);
 			if (namesSeen.contains(argName)) { Utils.error("Cannot have duplicate names (" + argName + "): " + argumentNames); }

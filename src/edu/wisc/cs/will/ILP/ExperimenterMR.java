@@ -3,7 +3,7 @@ package edu.wisc.cs.will.ILP;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class ExperimenterMR { // TODO - maybe this should be ExperimentWithSimul
     private long              maxTimeInMilliseconds = 3 * 24 * 60 * 60 * 1000L; // As a default, allow a max of three days (e.g., overnight plus the weekend).  This is in milliseconds, but remember that the max time, command-line argument is in seconds!
     private ReasonToStopEarly the_reasonToStopEarly = ReasonToStopEarly.useBestAccuracyToStopEarly;
 
-    private Set<String> lessonsToSkip = new HashSet<String>(32); 
+    private Set<String> lessonsToSkip = new LinkedHashSet<String>(32); 
     
     private int     numberOfFolds     =   1; // <------------------
     private int     maxNodesExpanded  = 100; // This is the number of ILP rule bodies that are EXPANDED by adding literals.

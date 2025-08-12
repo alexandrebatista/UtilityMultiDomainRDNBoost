@@ -4,7 +4,7 @@
  */
 package edu.wisc.cs.will.ResThmProver;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,14 +44,14 @@ public class LazyGroundNthArgumentClauseIndex {
     /** Index of clauses which might match a constant arg N.
      *
      */
-    private Map<PredicateNameAndArity, Map<Term, DefiniteClauseList>> definiteClausesByArgNIndex = new HashMap<PredicateNameAndArity, Map<Term, DefiniteClauseList>>();
+    private Map<PredicateNameAndArity, Map<Term, DefiniteClauseList>> definiteClausesByArgNIndex = new LinkedHashMap<PredicateNameAndArity, Map<Term, DefiniteClauseList>>();
 
     /** Store clauses in which the Nth arg is not ground.
      *
      * This is used to as a starting place for new definiteClause lists indexed by the
      * Nth args.  This is necessary to make sure unseen
      */
-    private Map<PredicateNameAndArity, DefiniteClauseList> definiteClausesWithUngroundNthArg = new HashMap<PredicateNameAndArity, DefiniteClauseList>();
+    private Map<PredicateNameAndArity, DefiniteClauseList> definiteClausesWithUngroundNthArg = new LinkedHashMap<PredicateNameAndArity, DefiniteClauseList>();
 
 
     public LazyGroundNthArgumentClauseIndex(HornClausebase clausebase, int indexedArgument) {
@@ -66,12 +66,12 @@ public class LazyGroundNthArgumentClauseIndex {
 
             if (literal.numberArgs() >= minimumClauseLengthToIndex) {
                 if (definiteClausesByArgNIndex == null) {
-                    definiteClausesByArgNIndex = new HashMap<PredicateNameAndArity, Map<Term, DefiniteClauseList>>();
+                    definiteClausesByArgNIndex = new LinkedHashMap<PredicateNameAndArity, Map<Term, DefiniteClauseList>>();
                 }
 
                 Map<Term, DefiniteClauseList> mapForKey = definiteClausesByArgNIndex.get(key);
                 if (mapForKey == null) {
-                    mapForKey = new HashMap<Term, DefiniteClauseList>();
+                    mapForKey = new LinkedHashMap<Term, DefiniteClauseList>();
                     definiteClausesByArgNIndex.put(key, mapForKey);
                     
                     // Changed by JWS.
@@ -271,7 +271,7 @@ public class LazyGroundNthArgumentClauseIndex {
                     definiteClausesByArgNIndex = new MyMap();
                 }
 
-                mapForKey = new HashMap<Term, DefiniteClauseList>();
+                mapForKey = new LinkedHashMap<Term, DefiniteClauseList>();
 
                 for (DefiniteClause definiteClause : keyAssertions) {
                     Literal literal = definiteClause.getDefiniteClauseHead();

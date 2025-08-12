@@ -491,7 +491,7 @@ public class ConnectedSentence extends Sentence implements Serializable, Implica
 //    @Override
 //    protected Sentence standardizeVariableNames(Set<Variable> usedVariables, BindingList newToOldBindings) {
 //        if ( usedVariables == null ) {
-//            usedVariables = new HashSet<Variable>();
+//            usedVariables = new LinkedHashSet<Variable>();
 //        }
 //
 //        if ( newToOldBindings == null ) {

@@ -7,8 +7,8 @@ package edu.wisc.cs.will.ILP;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +154,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 //        // To that end, we look for term in the termToVariableMap
 //        // for which this occurs.
 //        BindingList undoGeneralizationList = new BindingList();
-//        Map<Term,Term> newMappings = new HashMap<Term, Term>();
+//        Map<Term,Term> newMappings = new LinkedHashMap<Term, Term>();
 //
 //        for (Map.Entry<Term, Term> entry : termToVariableMap.entrySet()) {
 //            Term termToSearchFor = entry.getKey();
@@ -226,7 +226,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 
             Sentence newSentence = getStringHandler().getConnectedSentence(thisRebound, ConnectiveName.AND, thatRebound);
 
-            Set<ElementPath> newConstantPositions = new HashSet<ElementPath>();
+            Set<ElementPath> newConstantPositions = new LinkedHashSet<ElementPath>();
             for (ElementPath elementPath : this.constantPositions) {
                 newConstantPositions.add(elementPath.prepend(0));
             }
@@ -240,7 +240,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
             newGAC.setConstantsSplit(this.isConstantsSplit() || that.isConstantsSplit());
             newGAC.setRelevanceFromPositiveExample(this.relevanceFromPositiveExample && that.relevanceFromPositiveExample);
 
-            newGAC.mappings = new HashMap<Term, Term>();
+            newGAC.mappings = new LinkedHashMap<Term, Term>();
             if (this.mappings != null) {
                 newGAC.mappings.putAll(this.mappings);
             }
@@ -282,7 +282,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 
             Sentence newSentence = getStringHandler().getConnectedSentence(thisRebound, ConnectiveName.OR, thatRebound);
 
-            Set<ElementPath> newConstantPositions = new HashSet<ElementPath>();
+            Set<ElementPath> newConstantPositions = new LinkedHashSet<ElementPath>();
             for (ElementPath elementPath : this.constantPositions) {
                 newConstantPositions.add(elementPath.prepend(0));
             }
@@ -304,7 +304,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
                 newGAC.addOutputVariable((Variable) variable.applyTheta(bl));
             }
 
-            newGAC.mappings = new HashMap<Term, Term>();
+            newGAC.mappings = new LinkedHashMap<Term, Term>();
             if (this.mappings != null) {
                 newGAC.mappings.putAll(this.mappings);
             }
@@ -324,7 +324,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
     public RelevantClauseInformation getNegation() {
 
         Sentence newSentence;
-        Set<ElementPath> newConstantPositions = new HashSet<ElementPath>();
+        Set<ElementPath> newConstantPositions = new LinkedHashSet<ElementPath>();
 
         if (sentence instanceof ConnectedSentence && ((ConnectedSentence) sentence).getConnective() == ConnectiveName.NOT) {
             newSentence = ((ConnectedSentence) sentence).getSentenceA();
@@ -349,7 +349,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 
     public RelevantClauseInformation getNegationByFailure() {
         Sentence newSentence;
-        Set<ElementPath> newConstantPositions = new HashSet<ElementPath>();
+        Set<ElementPath> newConstantPositions = new LinkedHashSet<ElementPath>();
         
         if (sentence instanceof Clause && sentence.getStringHandler().isNegationByFailure((Clause) sentence)) {
             newSentence = sentence.getStringHandler().getNegationByFailureContents((Clause) sentence);
@@ -595,7 +595,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
     protected RelevantClauseInformation clone() throws CloneNotSupportedException {
         RelevantClauseInformation newRCI = (RelevantClauseInformation) super.clone();
         if (newRCI.mappings != null) {
-            newRCI.mappings = new HashMap<Term, Term>(this.mappings);
+            newRCI.mappings = new LinkedHashMap<Term, Term>(this.mappings);
         }
         if (newRCI.getSentence() != null) {
             BindingList bl = null;
@@ -913,7 +913,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 
     public boolean addOutputVariable(Variable e) {
         if (outputVariables == null) {
-            outputVariables = new HashSet<Variable>();
+            outputVariables = new LinkedHashSet<Variable>();
         }
 
         return outputVariables.add(e);
@@ -940,7 +940,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 
         public ConstantMarkerData(Set<ElementPath> constantPositions) {
             if (constantPositions == null) {
-                constantPositions = new HashSet<ElementPath>();
+                constantPositions = new LinkedHashSet<ElementPath>();
             }
             this.constantPositions = constantPositions;
         }
@@ -974,7 +974,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 
         public GeneralizerData(Map<Term, Term> currentMappings) {
             if (currentMappings == null) {
-                currentMappings = new HashMap<Term, Term>();
+                currentMappings = new LinkedHashMap<Term, Term>();
             }
             this.currentMappings = currentMappings;
         }
@@ -1598,7 +1598,7 @@ public class RelevantClauseInformation implements Cloneable, RelevantInformation
 
     public static class PositionData extends ElementPositionData {
 
-        Map<ElementPath, AllOfFOPC> pathToElementMap = new HashMap<ElementPath, AllOfFOPC>();
+        Map<ElementPath, AllOfFOPC> pathToElementMap = new LinkedHashMap<ElementPath, AllOfFOPC>();
 
         MapOfLists<AllOfFOPC, ElementPath> elementToPathMap = new MapOfLists<AllOfFOPC, ElementPath>();
 

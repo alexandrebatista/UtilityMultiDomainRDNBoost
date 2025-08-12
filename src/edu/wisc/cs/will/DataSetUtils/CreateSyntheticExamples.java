@@ -5,7 +5,7 @@ package edu.wisc.cs.will.DataSetUtils;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -179,10 +179,10 @@ public class CreateSyntheticExamples {
 		}
 			
 		if (debugLevel > 0) { Utils.println("\n% Creating some possible examples with " + numbArgs + " getArguments().  Signature = " + targetPredicateSignature + ".  Reason for each: " + provenanceString + "."); }
-		Set< Example>  resultsAsSet      = new HashSet<  Example>(4); // Use this to quickly look for duplicates.
+		Set< Example>  resultsAsSet      = new LinkedHashSet<  Example>(4); // Use this to quickly look for duplicates.
 		List<Example>  results           = new ArrayList<Example>(4);
 		Constant       dummyConstant     = stringHandler.getStringConstant("Dummy"); // Need a filler for the positions from which we don't extract.
-		Set<Term>      dummyConstantSet  = new HashSet<Term>(4);
+		Set<Term>      dummyConstantSet  = new LinkedHashSet<Term>(4);
 		dummyConstantSet.add(dummyConstant);
 		for (WorldState worldState : worldStatesToProcess2) {
 			if (debugLevel > 1 && usingWorldStates) { Utils.println("%    WorldState: " + worldState); }
@@ -219,7 +219,7 @@ public class CreateSyntheticExamples {
 					if (debugLevel > 2) { Utils.println("% Existing groundedTermsOfThisTypeInThisState '" + targetArgSpecs.get(leafCounter) + "':\n%   " + Utils.limitLengthOfPrintedList(groundedTermsOfThisTypeInThisState)); }
 					leafCounter++;
                 } else if (sig instanceof ConsCell) {
-                    groundedTermsOfThisTypeInThisState = new HashSet<Term>();
+                    groundedTermsOfThisTypeInThisState = new LinkedHashSet<Term>();
                     groundedTermsOfThisTypeInThisState.add( stringHandler.getNil() );
                     leafCounter++;
 				} else if (sig instanceof Function) {
@@ -308,7 +308,7 @@ public class CreateSyntheticExamples {
 		if (debugLevel > 0) { Utils.println("%      For '" + f  + "', [leaves " + leafCounter + " to " + currentCounter + "] crossProduct = " + Utils.limitLengthOfPrintedList(crossProduct)); }
 		List<List<Term>> allPossibilities = Utils.computeCrossProduct(crossProduct);
 		if (debugLevel > 0) { Utils.println("%        results: " + Utils.limitLengthOfPrintedList(allPossibilities)); }
-		Set<Term>        results          = new HashSet<Term>(allPossibilities.size());
+		Set<Term>        results          = new LinkedHashSet<Term>(allPossibilities.size());
 		for (List<Term> args : allPossibilities) {
 			results.add(stringHandler.getFunction(f.functionName, args, f.getTypeSpec()));
 		}
@@ -329,7 +329,7 @@ public class CreateSyntheticExamples {
 	
 	private static Set<Term> getConstantsOfThisTypeInThisWorldState(HandleFOPCstrings stringHandler, ArgSpec spec, WorldState worldState, Iterable<Literal> facts, Set<PredicateNameAndArity> factPredicates) {
 		Type type = spec.typeSpec.isaType;
-		Set<Term> results = new HashSet<Term>(4);		
+		Set<Term> results = new LinkedHashSet<Term>(4);		
 		
 		if (debugLevel > 0) { Utils.println("%    Collect constants of spec '" + spec + "' in world state '" + worldState + "'."); }
 		if (spec.typeSpec.mustBeThisValue()) { 

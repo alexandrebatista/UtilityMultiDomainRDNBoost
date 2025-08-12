@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -313,7 +313,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 			Utils.error("Should not pass in null's.");
 		}
 		if (variantHashMap == null) {
-			variantHashMap = new HashMap<Integer,List<ConnectedSentence>>(4);
+			variantHashMap = new LinkedHashMap<Integer,List<ConnectedSentence>>(4);
 		}
 		int arity = lit1.numberArgs();
 		List<ConnectedSentence> lookup = variantHashMap.get(arity);
@@ -359,7 +359,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 		*/
 		
 		if (pruneHashMap == null) {
-			pruneHashMap = new HashMap<Integer, MapOfLists<PredicateNameAndArity, Pruner>>();
+			pruneHashMap = new LinkedHashMap<Integer, MapOfLists<PredicateNameAndArity, Pruner>>();
 		}
 
         int arity = prunableLiteral.getArity();
@@ -399,11 +399,11 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	
 	public void addConstrainsArgumentType(int arity, int position, Type type, boolean pruneIfNoEffect) throws IllegalStateException {
 		if (constrainsType == null) {
-			constrainsType = new HashMap<Integer,Map<Integer,List<Object>>>(4);
+			constrainsType = new LinkedHashMap<Integer,Map<Integer,List<Object>>>(4);
 		}
 		Map<Integer,List<Object>> firstLookUp = constrainsType.get(arity);
 		if (firstLookUp == null) {
-			firstLookUp = new HashMap<Integer,List<Object>>(4);
+			firstLookUp = new LinkedHashMap<Integer,List<Object>>(4);
 			constrainsType.put(arity, firstLookUp);
 		}
 		List<Object> secondLookUp = firstLookUp.get(position);
@@ -486,7 +486,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	}
 	
 	private void addToDeSpecTypeList(int arity) {
-		if (typeDeSpeced == null) { typeDeSpeced = new HashSet<Integer>(4); }
+		if (typeDeSpeced == null) { typeDeSpeced = new LinkedHashSet<Integer>(4); }
 		typeDeSpeced.add(arity);
 	}
 	
@@ -557,7 +557,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	 */
 	private void setMaxOccurrences(int arity, int max) {		
 		if (maxOccurrencesPerArity == null) {
-			maxOccurrencesPerArity = new HashMap<Integer,Integer>(4);
+			maxOccurrencesPerArity = new LinkedHashMap<Integer,Integer>(4);
 		}
 		Integer current = maxOccurrencesPerArity.get(arity);
 		// Utils.println("setMaxOccurrences: current = " + current + " max = " + max);
@@ -590,12 +590,12 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 			return;
 		}
 		if (maxOccurrencesPerInputVars == null) {
-			maxOccurrencesPerInputVars = new HashMap<Integer,Map<List<Type>,Integer>>(4);
+			maxOccurrencesPerInputVars = new LinkedHashMap<Integer,Map<List<Type>,Integer>>(4);
 		}
 		Map<List<Type>,Integer> firstLookUp = maxOccurrencesPerInputVars.get(arity);
 		// Utils.println("setMaxOccurrencesPerInputVars: firstLookUp = " + firstLookUp + " max = " + max);
 		if (firstLookUp == null) {
-			firstLookUp = new HashMap<List<Type>,Integer>(4);
+			firstLookUp = new LinkedHashMap<List<Type>,Integer>(4);
 			maxOccurrencesPerInputVars.put(arity, firstLookUp);
 		}
 		List<Type> inputArgumentTypes = TypeSpec.getListOfInputArgumentTypes(typeSpecs);
@@ -645,7 +645,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	}	
 	public void setCanBeAbsent(int arity) {
 		if (arity < 0) { canBeAbsentAnyArity = true; }
-		if (canBeAbsentThisArity == null) { canBeAbsentThisArity = new HashSet<Integer>(4); }
+		if (canBeAbsentThisArity == null) { canBeAbsentThisArity = new LinkedHashSet<Integer>(4); }
 		if (canBeAbsentThisArity.contains(arity)) { return; } // No need to add again.
 		canBeAbsentThisArity.add(arity);
 	}
@@ -657,7 +657,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	}	
 	public void setDontComplainAboutMultipleTypes(int arity) {
 		if (arity < 0) { dontComplainAboutMultipleTypesAnyArity = true; }
-		if (dontComplainAboutMultipleTypesThisArity == null) { dontComplainAboutMultipleTypesThisArity = new HashSet<Integer>(4); }
+		if (dontComplainAboutMultipleTypesThisArity == null) { dontComplainAboutMultipleTypesThisArity = new LinkedHashSet<Integer>(4); }
 		if (dontComplainAboutMultipleTypesThisArity.contains(arity)) { return; } // No need to add again.
 		dontComplainAboutMultipleTypesThisArity.add(arity);
 	}	
@@ -668,8 +668,8 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 		return isaInterval_1D.contains(arity);
 	}
 	public void setIsaInterval_1D(int arity, boolean boundariesAtEnd) {
-		if (isaInterval_1D     == null) { isaInterval_1D     = new HashSet<Integer>(4); }
-		if (boundariesAtEnd_1D == null) { boundariesAtEnd_1D = new HashSet<Integer>(4); }
+		if (isaInterval_1D     == null) { isaInterval_1D     = new LinkedHashSet<Integer>(4); }
+		if (boundariesAtEnd_1D == null) { boundariesAtEnd_1D = new LinkedHashSet<Integer>(4); }
 		if (isaInterval_1D(    arity)) { return; } // Already recorded.  TODO check if boundariesAtEnd has changed!
 		isaInterval_1D.add(    arity);
 		// if (boundariesAtEnd_1D.get(arity)) { return; } // Already recorded.  TODO check if boundariesAtEnd has changed!
@@ -681,8 +681,8 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 		return isaInterval_2D.contains(arity);
 	}
 	public void setIsaInterval_2D(int arity, boolean boundariesAtEnd) {
-		if (isaInterval_2D     == null) { isaInterval_2D     = new HashSet<Integer>(4); }
-		if (boundariesAtEnd_2D == null) { boundariesAtEnd_2D = new HashSet<Integer>(4); }
+		if (isaInterval_2D     == null) { isaInterval_2D     = new LinkedHashSet<Integer>(4); }
+		if (boundariesAtEnd_2D == null) { boundariesAtEnd_2D = new LinkedHashSet<Integer>(4); }
 		if (isaInterval_2D(    arity)) { return; } // Already recorded.  TODO check if boundariesAtEnd has changed!
 		isaInterval_2D.add(    arity);
 		if (boundariesAtEnd) { boundariesAtEnd_2D.add(arity); }
@@ -693,8 +693,8 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 		return isaInterval_3D.contains(arity);
 	}
 	public void setIsaInterval_3D(int arity, boolean boundariesAtEnd) {
-		if (isaInterval_3D     == null) { isaInterval_3D     = new HashSet<Integer>(4); }
-		if (boundariesAtEnd_3D == null) { boundariesAtEnd_3D = new HashSet<Integer>(4); }
+		if (isaInterval_3D     == null) { isaInterval_3D     = new LinkedHashSet<Integer>(4); }
+		if (boundariesAtEnd_3D == null) { boundariesAtEnd_3D = new LinkedHashSet<Integer>(4); }
 		if (isaInterval_3D(    arity)) { return; } // Already recorded.  TODO check if boundariesAtEnd has changed!
 		isaInterval_3D.add(    arity);
 		if (boundariesAtEnd) { boundariesAtEnd_3D.add(arity); }
@@ -702,11 +702,11 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 
 	public void setDeterminateInfo(int arity, int position, Type type) throws IllegalStateException {
 		if (determinateSpec == null) {
-			determinateSpec = new HashMap<Integer,Map<Integer,Type>>(4);
+			determinateSpec = new LinkedHashMap<Integer,Map<Integer,Type>>(4);
 		}
 		Map<Integer,Type> firstLookUp = determinateSpec.get(arity);
 		if (firstLookUp == null) {
-			firstLookUp = new HashMap<Integer,Type>(4);
+			firstLookUp = new LinkedHashMap<Integer,Type>(4);
 			determinateSpec.put(arity, firstLookUp);
 		}
 		Type secondLookUp = firstLookUp.get(position);
@@ -720,11 +720,11 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 
 	public void addFunctionAsPred(FunctionAsPredType type, int arity, int position) throws IllegalStateException {
 		if (functionAsPredSpec == null) { 
-			functionAsPredSpec = new HashMap<FunctionAsPredType,Map<Integer,Integer>>();
+			functionAsPredSpec = new LinkedHashMap<FunctionAsPredType,Map<Integer,Integer>>();
 		}
 		Map<Integer,Integer> lookup1 = functionAsPredSpec.get(type);
 		if (lookup1 == null) { // Not currently specified.
-			lookup1 = new HashMap<Integer,Integer>(4);
+			lookup1 = new LinkedHashMap<Integer,Integer>(4);
 			functionAsPredSpec.put(type, lookup1);			
 		}
 		Integer lookup2 = lookup1.get(arity);
@@ -740,7 +740,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	public void addBridger(int arity) {
 		// Utils.println("Create BRIDGER: " + name + "/" + arity + "."); 
 		if (bridgerSpec == null) {
-			bridgerSpec = new HashSet<Integer>(4);
+			bridgerSpec = new LinkedHashSet<Integer>(4);
 		}
 		Boolean firstLookUp = bridgerSpec.contains(arity);
 		if (!firstLookUp) { // Not currently specified.
@@ -781,7 +781,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	public void addTemporary(int arity) { // -1 means 'any parity.'
 		// Utils.println("Create TEMPORARY: " + name + "/" + arity + "."); 
 		if (temporary == null) {
-			temporary = new HashSet<Integer>(4);
+			temporary = new LinkedHashSet<Integer>(4);
 		}
 		Boolean firstLookUp = temporary.contains(arity);
 		if (!firstLookUp) { // Not currently specified.
@@ -793,7 +793,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	public void addNamedArgOrdering(List<String> order) {
 		int arity = Utils.getSizeSafely(order);
 		if (namedArgumentOrdering == null) {
-			namedArgumentOrdering = new HashMap<Integer,List<String>>(4);
+			namedArgumentOrdering = new LinkedHashMap<Integer,List<String>>(4);
 		}
 		List<String> lookup = namedArgumentOrdering.get(arity);
 		if (lookup == null) { // Not currently specified.
@@ -809,7 +809,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	public void addInliner(int arity)  {
 		//Utils.waitHere("Create INLINE: " + name + "/" + arity + "."); 
 		if (inlineSpec == null) {
-			inlineSpec = new HashSet<Integer>(4);
+			inlineSpec = new LinkedHashSet<Integer>(4);
 		}
 		Boolean firstLookUp = inlineSpec.contains(arity);
 		if (!firstLookUp) { // Not currently specified.
@@ -830,7 +830,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	
 	public void addHiddenPred(int arity) { 
 		if (hiddenPredSpec == null) {
-			hiddenPredSpec = new HashSet<Integer>(4);
+			hiddenPredSpec = new LinkedHashSet<Integer>(4);
 		}
 		Boolean firstLookUp = hiddenPredSpec.contains(arity);
 		if (!firstLookUp) { // Not currently specified.
@@ -841,7 +841,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	
 	public void addQueryPred(int arity) { 
 		if (queryPredSpec == null) {
-			queryPredSpec = new HashSet<Integer>(4);
+			queryPredSpec = new LinkedHashSet<Integer>(4);
 		}
 		Boolean firstLookUp = queryPredSpec.contains(arity);
 		if (!firstLookUp) { // Not currently specified.
@@ -856,7 +856,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 			return; // Just return silently
 		}
 		if (cost == null) {
-			cost = new HashMap<Integer,Double>(4);
+			cost = new LinkedHashMap<Integer,Double>(4);
 		}
 		Boolean firstLookUp = cost.containsKey(arity);
 		if (firstLookUp) { 
@@ -884,7 +884,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	public void markAsSupportingPredicate(int arity, boolean okIfDup) {
 		//Utils.waitHere("Create SUPPORTER: " + name + "/" + arity + "."); 
 		if (supportingLiteral == null) {
-			supportingLiteral = new HashSet<Integer>(4);
+			supportingLiteral = new LinkedHashSet<Integer>(4);
 		}
 		Boolean firstLookUp = supportingLiteral.contains(arity);
 		if (!firstLookUp) { // Not currently specified.
@@ -900,7 +900,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 	// On these, the later override the earlier (allows code to change these).
 	public void setRelevance(int arity, RelevanceStrength strength) {
 		if (relevance == null) {
-			relevance = new HashMap<Integer,RelevanceStrength>(4);
+			relevance = new LinkedHashMap<Integer,RelevanceStrength>(4);
 		}
 		Boolean firstLookUp = relevance.containsKey(arity);
 		if (firstLookUp) { 
@@ -1053,7 +1053,7 @@ public class PredicateName extends AllOfFOPC implements Serializable {
 
     public void setContainsCallable(int arity) {
         if ( containsCallable == null ) {
-            containsCallable = new HashSet<Integer>();
+            containsCallable = new LinkedHashSet<Integer>();
         }
         containsCallable.add(arity);
     }

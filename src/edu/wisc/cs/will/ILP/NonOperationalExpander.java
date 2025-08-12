@@ -6,8 +6,8 @@ package edu.wisc.cs.will.ILP;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,7 +74,7 @@ public class NonOperationalExpander {
 
     private static Map<Literal, Literal> getNonOperationalExpansionMap(List<Literal> nonOperationalLiterals, List<Literal> operationalLiterals) {
 
-        Map<Literal, Literal> map = new HashMap<Literal, Literal>();
+        Map<Literal, Literal> map = new LinkedHashMap<Literal, Literal>();
 
         for (int i = 0; i < nonOperationalLiterals.size(); i++) {
             Literal nonOp = nonOperationalLiterals.get(i);
@@ -236,7 +236,7 @@ public class NonOperationalExpander {
         }
 
         private Set<TermAndIndex> getFreeTermSet(LiteralOrFunction literal) {
-            Set<TermAndIndex> set = new HashSet<TermAndIndex>();
+            Set<TermAndIndex> set = new LinkedHashSet<TermAndIndex>();
 
             List<Term> arguments = literal.getArguments();
 
@@ -795,7 +795,7 @@ public class NonOperationalExpander {
 //        }
 //
 //        private Set<TermAndIndex> getFreeTermSet(LiteralOrFunction literal) {
-//            Set<TermAndIndex> set = new HashSet<TermAndIndex>();
+//            Set<TermAndIndex> set = new LinkedHashSet<TermAndIndex>();
 //
 //            List<Term> arguments = literal.getArguments();
 //

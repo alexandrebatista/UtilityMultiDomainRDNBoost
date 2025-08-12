@@ -2,8 +2,8 @@ package edu.wisc.cs.will.Boosting.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,8 +34,8 @@ public class MergeTreeStatsToCSV {
 	
 	public MergeTreeStatsToCSV() {
 		parser = new FileParser(new HandleFOPCstrings());
-		idToProb = new HashMap<String, Double>();
-		idTocounts = new HashMap<String, Integer>();
+		idToProb = new LinkedHashMap<String, Double>();
+		idTocounts = new LinkedHashMap<String, Integer>();
 	}
 	
 	public void mergeStatsFromFiles(String[] files, String outputCSV) {
@@ -156,7 +156,7 @@ public class MergeTreeStatsToCSV {
 				  "scoringEventFG_NFLGame_ScoreEvent",
 				  "teamFinalScore_NFLTeam_NFLGame"
 		};
-		Set<Integer> skipsThisBin = new HashSet<Integer>(4);
+		Set<Integer> skipsThisBin = new LinkedHashSet<Integer>(4);
 		
 		if (true) { // This is for KBP.
 		

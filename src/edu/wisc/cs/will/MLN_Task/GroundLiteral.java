@@ -1,7 +1,7 @@
 package edu.wisc.cs.will.MLN_Task;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -92,7 +92,7 @@ public class GroundLiteral extends Literal {
 			for (int i = 0; i < length; i++) {
 				GroundLiteral gLit = gndClause.getIthLiteral(i);
 				if (gLit != this && (neighbors == null || !neighbors.contains(gLit))) {
-					if (neighbors == null) { neighbors = new HashSet<GroundLiteral>(4); }
+					if (neighbors == null) { neighbors = new LinkedHashSet<GroundLiteral>(4); }
 					neighbors.add(gLit);
 				}
 			}
@@ -127,7 +127,7 @@ public class GroundLiteral extends Literal {
 	 * Empties the GroundClauseList
 	 */
 	public void clearGndClauseSet() {
-		if (gndClauseSet == null) { gndClauseSet = new HashSet<GroundClause>(4); }
+		if (gndClauseSet == null) { gndClauseSet = new LinkedHashSet<GroundClause>(4); }
 		else { gndClauseSet.clear(); }
 	}
 	

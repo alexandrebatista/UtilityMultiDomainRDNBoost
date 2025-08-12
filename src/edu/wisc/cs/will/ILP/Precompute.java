@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -118,7 +118,7 @@ public class Precompute {
 //			}
 //			if (!predicatesToPrecompute.contains(pName)) { predicatesToPrecompute.add(pName); }
 //			if (precomputeClauses == null) {
-//				precomputeClauses = new HashMap<PredicateName,List<Clause>>(4);
+//				precomputeClauses = new LinkedHashMap<PredicateName,List<Clause>>(4);
 //			}
 //			List<Clause> existingClauses = precomputeClauses.get(pName);
 //			if (existingClauses == null) {
@@ -161,8 +161,8 @@ public class Precompute {
 
             counter = 0;
             duplicates = 0;
-         // checked = new HashSet<List<Term>>(128);
-            checked = new HashSet<String>(128);
+         // checked = new LinkedHashSet<List<Term>>(128);
+            checked = new LinkedHashSet<String>(128);
 
             //HornClauseProverChildrenGenerator rulesAndFactsHolder = null;
             HandleFOPCstrings stringHandler = prover.getStringHandler();

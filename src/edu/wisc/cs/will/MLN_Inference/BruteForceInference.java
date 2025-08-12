@@ -2,8 +2,8 @@ package edu.wisc.cs.will.MLN_Inference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public class BruteForceInference extends Inference {
 	private Map<GroundLiteral,Block>  currentBlocks;  // TODO blocks
 	private Collection<GroundLiteral> currentSatisfiableLiterals;  // We walk through these and assume they are in order, so need to use this special type of Set.
 	private Collection<GroundClause>  currentSatisfiableClauses;   // Clauses in the local blanket.
-	private Collection<GroundLiteral> flexibleGroundLiteralsComputed = new HashSet<GroundLiteral>(4); // Some query literals are coupled to others.  Some 'hidden' literals will be here as well, but that is fine.
+	private Collection<GroundLiteral> flexibleGroundLiteralsComputed = new LinkedHashSet<GroundLiteral>(4); // Some query literals are coupled to others.  Some 'hidden' literals will be here as well, but that is fine.
 	
 	private Map<GroundLiteral,Double> sumWeightSatisfiedClausesWhenLiteralEqualsTrue;  // TODO - put in an array for faster access and updating.
 	private Map<GroundLiteral,Double> sumWeightSatisfiedClausesWhenLiteralEqualsFalse;
@@ -48,8 +48,8 @@ public class BruteForceInference extends Inference {
 		}
 		if (Utils.getSizeSafely(groundedMarkovNetwork.task.getQueryLiterals()) < 1) { Utils.error("There needs to be some query literals."); }
 		
-		sumWeightSatisfiedClausesWhenLiteralEqualsTrue  = new HashMap<GroundLiteral,Double>(4);
-		sumWeightSatisfiedClausesWhenLiteralEqualsFalse = new HashMap<GroundLiteral,Double>(4);
+		sumWeightSatisfiedClausesWhenLiteralEqualsTrue  = new LinkedHashMap<GroundLiteral,Double>(4);
+		sumWeightSatisfiedClausesWhenLiteralEqualsFalse = new LinkedHashMap<GroundLiteral,Double>(4);
 	}
 	
 	protected void initForTheseFlexibleLiterals(Collection<GroundLiteral> lits) {

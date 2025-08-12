@@ -4,15 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class Graph {
 
-	public HashMap<String,Edge> GraphEdges = new HashMap<String,Edge>();
-	public HashMap<String,Node> GraphNodes = new HashMap<String,Node>();
+	public LinkedHashMap<String,Edge> GraphEdges = new LinkedHashMap<String,Edge>();
+	public LinkedHashMap<String,Node> GraphNodes = new LinkedHashMap<String,Node>();
 	String StartEntity;
 	String EndEntity;
 	String DirectoryPath;

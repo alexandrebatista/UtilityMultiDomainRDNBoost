@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -57,15 +57,15 @@ public class GraphDB {
 		Hashtable<String,Integer> typeCounts = new Hashtable<String,Integer>();
 		Hashtable<String,Integer> qrySign = new Hashtable<String,Integer>();
 		Set<String> vars = new TreeSet<String>();
-		HashMap<String,Double> countTable = new HashMap<String,Double>();
-		HashMap<String,Boolean> predSense = new HashMap<String,Boolean>();
-		HashMap<String,Double> predcountTableIn = new HashMap<String,Double>();
-		HashMap<String,Double> predcountTableOut = new HashMap<String,Double>();
-		HashMap<String,Double> predcountTableInNum = new HashMap<String,Double>();
-		HashMap<String,Double> predcountTableOutNum = new HashMap<String,Double>();
+		LinkedHashMap<String,Double> countTable = new LinkedHashMap<String,Double>();
+		LinkedHashMap<String,Boolean> predSense = new LinkedHashMap<String,Boolean>();
+		LinkedHashMap<String,Double> predcountTableIn = new LinkedHashMap<String,Double>();
+		LinkedHashMap<String,Double> predcountTableOut = new LinkedHashMap<String,Double>();
+		LinkedHashMap<String,Double> predcountTableInNum = new LinkedHashMap<String,Double>();
+		LinkedHashMap<String,Double> predcountTableOutNum = new LinkedHashMap<String,Double>();
 		//summary tables
-		HashMap<String,HashMap<String,Double>> InCount = new HashMap<String,HashMap<String,Double>>();
-		HashMap<String,HashMap<String,Double>> OutCount = new HashMap<String,HashMap<String,Double>>();
+		LinkedHashMap<String,LinkedHashMap<String,Double>> InCount = new LinkedHashMap<String,LinkedHashMap<String,Double>>();
+		LinkedHashMap<String,LinkedHashMap<String,Double>> OutCount = new LinkedHashMap<String,LinkedHashMap<String,Double>>();
 		String final_var = null;
 		static {
 			//Setting up the config file for the logger
@@ -327,12 +327,12 @@ public class GraphDB {
 				QuerySolution qs = results.next();
 				mInG.add(new Triple(qs.get("cnt").asNode(),qs.getResource("p").asNode(),
 						qs.getResource("o").asNode()));
-				HashMap<String,Double> temp = null;
+				LinkedHashMap<String,Double> temp = null;
 				temp = InCount.get(qs.get("o").asResource().getLocalName().isEmpty()?qs.get("o").asResource().toString().replace(ns, ""):qs.get("o").asResource().getLocalName());
 				//System.out.println(qs.get("cnt").asLiteral().getDouble()+" | "+qs.get("p").asResource().getLocalName()+" | "+qs.get("o").asResource().getLocalName());
 				if(temp==null)
 				{
-					temp = new HashMap<String,Double>();
+					temp = new LinkedHashMap<String,Double>();
 				}
 				System.out.println("----IN");
 				System.out.println(qs.get("cnt").asLiteral().getDouble()+" | "+qs.get("p").asResource().getLocalName()+" | "+(qs.get("o").asResource().getLocalName().isEmpty()?qs.get("o").asResource().toString().replace(ns, ""):qs.get("o").asResource().getLocalName()));
@@ -358,12 +358,12 @@ public class GraphDB {
 				QuerySolution qs = results1.next();
 				mOutG.add(new Triple(qs.get("s").asNode(),
 						qs.get("p").asNode(),qs.get("cnt").asNode()));
-				HashMap<String,Double> temp = null;
+				LinkedHashMap<String,Double> temp = null;
 				temp = OutCount.get(qs.get("s").asResource().getLocalName().isEmpty()?qs.get("s").asResource().toString().replace(ns, ""):qs.get("s").asResource().getLocalName());
 				//System.out.println(qs.get("s").asResource().getLocalName()+" | "+qs.get("p").asResource().getLocalName()+" | "+qs.get("cnt").asLiteral().getDouble());
 				if(temp==null)
 				{
-					temp = new HashMap<String,Double>();
+					temp = new LinkedHashMap<String,Double>();
 				}
 				temp.put(qs.get("p").asResource().getLocalName(),qs.get("cnt").asLiteral().getDouble());
 				OutCount.put(qs.get("s").asResource().getLocalName().isEmpty()?qs.get("s").asResource().toString().replace(ns, ""):qs.get("s").asResource().getLocalName(), temp);
@@ -689,7 +689,7 @@ public class GraphDB {
 			System.out.println(Gvar);
 			if(preds.size()==0)
 				return 0.0;
-			countTable = new HashMap<String,Double>();
+			countTable = new LinkedHashMap<String,Double>();
 			String[] gvarlst = Gvar.split(",");
 			String[] vallst = value.split(",");
 			for(int i = 0;i<gvarlst.length;i++)

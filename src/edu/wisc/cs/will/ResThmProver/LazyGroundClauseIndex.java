@@ -4,7 +4,7 @@
  */
 package edu.wisc.cs.will.ResThmProver;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class LazyGroundClauseIndex {
      * all args.  This is necessary to make sure unseen term combinations
      * start with the unground clauses in their index.
      */
-    private Map<PredicateNameAndArity, DefiniteClauseList> definiteClausesWithUngroundArgs = new HashMap<PredicateNameAndArity, DefiniteClauseList>();
+    private Map<PredicateNameAndArity, DefiniteClauseList> definiteClausesWithUngroundArgs = new LinkedHashMap<PredicateNameAndArity, DefiniteClauseList>();
 
     public LazyGroundClauseIndex(HornClausebase clausebase) {
     	maximumIndexSize = maximumIndexSizeDefault;
@@ -59,7 +59,7 @@ public class LazyGroundClauseIndex {
 
             Map<List<Term>, DefiniteClauseList> mapForKey = definiteClausesAllArgsIndex.get(key);
             if (mapForKey == null) {
-                mapForKey = new HashMap<List<Term>, DefiniteClauseList>();
+                mapForKey = new LinkedHashMap<List<Term>, DefiniteClauseList>();
                 definiteClausesAllArgsIndex.put(key, mapForKey);
 
                 if (LazyHornClausebase.DEBUG >= -2) { // Changed by JWS.
@@ -253,7 +253,7 @@ public class LazyGroundClauseIndex {
 
         if (LazyHornClausebase.DEBUG >= 1) {
             if (indexBuilds == null) {
-                indexBuilds = new HashMap<PredicateNameAndArity, Integer>();
+                indexBuilds = new LinkedHashMap<PredicateNameAndArity, Integer>();
             }
 
             Integer count = indexBuilds.get(key);
@@ -284,7 +284,7 @@ public class LazyGroundClauseIndex {
                 mapForKey = new DebuggingHashMap<List<Term>, DefiniteClauseList>((int) Math.max(16, clauses.size() / 0.75 + 10), "LazyGroundClauseIndex:" + key, LazyHornClausebase.DEBUG);
             }
             else {
-                mapForKey = new HashMap<List<Term>, DefiniteClauseList>((int) Math.max(16, clauses.size() / 0.75 + 10));
+                mapForKey = new LinkedHashMap<List<Term>, DefiniteClauseList>((int) Math.max(16, clauses.size() / 0.75 + 10));
             }
 
             for (DefiniteClause definiteClause : clauses) {

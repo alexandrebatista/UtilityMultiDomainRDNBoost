@@ -8,8 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +162,7 @@ public class BottomClauseUnused {
 
     private void expandNodeViaMode(Node nodeToExpand, ModeInfo modeInfo, LinkedList<Node> newOpenNodes, LinkedList<Node> allNewNodes) {
 
-        Map<Variable, TypeSpec> aMap = new HashMap<Variable, TypeSpec>(modeInfo.variableToTypeMap);
+        Map<Variable, TypeSpec> aMap = new LinkedHashMap<Variable, TypeSpec>(modeInfo.variableToTypeMap);
 
         List<PossibleBinding> possibleBindings = expandBindings(nodeToExpand, aMap);
 
@@ -287,7 +287,7 @@ public class BottomClauseUnused {
     }
 
     private Set<Literal> getModes(Literal example) {
-        Set<Literal> modes = new HashSet<Literal>();
+        Set<Literal> modes = new LinkedHashSet<Literal>();
 
         VarIndicator oldValue = context.getStringHandler().getVariableIndicatorNoSideEffects();
         Literal modeProofLiteral = context.getFileParser().parseLiteral("mode(X)");
@@ -354,7 +354,7 @@ public class BottomClauseUnused {
 
     public void addExcludedMode(PredicateNameAndArity pnaa) {
         if ( excludedModes == null) {
-            excludedModes = new HashSet<PredicateNameAndArity>();
+            excludedModes = new LinkedHashSet<PredicateNameAndArity>();
         }
 
         excludedModes.add(pnaa);
@@ -378,7 +378,7 @@ public class BottomClauseUnused {
                 List<PossibleBinding> result = new ArrayList<PossibleBinding>();
 
                 if (spec.canBeBound()) {
-                    Set<VariableInfo> variableInfos = new HashSet<VariableInfo>();
+                    Set<VariableInfo> variableInfos = new LinkedHashSet<VariableInfo>();
                     nodeToExpand.getAvailableInputs(spec, variableInfos);
 
                     if (spec.mustBeBound() && variableInfos.isEmpty()) {
@@ -627,7 +627,7 @@ public class BottomClauseUnused {
          */
         public ModeInfo rebind(BindingList bl) {
 
-            Map<Variable, TypeSpec> reboundVarToTypeMap = new HashMap<Variable, TypeSpec>();
+            Map<Variable, TypeSpec> reboundVarToTypeMap = new LinkedHashMap<Variable, TypeSpec>();
             for (Map.Entry<Variable, TypeSpec> entry : variableToTypeMap.entrySet()) {
                 Term newVar = bl.getMapping(entry.getKey());
                 if (newVar != null) {
@@ -758,7 +758,7 @@ public class BottomClauseUnused {
         private void addConstant(VariableInfo vi) {
             // Constants???
             if (constants == null) {
-                constants = new HashSet<VariableInfo>();
+                constants = new LinkedHashSet<VariableInfo>();
             }
             constants.add(vi);
         }
@@ -766,13 +766,13 @@ public class BottomClauseUnused {
         private void addInput(VariableInfo vi) {
             if (parent != null) {
                 if (inputs == null) {
-                    inputs = new HashSet<VariableInfo>();
+                    inputs = new LinkedHashSet<VariableInfo>();
                 }
                 inputs.add(vi);
             }
             else {
                 if (outputs == null) {
-                    outputs = new HashSet<VariableInfo>();
+                    outputs = new LinkedHashSet<VariableInfo>();
                 }
                 outputs.add(vi);
             }
@@ -781,13 +781,13 @@ public class BottomClauseUnused {
         private void addOutput(VariableInfo vi) {
             if (parent == null) {
                 if (inputs == null) {
-                    inputs = new HashSet<VariableInfo>();
+                    inputs = new LinkedHashSet<VariableInfo>();
                 }
                 inputs.add(vi);
             }
             else {
                 if (outputs == null) {
-                    outputs = new HashSet<VariableInfo>();
+                    outputs = new LinkedHashSet<VariableInfo>();
                 }
                 outputs.add(vi);
             }
@@ -1142,7 +1142,7 @@ public class BottomClauseUnused {
 
     public static class ModeToVariableData {
 
-        Map<Variable, TypeSpec> variableToTypeMap = new HashMap<Variable, TypeSpec>();
+        Map<Variable, TypeSpec> variableToTypeMap = new LinkedHashMap<Variable, TypeSpec>();
 
     }
 
@@ -1177,12 +1177,12 @@ public class BottomClauseUnused {
         protected Map<Variable, VariableInfo> possibleBindings;
 
         public PossibleBinding(Variable variable, VariableInfo binding) {
-            possibleBindings = new HashMap<Variable, VariableInfo>();
+            possibleBindings = new LinkedHashMap<Variable, VariableInfo>();
             possibleBindings.put(variable, binding);
         }
 
         public PossibleBinding(PossibleBinding pb, Variable variable, VariableInfo binding) {
-            possibleBindings = new HashMap<Variable, VariableInfo>();
+            possibleBindings = new LinkedHashMap<Variable, VariableInfo>();
             possibleBindings.putAll(pb.possibleBindings);
             possibleBindings.put(variable, binding);
         }

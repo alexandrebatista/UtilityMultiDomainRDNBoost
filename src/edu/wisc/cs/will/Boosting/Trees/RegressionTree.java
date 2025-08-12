@@ -3,7 +3,7 @@ package edu.wisc.cs.will.Boosting.Trees;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +88,7 @@ public class RegressionTree extends ClauseBasedTree {
 
 	public Set<Literal> getGroundParents(RegressionRDNExample example,
 			Map<String, List<RegressionRDNExample>> jointExamples) {
-		Set<Literal> groundParents = new HashSet<Literal>();
+		Set<Literal> groundParents = new LinkedHashSet<Literal>();
 		for (Clause clause : regressionClauses) {
 			// Remove the regression value argument
 			Literal head = clause.getDefiniteClauseHead();

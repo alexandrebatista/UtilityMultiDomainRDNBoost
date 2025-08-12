@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,10 +116,10 @@ public class RunBoostedRDN extends RunBoostedModels {
 			Utils.println("NonPrefTargets: " + ai.nonPrefTargets);
 		}
 		
-		Map<String,Map<Example, Double>> adviceMap = new HashMap<String,Map<Example, Double>>();
-		Map<String,List<Example>> exs = new HashMap<String,List<Example>>();
+		Map<String,Map<Example, Double>> adviceMap = new LinkedHashMap<String,Map<Example, Double>>();
+		Map<String,List<Example>> exs = new LinkedHashMap<String,List<Example>>();
 		for (String string : tgts) {
-			adviceMap.put(string, new HashMap<Example, Double>());
+			adviceMap.put(string, new LinkedHashMap<Example, Double>());
 			exs.put(string, new ArrayList<Example>());
 		}
 		
@@ -198,7 +198,7 @@ public class RunBoostedRDN extends RunBoostedModels {
 //			for (String target : relevantTargets) {
 				fullModel = new JointRDNModel();
 				String yapFile = cmdArgs.getYapBiasVal();
-				Map<String, LearnBoostedRDN> learners = new HashMap<String, LearnBoostedRDN>();
+				Map<String, LearnBoostedRDN> learners = new LinkedHashMap<String, LearnBoostedRDN>();
 				int minTreesInModel = Integer.MAX_VALUE;
 		
 				for (String pred : relevantTargets) {//cmdArgs.getTargetPredVal()) {
@@ -289,7 +289,7 @@ public class RunBoostedRDN extends RunBoostedModels {
 		}
 		fullModel = new JointRDNModel();
 		String yapFile = cmdArgs.getYapBiasVal();
-		Map<String, LearnBoostedRDN> learners = new HashMap<String, LearnBoostedRDN>();
+		Map<String, LearnBoostedRDN> learners = new LinkedHashMap<String, LearnBoostedRDN>();
 		int minTreesInModel = Integer.MAX_VALUE;
 		for (String pred : cmdArgs.getTargetPredVal()) {
 			fullModel.put(pred, new ConditionalModelPerPredicate(setup));

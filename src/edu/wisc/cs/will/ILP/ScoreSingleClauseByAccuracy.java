@@ -3,7 +3,7 @@
  */
 package edu.wisc.cs.will.ILP;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +31,7 @@ public class ScoreSingleClauseByAccuracy extends ScoreSingleClause {
 	public double multiplierForUniqueVars      = 0.0000001; // Ditto.  Count how many DIFFERENT variables there are.
 	public double multiplierForUniqueConstants = 0.0000002; // Ditto.  Count how many DIFFERENT variables there are.
 	
-	private Set<PredicateName> pNamesSeen = new HashSet<PredicateName>(32);
+	private Set<PredicateName> pNamesSeen = new LinkedHashSet<PredicateName>(32);
 	
 	public ScoreSingleClauseByAccuracy() {
 	}

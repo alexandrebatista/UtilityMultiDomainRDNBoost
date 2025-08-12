@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -141,7 +141,7 @@ public class LearnDiscriminantMLNs {
 	}
 	
 	private void addToQueryPnameArity(Literal lit) {
-		if (queryPredNames == null) { queryPredNames = new HashSet<PredNameArityPair>(4); }
+		if (queryPredNames == null) { queryPredNames = new LinkedHashSet<PredNameArityPair>(4); }
 		PredNameArityPair  pair = new PredNameArityPair(lit.predicateName, lit.numberArgs());
 		queryPredNames.add(pair);
 	}
@@ -155,11 +155,11 @@ public class LearnDiscriminantMLNs {
 			if (examplesBecomeQueryPnameArity) {
 				addToQueryPnameArity(currExample);
 			} else {
-				if (queryLiterals == null) { queryLiterals = new HashSet<Literal>(4); }
+				if (queryLiterals == null) { queryLiterals = new LinkedHashSet<Literal>(4); }
 				queryLiterals.add(currExample);
 			}
-			if (posQueryLiterals == null) { posQueryLiterals = new HashSet<GroundLiteral>(4);        }
-			if (queryLabels      == null) { queryLabels      = new HashMap<GroundLiteral,String>(4); }
+			if (posQueryLiterals == null) { posQueryLiterals = new LinkedHashSet<GroundLiteral>(4);        }
+			if (queryLabels      == null) { queryLabels      = new LinkedHashMap<GroundLiteral,String>(4); }
 			queryLabels.put(gLitPos, " // Positive example #" + Utils.comma(1 + queryLabels.size()) + ".");
 			posQueryLiterals.add(gLitPos);
 		} else if (readInTrainingLiterals) { Utils.error("No positive examples found!"); }
@@ -168,35 +168,35 @@ public class LearnDiscriminantMLNs {
 			if (examplesBecomeQueryPnameArity) {
 				addToQueryPnameArity(currExample);
 			} else {
-				if (queryLiterals == null) { queryLiterals = new HashSet<Literal>(4); }
+				if (queryLiterals == null) { queryLiterals = new LinkedHashSet<Literal>(4); }
 				queryLiterals.add(currExample);
 			}
-			if (negQueryLiterals == null) { negQueryLiterals = new HashSet<GroundLiteral>(4);        }
-			if (queryLabels      == null) { queryLabels      = new HashMap<GroundLiteral,String>(4); }
+			if (negQueryLiterals == null) { negQueryLiterals = new LinkedHashSet<GroundLiteral>(4);        }
+			if (queryLabels      == null) { queryLabels      = new LinkedHashMap<GroundLiteral,String>(4); }
 			queryLabels.put(gLitNeg, " // Negative example #" + Utils.comma(1 + queryLabels.size()) + ".");
 			negQueryLiterals.add(gLitNeg); // Might not need to add them here either, but OK to do so.
 		} else if (readInTrainingLiterals) { Utils.error("No negative examples found!"); }
 		for (Sentence currFact : facts) /* if (!currFact.predicateName.name.equals("taughtBy")) */ {
 			//currLiteral.setValueOnly(true);
 			if (currFact instanceof Literal) { 
-				if (posEvidenceLiterals == null) { posEvidenceLiterals =  new HashSet<Literal>(4); }
+				if (posEvidenceLiterals == null) { posEvidenceLiterals =  new LinkedHashSet<Literal>(4); }
 				posEvidenceLiterals.add((Literal) currFact); 
 			}
 			else if (currFact instanceof ConnectedSentence && ((ConnectedSentence) currFact).getSentenceB() instanceof Literal && ConnectiveName.isaNOT(((ConnectedSentence) currFact).getConnective().name)) {
-				if (negEvidenceLiterals == null) { negEvidenceLiterals =  new HashSet<Literal>(4); }
+				if (negEvidenceLiterals == null) { negEvidenceLiterals =  new LinkedHashSet<Literal>(4); }
 				negEvidenceLiterals.add((Literal) ((ConnectedSentence) currFact).getSentenceB());  // Have NOT(p(1)).
 			}
 			else if (currFact instanceof UniversalSentence && ((UniversalSentence) currFact).body instanceof Literal) {
-				if (posEvidenceLiterals == null) { posEvidenceLiterals =  new HashSet<Literal>(4); }
+				if (posEvidenceLiterals == null) { posEvidenceLiterals =  new LinkedHashSet<Literal>(4); }
 				posEvidenceLiterals.add((Literal) ((UniversalSentence) currFact).body); // Have ForAll p(x).
 			} // In the test below, should really check that 'sentenceB' is an instance of Literal.  TODO
 			else if (currFact instanceof UniversalSentence && ((UniversalSentence) currFact).body instanceof ConnectedSentence && ConnectiveName.isaNOT(((ConnectedSentence) ((UniversalSentence) currFact).body).getConnective().name)) {
-				if (negEvidenceLiterals == null) { negEvidenceLiterals =  new HashSet<Literal>(4); }
+				if (negEvidenceLiterals == null) { negEvidenceLiterals =  new LinkedHashSet<Literal>(4); }
 				negEvidenceLiterals.add((Literal) ((ConnectedSentence) ((UniversalSentence) currFact).body).getSentenceB()); // Have ForAll NOT(p(x)).
 			} else { Utils.error("Expecting something like NOT(p(x)) but got: " + currFact); }
 		}
 
-		/*hiddenPredNames     = new HashSet<PredNameArityPair>(1);
+		/*hiddenPredNames     = new LinkedHashSet<PredNameArityPair>(1);
 		PredicateName pName = stringHandler.getPredicateName("course");
 		PredNameArityPair pNameArityPair = new PredNameArityPair(pName, 2);
 		hiddenPredNames.add(pNameArityPair); */
@@ -548,7 +548,7 @@ public class LearnDiscriminantMLNs {
 		Theory theory = new Theory(stringHandler, sentences);
 		if (hiddenPredNames != null) { Utils.error("Already have hiddenPredNames"); }
 		if (hiddenLiterals  != null) { Utils.error("Already have hiddenLiterals"); }
-		hiddenLiterals  = new HashSet<Literal>(4);
+		hiddenLiterals  = new LinkedHashSet<Literal>(4);
 		for (Clause clause : theory.getClauses()) {	
 			Literal lit = clause.posLiterals.get(0);			
 			hiddenLiterals.add(lit);

@@ -5,7 +5,7 @@
 package edu.wisc.cs.will.ILP;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import edu.wisc.cs.will.FOPC.Literal;
@@ -25,7 +25,7 @@ public class MutuallyExclusiveModeConstraint implements ModeConstraint {
     private int maxOccurances;
 
     public MutuallyExclusiveModeConstraint(Collection<PredicateNameAndArity> mutuallyExclusiveModes, int maxOccurances) {
-        this.mutuallyExclusiveModes = new HashSet<PredicateNameAndArity>(mutuallyExclusiveModes);
+        this.mutuallyExclusiveModes = new LinkedHashSet<PredicateNameAndArity>(mutuallyExclusiveModes);
         this.maxOccurances = maxOccurances;
     }
 
@@ -62,7 +62,7 @@ public class MutuallyExclusiveModeConstraint implements ModeConstraint {
 
                 if (removeModes) {
                     if (isMutable == false) {
-                        result = new HashSet<PredicateNameAndArity>(eligibleExpansionModes);
+                        result = new LinkedHashSet<PredicateNameAndArity>(eligibleExpansionModes);
                     }
 
                     for (PredicateNameAndArity predicateNameAndArity : mutuallyExclusiveModes) {

@@ -6,8 +6,8 @@ package edu.wisc.cs.will.ILP;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 	private                int     callCounter          = 0;
 	private   static final int     callCounterMOD       = 10000; // Every N predicate-usage counts, report predicate usage.
 	public    static       int     modForReportingExpansions = 10; // Every so often, report the node being expanded.
-	private   Set<PredicateName>   predicatesMarked     = new HashSet<PredicateName>(4); // TODO - add code to RESET.  But might not be necessary since not a large number of predicates.
+	private   Set<PredicateName>   predicatesMarked     = new LinkedHashSet<PredicateName>(4); // TODO - add code to RESET.  But might not be necessary since not a large number of predicates.
 	
 	public    static final int       numberofConstantsToCreate = 100;
 	protected Map<Type,List<Term>>   newTypesPresentInChildMap; // I (JWS) don't know how in Java one can change (and recover) a passed-in argument, so I'll make it a 'global' instance variable.
@@ -75,8 +75,8 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 	}
 	
 	protected void initialize() { 
-		existingTermsOfTypeMap = new HashMap<Type,List<Term>>(4);
-		literalsTriedSoFar     = new HashMap<PredicateName,List<Literal>>(64);
+		existingTermsOfTypeMap = new LinkedHashMap<Type,List<Term>>(4);
+		literalsTriedSoFar     = new LinkedHashMap<PredicateName,List<Literal>>(64);
 		constantsToUse         = new StringConstant[numberofConstantsToCreate];
 		dummyBindingList       = new BindingList();
 		boolean wasVarIndicatorSet = ((LearnOneClause) task).stringHandler.isVariableIndicatorSet(); // We would like the following to NOT become the default setting for VariableIndicator (i.e., if it is currently null).
@@ -267,14 +267,14 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 						if (typeOfThisSpecificValue == null) { Utils.error("Cannot find type of: '" + typeSpecAsConstant + "'."); }
 						if (LearnOneClause.debugLevel > 2) { Utils.println("%    Spec says to use this constant: '" + typeSpecAsConstant + ",' whose type = '" + typeOfThisSpecificValue + "'."); }
 						validTermsOfThisType.add(typeSpecAsConstant);
-						if (typesOfNewTerms == null) { typesOfNewTerms = new HashMap<Term,Type>(4); }
+						if (typesOfNewTerms == null) { typesOfNewTerms = new LinkedHashMap<Term,Type>(4); }
 						Type assignedType = typesOfNewTerms.get(typeSpecAsConstant);
 						if (assignedType == null) { typesOfNewTerms.put(typeSpecAsConstant, typeOfThisSpecificValue); }
 						else if (assignedType != typeOfThisSpecificValue) { Utils.error("Have two types for '" + typeSpecAsConstant + "': " + assignedType + "' and '" + typeOfThisSpecificValue + "'."); }
 						// No need to add to depthsOfTerms since constants have depth of the max depth of the input variables.
 					} else if (spec.mustBeConstant()) {  // Grab some number of constants from the positive SEEDs.
 						Variable newVarOfThisType = getNewILPbodyVar(spec); // We'll stick a variable in for now, then later find to what it gets bound.
-						if (typesOfNewConstants == null) { typesOfNewConstants = new HashMap<Variable,Type>(4); }
+						if (typesOfNewConstants == null) { typesOfNewConstants = new LinkedHashMap<Variable,Type>(4); }
 						typesOfNewConstants.put(newVarOfThisType, spec.isaType);
 						validTermsOfThisType.add(newVarOfThisType); // Just stick in the required type - below possible constants will be picked using the pos seeds.
 						// No need to add to depthsOfTerms since constants have depth of the max depth of the input variables.
@@ -282,7 +282,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 						// Seemed easiest in terms of the logic to repeat the code above.
 						if (spec.canBeConstant()) {
 							Variable newVarOfThisType = getNewILPbodyVar(spec); // We'll stick a variable in for now, then later find to what it gets bound.
-							if (typesOfNewConstants == null) { typesOfNewConstants = new HashMap<Variable,Type>(4); }
+							if (typesOfNewConstants == null) { typesOfNewConstants = new LinkedHashMap<Variable,Type>(4); }
 							typesOfNewConstants.put(newVarOfThisType, spec.isaType);
 							validTermsOfThisType.add(newVarOfThisType); // Just stick in the required type - below possible constants will be picked using the positive seeds.
 						}
@@ -291,7 +291,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 						List<Term> existingTermsOfThisType = getExistingTermsOfThisType(spec.isaType, parent); // We want objects UNDER this type (or OF this type).  E.g., if we're looking for an DOG, collect POODLEs, but *not* ANIMALs.
 						if (LearnOneClause.debugLevel > 3) { Utils.println("%  JWS: isaType = '" + spec.isaType + "' matches these existing terms: " + existingTermsOfThisType); }
 						if (existingTermsOfThisType != null) for (Term item : existingTermsOfThisType) {
-							if (depthsOfTerms == null) { depthsOfTerms = new HashMap<Term,Integer>(4); }
+							if (depthsOfTerms == null) { depthsOfTerms = new LinkedHashMap<Term,Integer>(4); }
 							Integer oldDepth = depthsOfTerms.get(item);
 							if (oldDepth == null) {
 								Integer depthOfItem = parent.getDepthOfArgument(item);
@@ -333,18 +333,18 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 							Variable newVarOfThisType = getNewILPbodyVar(spec);
 							
 							// Store these newly created variables and their types.
-							if (newVariables    == null) { newVariables = new HashMap<Variable,Type>(4); }
+							if (newVariables    == null) { newVariables = new LinkedHashMap<Variable,Type>(4); }
 							newVariables.put(newVarOfThisType, spec.isaType);
-							if (newVarsThisType == null) { newVarsThisType = new HashMap<Type,List<Variable>>(4); }
+							if (newVarsThisType == null) { newVarsThisType = new LinkedHashMap<Type,List<Variable>>(4); }
 							if (!spec.mustBeNewVariable()) { // Don't reuse this in the same literal (OK for later literals in the clause).
 								if (listOfNewVarsThisType == null) { listOfNewVarsThisType = new ArrayList<Variable>(1); }
 								listOfNewVarsThisType.add(newVarOfThisType);
 								newVarsThisType.put(spec.isaType, listOfNewVarsThisType);	
 							} else {
-								if (mustBeNewVariables == null) { mustBeNewVariables = new HashSet<Variable>(4); }
+								if (mustBeNewVariables == null) { mustBeNewVariables = new LinkedHashSet<Variable>(4); }
 								mustBeNewVariables.add(newVarOfThisType);
 							}
-							if (typesOfNewTerms == null) { typesOfNewTerms = new HashMap<Term,Type>(4); } // These don't need to be very big since few new variables per literal.  Ie, allow 3 before rebuilding the hash map.
+							if (typesOfNewTerms == null) { typesOfNewTerms = new LinkedHashMap<Term,Type>(4); } // These don't need to be very big since few new variables per literal.  Ie, allow 3 before rebuilding the hash map.
 							typesOfNewTerms.put(newVarOfThisType, spec.isaType);
 							validTermsOfThisType.add(newVarOfThisType);
 						} else { 
@@ -504,7 +504,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 												Term newTerm = args2.get(counter2++);
 												Type newType = typesOfNewConstants.get(term);
 												args3.add(newTerm);
-												if (typesOfNewTerms == null) { typesOfNewTerms = new HashMap<Term,Type>(4); } // Make sure this is bound.
+												if (typesOfNewTerms == null) { typesOfNewTerms = new LinkedHashMap<Term,Type>(4); } // Make sure this is bound.
 												typesOfNewTerms.put(newTerm, newType);  // Look up the type associated with this var-to-grab-constant.
 											}
 											else { args3.add(term); } // For other terms, we want to use the originals.
@@ -585,8 +585,8 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 							List<Type>              newTypesInChild = collectNewTypesPresentInChild(); // Grab the other local variable.
 							if (LearnOneClause.debugLevel > debugMult*2) { Utils.println("%    types of new args: " + newTypesInChild); }							
 							
-							Map<Term,Integer> argDepths = new HashMap<Term,Integer>(args.size());
-							if (depthsOfTerms == null) { depthsOfTerms = new HashMap<Term,Integer>(4); }
+							Map<Term,Integer> argDepths = new LinkedHashMap<Term,Integer>(args.size());
+							if (depthsOfTerms == null) { depthsOfTerms = new LinkedHashMap<Term,Integer>(4); }
 							setTermDepths(args, depthsOfTerms, newVariables, maxDepthOfInputVars, argDepths);							
 							SingleClauseNode newNode      = new SingleClauseNode(parent, pred, argDepths, specs, newTypesInChild, newTypesInChildMap, typesOfNewTerms);  // Create the new search node.
 							if (newNode.pruneMe) { continue; } // TODO - should we count these?  If this node marks itself (e.g., it might be an unnecessary constrainer), then do not add to OPEN.
@@ -774,7 +774,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 	private int countNewUniqueVariables(List<Term> items, Map<Variable,Type> newVars) {
 		if (items == null || newVars == null) { return 0; }
 		int result = 0;
-		Set<Term> seenVars = new HashSet<Term>(8);
+		Set<Term> seenVars = new LinkedHashSet<Term>(8);
 		for (Term term : items) if (!seenVars.contains(term) && term instanceof Variable && newVars.containsKey(term)) { 
 			result++;
 			seenVars.add(term);
@@ -828,7 +828,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 			
 			if (argType != null) { // This variable is a new one.  So need to add its type.
 				if (newTypesPresentInChildMap == null) {  // In no hash map, initialize.
-					newTypesPresentInChildMap = new HashMap<Type,List<Term>>(4);
+					newTypesPresentInChildMap = new LinkedHashMap<Type,List<Term>>(4);
 					newTypesPresentInChild    = new ArrayList<Type>(4);
 				}
 				List<Term> termsOfThisType = newTypesPresentInChildMap.get(argType); // See if any variables of this type in the hash map.
@@ -849,7 +849,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 			
 			if (argType != null) { // This constant is a new one.  So need to add its type. todo: clean up this code so vars and constants treated the same - ie, too much duplication.
 				if (newTypesPresentInChildMap == null) {  // In no hash map, initialize.
-					newTypesPresentInChildMap = new HashMap<Type,List<Term>>(4);
+					newTypesPresentInChildMap = new LinkedHashMap<Type,List<Term>>(4);
 					newTypesPresentInChild    = new ArrayList<Type>(4);
 				}
 				List<Term> termsOfThisType = newTypesPresentInChildMap.get(argType); // See if any vars of this type in the hash map.
@@ -871,7 +871,7 @@ public class ChildrenClausesGenerator extends ChildrenNodeGenerator {
 		else { Utils.error("Should not reach here: " + arg); }
 	}
 	
-	// From these arguments, collect those that are variables and are in this HashMap.
+	// From these arguments, collect those that are variables and are in this LinkedHashMap.
 	private List<Variable> collectVarsPresent(List<Term> args, Map<Variable,Type> typesOfNewConstants) {
 		if (args == null || typesOfNewConstants == null) { return null; }
 		List<Variable> result = new ArrayList<Variable>(args.size());

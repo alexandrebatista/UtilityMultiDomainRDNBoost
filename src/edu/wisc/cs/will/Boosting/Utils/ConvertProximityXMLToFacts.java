@@ -8,8 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,10 +79,10 @@ public class ConvertProximityXMLToFacts {
 		linkIds = new ArrayList<String>();
 		fromIds = new ArrayList<String>();
 		toIds = new ArrayList<String>();
-		objectAttrs = new HashMap<String, Map<String,List<String>>>();
-		linkAttrs = new HashMap<String, Map<String,List<String>>>();
-		container_objIds = new HashSet<String>();
-		container_linkIds = new HashSet<String>();
+		objectAttrs = new LinkedHashMap<String, Map<String,List<String>>>();
+		linkAttrs = new LinkedHashMap<String, Map<String,List<String>>>();
+		container_objIds = new LinkedHashSet<String>();
+		container_linkIds = new LinkedHashSet<String>();
 	}
 
 
@@ -243,7 +243,7 @@ public class ConvertProximityXMLToFacts {
 				String name = getName(node);
 				String type = getItemType(node);
 				NodeList childnodes = node.getChildNodes();
-				HashMap<String, List<String>> attributeValue = new HashMap<String, List<String>>();
+				LinkedHashMap<String, List<String>> attributeValue = new LinkedHashMap<String, List<String>>();
 
 				for (int j = 0; j < childnodes.getLength(); j++) {
 					String childname = childnodes.item(j).getNodeName();

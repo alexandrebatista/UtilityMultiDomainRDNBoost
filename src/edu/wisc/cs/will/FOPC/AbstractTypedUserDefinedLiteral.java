@@ -5,7 +5,7 @@
 
 package edu.wisc.cs.will.FOPC;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** This is the base=class for a Typed user defined literal.
@@ -22,7 +22,7 @@ import java.util.Map;
 public abstract class AbstractTypedUserDefinedLiteral extends AbstractUserDefinedLiteral {
 
     @SuppressWarnings("unchecked")
-	protected Map<Class, TermToJavaTypeConverter> converters = new HashMap<Class, TermToJavaTypeConverter>();
+	protected Map<Class, TermToJavaTypeConverter> converters = new LinkedHashMap<Class, TermToJavaTypeConverter>();
 
     protected AbstractTypedUserDefinedLiteral(boolean cachingEnabled) {
         this(null, cachingEnabled);

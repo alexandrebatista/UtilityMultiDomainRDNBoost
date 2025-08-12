@@ -1,13 +1,13 @@
 package edu.iu.cs.RelationalRandomWalks;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class Node {
 
 	public String name;
 	public int Nodeid;
-	public HashSet<Edge> IncomingEdge = new HashSet<Edge>();
-	public HashSet<Edge> OutgoingEdge = new HashSet<Edge>();
+	public LinkedHashSet<Edge> IncomingEdge = new LinkedHashSet<Edge>();
+	public LinkedHashSet<Edge> OutgoingEdge = new LinkedHashSet<Edge>();
 	
 	public Node(String xname,int xNodeid)
 	{

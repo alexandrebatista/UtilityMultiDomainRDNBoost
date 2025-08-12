@@ -5,7 +5,7 @@ package edu.wisc.cs.will.Boosting.RDN.Models;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.wisc.cs.will.Boosting.RDN.WILLSetup;
@@ -20,7 +20,7 @@ public class DependencyNetwork {
 	
 	public DependencyNetwork() {
 		// System.out.println("Initting string rep to node");
-		stringRepToNode = new HashMap<String, DependencyNode>();
+		stringRepToNode = new LinkedHashMap<String, DependencyNode>();
 	}
 
 	

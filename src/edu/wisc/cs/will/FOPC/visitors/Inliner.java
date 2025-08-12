@@ -7,7 +7,7 @@ package edu.wisc.cs.will.FOPC.visitors;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -321,7 +321,7 @@ public class Inliner {
 
         public void addDoNotInlinePredicate(PredicateNameAndArity aPredicate) {
             if (doNotInlineSet == null) {
-                doNotInlineSet = new HashSet<PredicateNameAndArity>();
+                doNotInlineSet = new LinkedHashSet<PredicateNameAndArity>();
             }
             doNotInlineSet.add(aPredicate);
         }
