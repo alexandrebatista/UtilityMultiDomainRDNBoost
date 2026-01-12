@@ -128,8 +128,8 @@ public final class WILLSetup {
 		
 		Utils.Verbosity defaultVerbosity = (Utils.isDevelopmentRun() ? Utils.Verbosity.Developer : Utils.Verbosity.Medium);
 
-		Utils.seedRandom(12345); // Use this if we want to repeat runs exactly.
-	//	Utils.seedRandom(System.currentTimeMillis() % 100000); // Only use the last few digits (though probably doesn't matter).  JWS
+	//	Utils.seedRandom(12345); // Use this if we want to repeat runs exactly.
+		Utils.seedRandom(System.currentTimeMillis() % 100000); // Only use the last few digits (though probably doesn't matter).  JWS
 		Utils.setVerbosity(defaultVerbosity);
 
 		File dir = new CondorFile(directory);
@@ -1710,7 +1710,13 @@ public final class WILLSetup {
 		getOuterLooper().innerLoopTask.maxFreeBridgersInBody = 1; // Math.max(2, outerLooper.getMaxNumberOfLiteralsAtAnInteriorNode()); // This is the body of ONE node.  By allowing more bridgers that literals we can, say, create comparators between two extracted values.
 		// Add 1 here since the root has literals but is at depth 0.
 		// We don't want the individual trees to get too complicated, so limit to 4 literals (so if 2 lits per nodes and depth is 2, instead of a max of 6 literals, the limit of 4 will be used).
-		getOuterLooper().setMaxTreeDepthInLiterals(Math.max(4, (getOuterLooper().getMaxTreeDepth() + 1) * (getOuterLooper().innerLoopTask.maxFreeBridgersInBody + getOuterLooper().getMaxNumberOfLiteralsAtAnInteriorNode()))); // Recall there could be some bridgers at each interior node, so this is allowing some bridgers.
+
+		if (cmdArgs.getMaxTreeDepthInLiteralsVal() == -1) {
+			getOuterLooper().setMaxTreeDepthInLiterals(Math.max(4, (getOuterLooper().getMaxTreeDepth() + 1) * (getOuterLooper().innerLoopTask.maxFreeBridgersInBody + getOuterLooper().getMaxNumberOfLiteralsAtAnInteriorNode()))); // Recall there could be some bridgers at each interior node, so this is allowing some bridgers.
+		}
+		else {
+			getOuterLooper().setMaxTreeDepthInLiterals(cmdArgs.getMaxTreeDepthInLiteralsVal());
+		}
 		
 		ChildrenClausesGenerator.modForReportingExpansions = 1; // Since we won't be doing a lot of expansions, let's see all of them.
 		// Reminder: "consider" means "expand" (i.e., remove from the OPEN list and generate its children);  "create" is a counter on children.
