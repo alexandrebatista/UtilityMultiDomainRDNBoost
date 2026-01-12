@@ -72,6 +72,7 @@ public class LearnBoostedRDN {
     private long learningTimeTillNow = 0;
 
     public Map<Example, Double> adviceGradients = null;
+    final double EPSILON = 1e-7;
 
     public LearnBoostedRDN(CommandLineArguments cmdArgs, WILLSetup setup) {
         this.cmdArgs = cmdArgs;
@@ -593,6 +594,8 @@ public class LearnBoostedRDN {
         List<RegressionRDNExample> all_exs = new ArrayList<RegressionRDNExample>();
         double scaleFactor = 1e8; // Used in EM to scale up the gradients
 
+        String rdnVersion = cmdArgs.getRdnVersionVal();
+
         getSampledPosNegEx(all_exs);
         // No need to get sample probabilities as there is no \psi_0 or gradient.
         if (!disableBoosting) {
@@ -755,54 +758,168 @@ public class LearnBoostedRDN {
                             } else {
                                 eg.setOutputValue(1 - prob / (prob + (1 - prob) * Math.exp(-beta)));
                             }
-                        } else if (adviceGradients == null) {
-                            // Neither advice nor softm
-
-                            //Modified By Cainã Figueiredo
-                            // ----------------------------------------------------------
-                            Pattern treeNumberPattern = Pattern.compile(".*/gradients_(\\d+).txt");
-                            Matcher treeNumberMatcher = treeNumberPattern.matcher(gradFile);
-                            int treeNumber = 1;
-                            if (treeNumberMatcher.find()) {
-                                treeNumber = Integer.parseInt(treeNumberMatcher.group(1)) + 1; // It starts on 1.
-                            }
-                            double weight = eg.getExampleWeight();
-                            String domain = eg.getExampleDomain();
-                            int utilityAlphaSetIter = cmdArgs.getUtilityAlphaSetIter(); // The learning iteration where the utility alphas will be set as the values defined by the user. Before this iteration, both utility alpha will be set as 1 (equivalent to original RDN-Boost).
-                            double sourceUtilityAlpha = treeNumber >= utilityAlphaSetIter ? cmdArgs.getSourceUtilityAlpha() : 1.0;
-                            double targetUtilityAlpha = treeNumber >= utilityAlphaSetIter ? cmdArgs.getTargetUtilityAlpha() : 1.0;
-                            double utilityAlpha = domain.equalsIgnoreCase("sourceDomain") ? sourceUtilityAlpha : targetUtilityAlpha;
-                            int originalValue = eg.getOriginalValue();
-                            double predictionError = originalValue - prob;
-                            double z = Math.pow(prob, originalValue) * Math.pow(1 - prob, 1 - originalValue);
-                            double unweightedExampleGradient = Math.pow(z, 1 - utilityAlpha) * predictionError;
-                            // System.out.println("TreeNumber: " + treeNumber);
-                            // System.out.println("Label: " + originalValue);
-                            // System.out.println("Utility Alpha: " + utilityAlpha);
-                            // System.out.println("Example is from " + eg.getExampleDomain() + " and has weight " + domainAlpha + "\n");
-                            // ----------------------------------------------------------
-
-                            double exampleGradient = weight * unweightedExampleGradient;
-                            // TODO: Remove the following prints after fixing the issue related to weights normalization, which is reducing the gradients to zero as the number of examples increases
-                            // System.out.println("State prob: " + stateProb);
-                            // System.out.println("Grad file: " + gradFile);
-                            // System.out.println("Domain: " + domain);
-                            // System.out.println("Weight: " + weight);
-                            // System.out.println("Probability of being True: " + prob);
-                            // System.out.println("Original value: " + originalValue);
-                            // System.out.println("Utility alpha: " + utilityAlpha);
-                            // System.out.println("Z: " + z);
-                            // System.out.println("Example gradient: " + exampleGradient);
-                            eg.setOutputValue(exampleGradient);
-                            // ---------------------------------------------------------
-                        } else {
-                            // Advice
-                            if (eg.isOriginalTruthValue()) {
-                                eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1 - cmdArgs.getAdviceWt()) * (stateProb * (1 - prob)));
+                        }
+                        else if (rdnVersion.equals("rdn")) {
+                            if (adviceGradients==null){
+                                // Neither advice nor softm
+                                if (eg.isOriginalTruthValue()) {
+                                    eg.setOutputValue(stateProb * (1 - prob));
+                                } else {
+                                    eg.setOutputValue(stateProb * (0 - prob));
+                                }
                             } else {
-                                eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1 - cmdArgs.getAdviceWt()) * (stateProb * (0 - prob)));
+                                // Advice
+                                if (eg.isOriginalTruthValue()) {
+                                    eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1-cmdArgs.getAdviceWt())*(stateProb * (1 - prob)));
+                                } else {
+                                    eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1-cmdArgs.getAdviceWt())*(stateProb * (0 - prob)));
+                                }
                             }
                         }
+                        else if (rdnVersion.equals("gflRdn")) {
+                            if (adviceGradients==null) {
+                                // --- Parâmetros ---
+                                double alpha = cmdArgs.getFocalLossAlphaVal();
+                                double gamma = cmdArgs.getFocalLossGammaVal();
+                                double lambda = cmdArgs.getBoxCoxLambdaVal();
+
+                                // --- Constante de Estabilidade ---
+                                // Use um epsilon um pouco maior para a comparação de lambda
+                                final double EPSILON = 1e-7;
+                                final double LAMBDA_EPSILON = 1e-9;
+
+                                // --- Pré-processamento da Probabilidade ---
+                                // 1. Obtenha a probabilidade bruta da classe 1 (p)
+                                double p = prob;
+
+                                // 2. Clipping de Estabilidade
+                                //    Garante que 'p' nunca seja 0 ou 1
+                                p = Math.max(EPSILON, p);
+                                p = Math.min(1.0 - EPSILON, p);
+
+                                // Variável para armazenar o gradiente (dL/dz)
+                                double grad;
+
+                                // --- ESTRUTURA DE DECISÃO PRINCIPAL ---
+                                if (eg.isOriginalTruthValue()) {
+
+                                    // ======================================
+                                    // === CASO: CLASSE POSITIVA (y = 1) ====
+                                    // ======================================
+                                    // grad = d(L_pos) / dz
+                                    // L_pos = alpha * (1-p)^gamma * [ (1 - p^lambda) / lambda ]
+
+                                    if (Math.abs(lambda) < LAMBDA_EPSILON) {
+                                        // --- Gradiente L_pos para lambda -> 0 ---
+                                        grad = alpha * Math.pow(1.0 - p, gamma) * (gamma * p * Math.log(p) + p - 1.0);
+                                    } else {
+                                        // --- Gradiente L_pos para lambda != 0 ---
+                                        double first_component = -alpha * p * Math.pow(1.0 - p, gamma);
+                                        double second_component = gamma * (1.0 - Math.pow(p, lambda)) / lambda;
+                                        double third_component = Math.pow(p, lambda - 1) * (1.0 - p);
+                                        grad = first_component * (second_component + third_component);
+                                    }
+
+                                } else {
+
+                                    // ======================================
+                                    // === CASO: CLASSE NEGATIVA (y = 0) ====
+                                    // ======================================
+                                    // grad = d(L_neg) / dz
+                                    // L_neg = (1-alpha) * p^gamma * [ (1 - (1-p)^lambda) / lambda ]
+
+                                    double one_minus_alpha = alpha < 1.0 ? 1.0 - alpha : 1.0;
+
+                                    if (Math.abs(lambda) < LAMBDA_EPSILON) {
+                                        // --- Gradiente L_neg para lambda -> 0 ---
+                                        // Derivada de: (1-alpha) * p^gamma * [-log(1-p)]
+                                        grad = one_minus_alpha * (
+                                                -gamma * Math.pow(p, gamma) * (1.0 - p) * Math.log(1.0 - p) +
+                                                        Math.pow(p, gamma + 1.0)
+                                        );
+                                    } else {
+                                        // --- Gradiente L_neg para lambda != 0 ---
+                                        // Derivada de: (1-alpha) * p^gamma * [ (1 - (1-p)^lambda) / lambda ]
+                                        double p_gamma = Math.pow(p, gamma);
+                                        double one_minus_p = 1.0 - p;
+
+                                        grad = (one_minus_alpha / lambda) * (
+                                                gamma * p_gamma * one_minus_p * (1.0 - Math.pow(one_minus_p, lambda)) +
+                                                        lambda * Math.pow(p, gamma + 1.0) * Math.pow(one_minus_p, lambda)
+                                        );
+                                    }
+                                }
+
+                                if (cmdArgs.getHiddenStrategy().equals("EM")) {
+                                    if (!cmdArgs.isIgnoreStateProb()) {
+                                        // 'stateProb' já foi calculado antes neste método (inclui scaleFactor quando aplicável)
+                                        grad = grad * stateProb;
+                                    }
+                                }
+
+                                // O pseudo-residual é o negativo do gradiente
+                                eg.setOutputValue(-grad);
+                            }
+                            else {
+                                // Advice
+                                if (eg.isOriginalTruthValue()) {
+                                    eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1-cmdArgs.getAdviceWt())*(stateProb * (1 - prob)));
+                                } else {
+                                    eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1 - cmdArgs.getAdviceWt()) * (stateProb * (0 - prob)));
+                                }
+                            }
+                        }
+                        else if (rdnVersion.equals("utilRdn")) {
+                            if (adviceGradients==null){
+                                // Neither advice nor softm
+
+                                //Modified By Cainã Figueiredo
+                                // ----------------------------------------------------------
+                                Pattern treeNumberPattern = Pattern.compile(".*/gradients_(\\d+).txt");
+                                Matcher treeNumberMatcher = treeNumberPattern.matcher(gradFile);
+                                int treeNumber = 1;
+                                if (treeNumberMatcher.find()) {
+                                    treeNumber = Integer.parseInt(treeNumberMatcher.group(1)) + 1; // It starts on 1.
+                                }
+                                double weight = eg.getExampleWeight();
+                                String domain = eg.getExampleDomain();
+                                int utilityAlphaSetIter = cmdArgs.getUtilityAlphaSetIter(); // The learning iteration where the utility alphas will be set as the values defined by the user. Before this iteration, both utility alpha will be set as 1 (equivalent to original RDN-Boost).
+                                double sourceUtilityAlpha = treeNumber >= utilityAlphaSetIter ? cmdArgs.getSourceUtilityAlpha() : 1.0;
+                                double targetUtilityAlpha = treeNumber >= utilityAlphaSetIter ? cmdArgs.getTargetUtilityAlpha() : 1.0;
+                                double utilityAlpha = domain.equalsIgnoreCase("sourceDomain") ? sourceUtilityAlpha : targetUtilityAlpha;
+                                int originalValue = eg.getOriginalValue();
+                                double predictionError = originalValue - prob;
+                                double z = Math.pow(prob, originalValue) * Math.pow(1-prob, 1-originalValue);
+                                double unweightedExampleGradient = Math.pow(z, 1-utilityAlpha) * predictionError;
+                                // System.out.println("TreeNumber: " + treeNumber);
+                                // System.out.println("Label: " + originalValue);
+                                // System.out.println("Utility Alpha: " + utilityAlpha);
+                                // System.out.println("Example is from " + eg.getExampleDomain() + " and has weight " + domainAlpha + "\n");
+                                // ----------------------------------------------------------
+
+                                double exampleGradient = weight * unweightedExampleGradient;
+                                // TODO: Remove the following prints after fixing the issue related to weights normalization, which is reducing the gradients to zero as the number of examples increases
+                                // System.out.println("State prob: " + stateProb);
+                                // System.out.println("Grad file: " + gradFile);
+                                // System.out.println("Domain: " + domain);
+                                // System.out.println("Weight: " + weight);
+                                // System.out.println("Probability of being True: " + prob);
+                                // System.out.println("Original value: " + originalValue);
+                                // System.out.println("Utility alpha: " + utilityAlpha);
+                                // System.out.println("Z: " + z);
+                                // System.out.println("Example gradient: " + exampleGradient);
+                                eg.setOutputValue(exampleGradient);
+                                // ---------------------------------------------------------
+                            } else {
+                                // Advice
+                                if (eg.isOriginalTruthValue()) {
+                                    eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1-cmdArgs.getAdviceWt())*(stateProb * (1 - prob)));
+                                } else {
+                                    eg.setOutputValue(cmdArgs.getAdviceWt() * adviceGradients.get(eg) + (1-cmdArgs.getAdviceWt())*(stateProb * (0 - prob)));
+                                }
+                            }
+                        }
+                        else throw new IllegalArgumentException("RDN Version provided is invalid.");
                     }
                 }
                 if (printGradients) {
