@@ -280,6 +280,14 @@ public class CommandLineArguments {
 
     private String rdnVersionVal = "rdn";
 
+    public static final String disableLimiters = "disableLimiters";
+    private boolean limitersDisabled = false;
+
+    // NEW: flag para arquivo de pesos das amostras
+    public static final String weightsFlag = "weights";
+    private String weightsFileVal = null;
+
+
     public void setkbpllFiles(String files) {
         kbpllAdviceFile = files;
     }
@@ -976,6 +984,19 @@ public class CommandLineArguments {
                 continue;
             }
 
+            if (argMatches(args[i], disableLimiters)) {
+                limitersDisabled = true;
+                if (isArgumentNotAFlag(args, i + 1)) {
+                    limitersDisabled = Utils.parseBoolean(args[++i]);
+                }
+                continue;
+            }
+
+            if (argMatches(args[i], weightsFlag)) {
+                weightsFileVal = args[++i];
+                continue;
+            }
+
             Utils.println("Unknown argument: " + args[i]);
             return false;
         }
@@ -1004,6 +1025,7 @@ public class CommandLineArguments {
         String result = "Usage:\n";
 
         result += argPrefix + learn + " : Use this flag, if you want to enable learning.\n";
+        result += argPrefix + weightsFlag + " <weights file> : Path to a file containing sample weights (optional, used during training).\n";
 
         result += argPrefix + infer + " : Use this flag, if you want to enable inference.\n";
 
@@ -1344,6 +1366,15 @@ public class CommandLineArguments {
 
     public String getAdviceFileVal() {
         return adviceFileVal;
+    }
+
+
+    public void setWeightsFile(String fileName) {
+        this.weightsFileVal = fileName;
+    }
+
+    public String getWeightsFile() {
+        return this.weightsFileVal;
     }
 
     /**
@@ -2005,4 +2036,11 @@ public class CommandLineArguments {
         this.rdnVersionVal = rdnVersionVal;
     }
 
+    public boolean isDisableLimiters() {
+        return limitersDisabled;
+    }
+
+    public void setDisableLimiters(boolean val) {
+        limitersDisabled = val;
+    }
 }

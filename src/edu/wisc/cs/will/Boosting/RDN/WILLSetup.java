@@ -1740,7 +1740,32 @@ public final class WILLSetup {
 		// TODO - should also have a maxTime for learning ALL N trees.  Maybe write the remaining trees as adding zero to the wgt'ed sum, since other code looks for maxTrees.
 		getOuterLooper().setMaximumClockTimeInMillisec((long) (maxHoursToRunPerTree * 60 * 60 * 1000));
 
-	//	getOuterLooper().initialize(false);  // We're leaving this for the caller, in case the caller needs to do somethings before initialization.		
+		if (cmdArgs.isDisableLimiters()) {
+            System.out.println("DEBUG: DISABLE_LIMITERS ativado");
+            
+            getOuterLooper().setMaxTreeDepth(1000);
+            
+            if (cmdArgs.getMaxTreeDepthInLiteralsVal() != -1) {
+                getOuterLooper().setMaxTreeDepthInLiterals(cmdArgs.getMaxTreeDepthInLiteralsVal());
+            } else {
+                getOuterLooper().setMaxTreeDepthInLiterals(10000);
+            }
+
+			getOuterLooper().maxNumberOfClauses = 1000;
+			getOuterLooper().maxNumberOfCycles = 1000;
+
+            // ← MUDE ISTO (de 0.000001 para 0.0025)
+            getOuterLooper().setMaxAcceptableNodeScoreToStop(0.0025);
+            
+			getInnerLooper().setMaxNodesToConsider(10000000);
+			getInnerLooper().setMaxNodesToCreate(100000000);
+            
+            System.out.println("DEBUG: DISABLE_LIMITERS - valores finais:");
+            System.out.println("  maxTreeDepth = " + getOuterLooper().getMaxTreeDepth());
+            System.out.println("  maxAcceptableNodeScoreToStop = " + getOuterLooper().getMaxAcceptableNodeScoreToStop());
+        } 
+
+		// getOuterLooper().initialize(false);  // We're leaving this for the caller, in case the caller needs to do somethings before initialization.		
 		return getOuterLooper();
 	}
 

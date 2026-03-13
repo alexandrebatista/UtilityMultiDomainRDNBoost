@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
 
 import edu.wisc.cs.will.Boosting.Common.RunBoostedModels;
 import edu.wisc.cs.will.Boosting.Common.SRLInference;
@@ -49,46 +52,95 @@ import edu.wisc.cs.will.stdAIsearch.SearchInterrupted;
  * @author Tushar Khot
  */
 public class LearnBoostedRDN {
-    protected final static int debugLevel = 1; // Used to control output from this class (0 = no output, 1=some, 2=much, 3=all).
-
-    private CommandLineArguments cmdArgs;
-    private ExampleSubSampler egSubSampler;
-    private WILLSetup setup;
-
-    public List<RegressionRDNExample> egs = null;
-    private String targetPredicate = null;
-    private int maxTrees = 10;
-    private double minGradientForSame = 0.0002;
-    private double minPercentageSameForStop = 0.8;
-    private String yapSettingsFile;
-    private boolean resampleExamples = true;
-    private boolean newInputFileForEachTree = true;
-    private boolean stopIfFewChanges = false;
-    private boolean performLineSearch = false;
-    private boolean learnSingleTheory = false;
-    private boolean disableBoosting = false;
-    private boolean printGradients = false;
-
-    private long learningTimeTillNow = 0;
-
-    public Map<Example, Double> adviceGradients = null;
-    final double EPSILON = 1e-7;
-
-    public LearnBoostedRDN(CommandLineArguments cmdArgs, WILLSetup setup) {
-        this.cmdArgs = cmdArgs;
-        this.setup = setup;
-        maxTrees = cmdArgs.getMaxTreesVal();
-        setParamsUsingSetup(setup);
-        if (cmdArgs.isUseYapVal()) {
-            learnSingleTheory = false;
+     protected final static int debugLevel = 1; // Used to control output from this class (0 = no output, 1=some, 2=much, 3=all).
+ 
+     private CommandLineArguments cmdArgs;
+     private ExampleSubSampler egSubSampler;
+     private WILLSetup setup;
+    // mapa carregado a partir do arquivo de pesos (chave: literal como "predicado(a,b)", valor: peso)
+    private Map<String, Double> externalWeights = null;
+ 
+     public List<RegressionRDNExample> egs = null;
+     private String targetPredicate = null;
+     private int maxTrees = 10;
+     private double minGradientForSame = 0.0002;
+     private double minPercentageSameForStop = 0.8;
+     private String yapSettingsFile;
+     private boolean resampleExamples = true;
+     private boolean newInputFileForEachTree = true;
+     private boolean stopIfFewChanges = false;
+     private boolean performLineSearch = false;
+     private boolean learnSingleTheory = false;
+     private boolean disableBoosting = false;
+     private boolean printGradients = false;
+ 
+     private long learningTimeTillNow = 0;
+ 
+     public Map<Example, Double> adviceGradients = null;
+     final double EPSILON = 1e-7;
+ 
+     public LearnBoostedRDN(CommandLineArguments cmdArgs, WILLSetup setup) {
+         this.cmdArgs = cmdArgs;
+         this.setup = setup;
+         maxTrees = cmdArgs.getMaxTreesVal();
+         setParamsUsingSetup(setup);
+         if (cmdArgs.isUseYapVal()) {
+             learnSingleTheory = false;
+         }
+         if (cmdArgs.isDisabledBoosting()) {
+             disableBoosting = true;
+         }
+         egSubSampler = new ExampleSubSampler(setup, cmdArgs);
+        // tenta carregar arquivo de pesos (se presente)
+        loadExternalWeightsIfPresent();
+     }
+    
+    private void loadExternalWeightsIfPresent() {
+        String wf = cmdArgs.getWeightsFile();
+        if (wf == null) {
+            return; // não informado
         }
-        if (cmdArgs.isDisabledBoosting()) {
-            disableBoosting = true;
+        if (!Utils.fileExists(wf)) {
+            Utils.println("% Weights file not found, ignoring: " + wf);
+            return;
         }
-        egSubSampler = new ExampleSubSampler(setup, cmdArgs);
+        externalWeights = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(wf))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                int idx = line.lastIndexOf(' ');
+                if (idx <= 0) {
+                    Utils.printlnErr("Malformed weights line (skipping): " + line);
+                    continue;
+                }
+                String lit = line.substring(0, idx).trim();
+                String wstr = line.substring(idx + 1).trim();
+                try {
+                    double w = Double.parseDouble(wstr);
+                    externalWeights.put(lit, w);
+                } catch (NumberFormatException e) {
+                    Utils.printlnErr("Invalid weight value (skipping): " + line);
+                }
+            }
+        } catch (IOException e) {
+            Utils.reportStackTrace(e);
+            Utils.printlnErr("Error reading weights file: " + wf);
+            externalWeights = null;
+            return;
+        }
+        Utils.println("% Loaded " + externalWeights.size() + " sample weights from " + wf);
     }
-
-    /**
+ 
+     /**
+     * Retorna o mapa de pesos carregado (pode ser null se nenhum arquivo foi carregado).
+     */
+    public Map<String, Double> getExternalWeights() {
+        return externalWeights;
+    }
+ 
+     /**
      * @param predicate
      * @param yapFile
      * @param caller
@@ -162,7 +214,7 @@ public class LearnBoostedRDN {
             outerLoop.setMaxTreeDepthInLiterals(120);
             outerLoop.maxNumberOfClauses = 200;
             outerLoop.maxNumberOfCycles = 200;
-            outerLoop.setMaxAcceptableNodeScoreToStop(0.0001);
+            outerLoop.setMaxAcceptableNodeScoreToStop(0.001);
         }
         //TODO(TVK!)
         if (// cmdArgs.isLearnMLN() ||
@@ -597,6 +649,10 @@ public class LearnBoostedRDN {
         String rdnVersion = cmdArgs.getRdnVersionVal();
 
         getSampledPosNegEx(all_exs);
+        
+        // Aplicar pesos externos (se carregados)
+        applyExternalWeights(all_exs);
+        
         // No need to get sample probabilities as there is no \psi_0 or gradient.
         if (!disableBoosting) {
             Utils.println("Computing probabilities");
@@ -1200,4 +1256,39 @@ public class LearnBoostedRDN {
         return yapSettingsFile;
     }
 
+     /**
+     * Aplica pesos externos aos exemplos carregados a partir do arquivo de pesos.
+     * Se externalWeights for null ou se o exemplo não estiver no mapa, usa peso 1.0
+     * 
+     * @param examples Lista de exemplos a serem ponderados
+     */
+    private void applyExternalWeights(List<RegressionRDNExample> examples) {
+        if (externalWeights == null || externalWeights.isEmpty()) {
+            Utils.println("% No external weights applied (weights map is empty or null).");
+            return;
+        }
+
+        int appliedCount = 0;
+        int defaultCount = 0;
+
+        for (RegressionRDNExample eg : examples) {
+            // Obter a representação em string do exemplo (literalmente)
+            String exampleKey = eg.toPrettyString();
+            
+            Double weight = externalWeights.get(exampleKey);
+            
+            if (weight != null) {
+                // Peso encontrado no mapa
+                eg.setWeightOnExample(weight);
+                appliedCount++;
+            } else {
+                // Peso não encontrado, usar padrão 1.0
+                eg.setWeightOnExample(1.0);
+                defaultCount++;
+            }
+        }
+
+        Utils.println("% Applied external weights: " + appliedCount + " examples matched, " + 
+                      defaultCount + " used default weight (1.0).");
+    }
 }
